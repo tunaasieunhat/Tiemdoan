@@ -273,6 +273,16 @@
     /* ---------- Màn hình thấp (điện thoại xoay ngang) ---------- */
     @media (max-width: 1100px) { .hud-actions .lbl { display: none; } .hud-left .hud-names { max-width: 150px; } }
     @media (max-height: 520px) {
+      #screen-loading, #screen-profile { align-items: flex-start; padding: 10px; }
+      .loading-card { padding: 12px 16px 14px; }
+      .loading-logo { width: 84px; height: 84px; }
+      .loading-title { font-size: 22px; }
+      .loading-track { display: none; }
+      #load-tip { min-height: 0; margin-top: 6px; }
+      .profile-card { padding: 14px; }
+      .profile-preview .stage { width: 110px; height: 136px; }
+      .look-opt .mini { width: 46px; height: 46px; }
+      .field input { padding: 7px 12px; font-size: 15px; }
       :root { --hud-h: 48px; }
       #hud { padding: 4px 8px; gap: 6px; }
       .hud-avatar { width: 34px; height: 34px; }
@@ -689,6 +699,22 @@
     .float-text { position: fixed; z-index: 120; font-weight: 900; font-size: 20px; pointer-events: none; animation: floatUp 1.5s ease-out forwards; text-shadow: 0 2px 0 #fff, 0 0 6px #fff; white-space: nowrap; }
 
     /* =====================================================
+       THÔNG CÁO CẬP NHẬT
+       ===================================================== */
+    .load-version { margin-top: 10px; font-size: 11px; font-weight: 800; color: var(--cocoa-soft); }
+    .update-banner { margin-top: 12px; text-align: left; font-size: 13px; font-weight: 700; padding: 10px 12px; border-radius: 18px; background: linear-gradient(#effbf3, #dff6e7); border: 3px solid #94d8ad; box-shadow: 0 4px 0 #94d8ad; animation: popupIn 0.4s cubic-bezier(0.2, 1.4, 0.4, 1); }
+    .update-banner.hidden { display: none; }
+    .update-banner ul { margin: 4px 0 0; padding-left: 18px; list-style: disc; }
+    .changelog { text-align: left; display: flex; flex-direction: column; gap: 10px; }
+    .cl-entry { background: #fff8f1; border: 2.5px solid #f4dfcd; border-radius: 18px; padding: 8px 12px; }
+    .cl-entry:first-child { background: #fff3c9; border-color: #ecc95c; }
+    .cl-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .cl-ver { background: #ff8fa3; color: #fff; font-weight: 900; font-size: 12px; border-radius: 999px; padding: 1px 9px; }
+    .cl-title { font-weight: 900; color: var(--cocoa); }
+    .cl-date { margin-left: auto; font-size: 11px; font-weight: 800; color: var(--cocoa-soft); }
+    .cl-entry ul { margin: 6px 0 0; padding-left: 18px; list-style: disc; font-size: 13px; line-height: 1.45; }
+
+    /* =====================================================
        SỰ CỐ MẤT ĐIỆN
        ===================================================== */
     #power-panel {
@@ -852,7 +878,9 @@
       <div class="load-bar"><div id="load-fill"></div><div class="load-pct" id="load-pct">0%</div></div>
       <div id="load-text">Đang mở cửa tiệm...</div>
       <div id="load-actions" class="hidden"></div>
+      <div id="update-banner" class="update-banner hidden"></div>
       <div id="load-tip"></div>
+      <div class="load-version"><span id="load-version"></span> • <button class="underline font-black" data-action="changelog">📰 Có gì mới?</button></div>
     </div>
   </section>
 
@@ -1336,6 +1364,54 @@
       '💡 Mẹo: Rót nước tới vạch xanh, quá tay là tràn ly đó!',
       '💡 Mẹo: Máy phát điện giúp bạn không bao giờ lo mất điện.',
       '💡 Mẹo: Nhà phê bình ẩm thực ảnh hưởng danh tiếng gấp đôi.'
+    ];
+
+    /* =====================================================
+       PHIÊN BẢN & THÔNG CÁO CẬP NHẬT
+       Mỗi lần cập nhật game: tăng GAME_VERSION, thêm một mục lên đầu
+       CHANGELOG và sửa file version.json ở thư mục gốc cho khớp.
+       ===================================================== */
+    const GAME_VERSION = '3.1.0';
+    const SEEN_VERSION_KEY = 'tinyFastFoodStory_seenVersion';
+    const VERSION_URL = 'https://raw.githubusercontent.com/tunaasieunhat/Tiemdoan/main/version.json';
+    const DOWNLOAD_URL = 'https://github.com/tunaasieunhat/Tiemdoan/releases/tag/apk-latest';
+    const CHANGELOG = [
+      {
+        version: '3.1.0', date: '01/11/2026', title: 'Thông cáo cập nhật',
+        items: [
+          'Sau mỗi lần cập nhật, game tự hiện bảng “Có gì mới” khi bạn mở lại.',
+          'Màn hình chính báo khi đã có phiên bản mới, kèm nút tải về.',
+          'Xem lại lịch sử cập nhật bằng nút 📰 ở màn hình chính hoặc trong ❓ Hướng dẫn.',
+          'Màn hình chính và màn tạo hồ sơ gọn gàng hơn trên điện thoại xoay ngang.'
+        ]
+      },
+      {
+        version: '3.0.0', date: '01/11/2026', title: 'Quán ăn 3D màn hình ngang',
+        items: [
+          'Quán ăn mô phỏng 3D phong cách chibi, chơi toàn màn hình ngang.',
+          'Chạm vào khu vực, đồ vật hoặc khách để mở bảng thao tác; camera bay tới khu đó.',
+          'Khách 3D đi qua cửa, xếp hàng, ra bàn ngồi và rời quán theo cảm xúc.',
+          'Món trên bếp, bánh trên đĩa, ly nước và khay giao món hiển thị 3D theo thời gian thực.',
+          'Ánh sáng đổi theo giờ, tối đi khi mất điện; các nâng cấp hiện ngay trong quán.'
+        ]
+      },
+      {
+        version: '2.0.0', date: '01/11/2026', title: 'Nhân vật chibi & khu bếp riêng',
+        items: [
+          'Nhân vật chibi và hình vẽ chi tiết cho đồ ăn, nguyên liệu, đồ vật.',
+          'Màn hình loading, tạo hồ sơ chủ quán và hướng dẫn tân thủ cùng Mèo Bơ.',
+          'Khách đến lần lượt từng người, có thanh thời gian đợi món.',
+          'Thực đơn 12 món: thêm burger mới, gà rán và 3 loại nước rót bằng cách nhấn giữ.'
+        ]
+      },
+      {
+        version: '1.0.0', date: '30/10/2026', title: 'Khai trương Tiny Fast-Food Story',
+        items: [
+          'Tự tay nướng, lắp ráp và giao món cho khách.',
+          'Kho hàng có hạn sử dụng; sự cố mất điện và nguyên liệu ôi thiu.',
+          '4 nâng cấp: bếp cao cấp, tủ đông, máy phát điện, trang trí quán.'
+        ]
+      }
     ];
 
     /* =====================================================
@@ -2400,6 +2476,7 @@
     }
 
     function runLoading() {
+      setText($('load-version'), 'Phiên bản ' + GAME_VERSION);
       $('loading-logo').innerHTML = ART.logo();
       $('loading-chef').innerHTML = ART.chibi(pick(CHEF_LOOKS), 'excited');
       const tasks = [
@@ -2450,6 +2527,69 @@
         act.innerHTML = '<button class="btn btn-mint btn-big" data-action="load-new">🎮 Bắt đầu chơi</button>';
       }
       Sound.play('pop');
+      checkWhatsNew();
+      checkRemoteVersion();
+    }
+
+    /* =====================================================
+       THÔNG CÁO CẬP NHẬT
+       ===================================================== */
+    function cmpVersion(a, b) {
+      const pa = String(a).split('.').map(Number);
+      const pb = String(b).split('.').map(Number);
+      for (let i = 0; i < 3; i++) {
+        const d = (pa[i] || 0) - (pb[i] || 0);
+        if (d) return d > 0 ? 1 : -1;
+      }
+      return 0;
+    }
+    function getSeenVersion() { try { return localStorage.getItem(SEEN_VERSION_KEY); } catch (e) { return null; } }
+    function setSeenVersion(v) { try { localStorage.setItem(SEEN_VERSION_KEY, v); } catch (e) { /* bỏ qua */ } }
+    function changelogHTML(entries) {
+      return '<div class="changelog">' + entries.map((e) => '<div class="cl-entry"><div class="cl-head"><span class="cl-ver">v' + e.version + '</span><span class="cl-title">' + e.title + '</span><span class="cl-date">' + e.date + '</span></div>' +
+        '<ul>' + e.items.map((it) => '<li>' + it + '</li>').join('') + '</ul></div>').join('') + '</div>';
+    }
+    function showChangelog(sinceVersion) {
+      const newer = sinceVersion ? CHANGELOG.filter((e) => cmpVersion(e.version, sinceVersion) > 0) : [];
+      Modal.show({
+        icon: '📰',
+        title: newer.length ? 'Có gì mới trong bản ' + GAME_VERSION + '?' : 'Thông cáo cập nhật',
+        html: changelogHTML(newer.length ? newer : CHANGELOG),
+        buttons: [{ label: '👍 Tuyệt vời!', cls: 'btn-mint' }]
+      });
+      setSeenVersion(GAME_VERSION);
+    }
+    function checkWhatsNew() {
+      if (!hasSave()) { setSeenVersion(GAME_VERSION); return; }
+      const from = getSeenVersion() || '2.0.0';
+      if (cmpVersion(GAME_VERSION, from) > 0) showChangelog(from);
+    }
+
+    let remoteUpdate = null;
+    function checkRemoteVersion() {
+      if (!window.fetch) return;
+      const ctrl = window.AbortController ? new AbortController() : null;
+      const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, 6000);
+      fetch(VERSION_URL + '?t=' + Date.now(), { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((info) => {
+          clearTimeout(timer);
+          if (!info || typeof info.version !== 'string' || cmpVersion(info.version, GAME_VERSION) <= 0) return;
+          remoteUpdate = info;
+          renderUpdateBanner();
+          if (!$('screen-game').classList.contains('hidden')) toast('🆕 Đã có phiên bản ' + info.version + '! Mở lại game để xem cách tải.', 'good');
+        })
+        .catch(() => clearTimeout(timer));
+    }
+    function renderUpdateBanner() {
+      const el = $('update-banner');
+      if (!remoteUpdate) { el.classList.add('hidden'); return; }
+      const link = /^https:\/\//.test(remoteUpdate.download || '') ? remoteUpdate.download : DOWNLOAD_URL;
+      const notes = Array.isArray(remoteUpdate.notes) ? remoteUpdate.notes.slice(0, 4) : [];
+      el.innerHTML = '<div class="font-black">🆕 Đã có phiên bản mới ' + esc(remoteUpdate.version) + (remoteUpdate.title ? ': ' + esc(remoteUpdate.title) : '') + '</div>' +
+        (notes.length ? '<ul>' + notes.map((n) => '<li>' + esc(n) + '</li>').join('') + '</ul>' : '') +
+        '<a class="btn btn-sm btn-mint mt-1" href="' + esc(link) + '" target="_blank" rel="noopener">⬇️ Tải bản mới</a>';
+      el.classList.remove('hidden');
     }
 
     function askNewGame() {
@@ -5811,7 +5951,12 @@
         '</ol><div class="text-xs mt-2 opacity-80">💾 Tiến trình được tự động lưu vào trình duyệt (LocalStorage).</div>';
     }
     function showHelp() {
-      Modal.show({ icon: ART.catChef('happy'), title: 'Hướng dẫn chơi', html: helpHTML(), buttons: [{ label: '👍 Đã hiểu', cls: 'btn-mint' }] });
+      Modal.show({
+        icon: ART.catChef('happy'),
+        title: 'Hướng dẫn chơi (bản ' + GAME_VERSION + ')',
+        html: helpHTML(),
+        buttons: [{ label: '📰 Thông cáo cập nhật', cls: 'btn-butter', onClick: () => showChangelog(null) }, { label: '👍 Đã hiểu', cls: 'btn-mint' }]
+      });
     }
 
     function confirmReset() {
@@ -5919,6 +6064,7 @@
         case 'pause': togglePause(); break;
         case 'sound': toggleSound(); break;
         case 'help': Sound.play('click'); showHelp(); break;
+        case 'changelog': Sound.play('click'); showChangelog(null); break;
         case 'reset': Sound.play('click'); confirmReset(); break;
         default: break;
       }

@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches: [main, claude/untitled-session-hrxf6u]
-    paths: ['index.html', '.github/workflows/build-apk.yml']
+    paths: ['index.html', 'version.json', '.github/workflows/build-apk.yml']
   workflow_dispatch:
 
 permissions:
@@ -23,6 +23,15 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      - name: Check version.json matches the game
+        run: |
+          node -e "
+            const v = require('./version.json').version;
+            const html = require('fs').readFileSync('index.html', 'utf8');
+            if (!html.includes(\"const GAME_VERSION = '\" + v + \"'\")) { console.error('version.json (' + v + ') does not match GAME_VERSION in index.html'); process.exit(1); }
+            console.log('Version ' + v);
+          "
 
       - name: Prepare web files (inline Tailwind and Three.js so the app works offline)
         run: |
@@ -52,6 +61,9 @@ jobs:
           npx cap add android
           sed -i 's/<activity/<activity android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
           grep -q 'sensorLandscape' android/app/src/main/AndroidManifest.xml
+          VER=$(node -p "require('../version.json').version")
+          sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"$VER\"/" android/app/build.gradle
+          grep -E 'versionCode|versionName' android/app/build.gradle
           npx cap sync android
 
       - name: Build debug APK
@@ -70,9 +82,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          VER=$(node -p "require('./version.json').version")
+          node -e "
+            const v = require('./version.json');
+            const lines = ['## Tiny Fast-Food Story v' + v.version + ' – ' + v.title, '', ...v.notes.map((n) => '- ' + n), '', 'Tải **TinyFastFoodStory.apk** về điện thoại Android rồi mở để cài.', '', 'Bản build từ commit ${{ github.sha }}.'];
+            require('fs').writeFileSync('release-notes.md', lines.join('\\n'));
+          "
           gh release delete apk-latest -y --cleanup-tag || true
           gh release create apk-latest TinyFastFoodStory.apk \
             --target "${{ github.sha }}" \
             --prerelease \
-            --title "Tiny Fast-Food Story – APK mới nhất" \
-            --notes "File APK tự build từ index.html (commit ${{ github.sha }}). Tải TinyFastFoodStory.apk về điện thoại Android rồi mở để cài."
+            --title "Tiny Fast-Food Story v$VER – APK mới nhất" \
+            --notes-file release-notes.md
