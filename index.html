@@ -1,0 +1,2958 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tiny Fast-Food Story</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    if (window.tailwind) {
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              nunito: ['Nunito', 'Quicksand', 'system-ui', 'sans-serif'],
+              quick: ['Quicksand', 'Nunito', 'sans-serif']
+            },
+            colors: {
+              cream: '#FFF8EC',
+              peach: '#FFD9C0',
+              blush: '#FFD3DA',
+              mint: '#CFF3DD',
+              butter: '#FFF0B3',
+              sky: '#D3EAFF',
+              lilac: '#E8DDFF',
+              cocoa: '#6B4A3A',
+              caramel: '#D99A6C'
+            }
+          }
+        }
+      };
+    }
+  </script>
+  <style>
+    :root {
+      --cocoa: #6b4a3a;
+      --cocoa-soft: #94715e;
+      --line: #f1d3bd;
+      --line-dark: #e2b392;
+      --paper: #fffdf8;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Nunito', 'Quicksand', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      color: var(--cocoa);
+      background-color: #fff3e4;
+      background-image:
+        radial-gradient(#ffe0c6 1.7px, transparent 1.8px),
+        radial-gradient(#ffe8d5 1.7px, transparent 1.8px);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+      min-height: 100vh;
+      -webkit-user-select: none;
+      user-select: none;
+      overflow-x: hidden;
+    }
+    button { font-family: inherit; cursor: pointer; color: inherit; }
+    .hidden { display: none; }
+    .font-title { font-family: 'Quicksand', 'Nunito', sans-serif; }
+
+    /* ---------- Thẻ & nút bấm ---------- */
+    .card {
+      background: var(--paper);
+      border: 3px solid var(--line);
+      border-radius: 26px;
+      box-shadow: 0 6px 0 var(--line), 0 14px 28px rgba(166, 110, 70, 0.12);
+    }
+    .btn {
+      --bg: #ffffff;
+      --bd: #e7b08b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 1.15;
+      border-radius: 16px;
+      padding: 8px 12px;
+      background: var(--bg);
+      border: 2.5px solid var(--bd);
+      color: var(--cocoa);
+      box-shadow: 0 4px 0 var(--bd);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease, opacity 0.15s ease;
+      position: relative;
+    }
+    .btn:hover { filter: brightness(1.04) saturate(1.05); }
+    .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--bd); }
+    .btn:disabled, .btn.is-disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(0.35);
+      transform: none;
+      box-shadow: 0 4px 0 var(--bd);
+    }
+    .btn-peach { --bg: #ffe4d2; --bd: #eaa47c; }
+    .btn-mint { --bg: #d8f6e3; --bd: #7cc89c; }
+    .btn-pink { --bg: #ffdbe1; --bd: #e88f9e; }
+    .btn-butter { --bg: #fff4c4; --bd: #dfbb4c; }
+    .btn-sky { --bg: #dbeeff; --bd: #82b5e2; }
+    .btn-lilac { --bg: #eee6ff; --bd: #a897dc; }
+    .btn-cocoa { --bg: #8d5d45; --bd: #5f3c2b; color: #fff8ef; }
+    .btn-big { font-size: 17px; padding: 12px 20px; border-radius: 20px; }
+    .btn-sm { font-size: 12px; padding: 5px 9px; border-radius: 12px; box-shadow: 0 3px 0 var(--bd); }
+    .btn-col { flex-direction: column; gap: 1px; padding: 7px 4px; }
+    .btn .badge {
+      position: absolute;
+      top: -9px;
+      right: -8px;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: #ff8fa3;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
+    }
+    .btn .badge.zero { background: #cdbfb4; }
+
+    /* ---------- Thanh trạng thái (HUD) ---------- */
+    #hud {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 248, 238, 0.96);
+      border-bottom: 3px solid var(--line);
+      box-shadow: 0 4px 16px rgba(166, 110, 70, 0.08);
+    }
+    .hud-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 2.5px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-weight: 800;
+      font-size: 14px;
+      white-space: nowrap;
+      box-shadow: 0 3px 0 var(--line);
+    }
+    .hud-chip .big { font-size: 17px; font-weight: 900; }
+    .chip-power-on { background: #e4f8ec; border-color: #95d6ae; box-shadow: 0 3px 0 #95d6ae; color: #2f7a4d; }
+    .chip-power-off { background: #ffe1e1; border-color: #f09595; box-shadow: 0 3px 0 #f09595; color: #b23b3b; animation: blink 0.9s ease-in-out infinite; }
+    .rep-bar { width: 60px; height: 8px; background: #f3e4d6; border-radius: 99px; overflow: hidden; }
+    .rep-bar > div { height: 100%; width: 50%; background: linear-gradient(90deg, #ffd166, #ffad5a); border-radius: 99px; transition: width 0.4s ease; }
+    .tab-btn {
+      font-weight: 900;
+      font-size: 14px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 2.5px solid var(--line);
+      background: #fff;
+      color: var(--cocoa-soft);
+      box-shadow: 0 3px 0 var(--line);
+      white-space: nowrap;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+    }
+    .tab-btn:hover { background: #fff3e8; }
+    .tab-btn:active { transform: translateY(2px); }
+    .tab-btn.active { background: #ffd9c0; border-color: #eaa47c; box-shadow: 0 3px 0 #eaa47c; color: var(--cocoa); }
+    .tab-badge {
+      display: inline-flex;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      margin-left: 4px;
+      border-radius: 999px;
+      background: #ff8fa3;
+      color: #fff;
+      font-size: 11px;
+      align-items: center;
+      justify-content: center;
+    }
+    .tab-badge.hidden { display: none; }
+
+    /* ---------- Quầy khách hàng ---------- */
+    #counter {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      border: 3px solid var(--line);
+      box-shadow: 0 6px 0 var(--line), 0 14px 28px rgba(166, 110, 70, 0.12);
+      background: repeating-linear-gradient(90deg, #ffe7d5 0 30px, #fff1e5 30px 60px);
+      transition: background 0.6s ease;
+    }
+    #counter.cozy { background: repeating-linear-gradient(90deg, #ffe1e7 0 30px, #fff2f4 30px 60px); }
+    .wainscot {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 45%;
+      background: repeating-linear-gradient(90deg, #f6d2b4 0 18px, #f0c6a4 18px 20px);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .menu-board {
+      background: #50604f;
+      color: #fbf3df;
+      border: 6px solid #b9875b;
+      border-radius: 14px;
+      padding: 5px 10px 7px;
+      box-shadow: 0 4px 0 #94653f;
+      font-family: 'Quicksand', 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      min-width: 168px;
+      position: relative;
+      z-index: 2;
+    }
+    .menu-board h3 { font-size: 13px; font-weight: 800; text-align: center; color: #ffe8a3; margin: 0 0 2px; letter-spacing: 0.5px; }
+    .menu-board .row { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed rgba(255, 255, 255, 0.18); padding: 1px 0; }
+    .wall-window {
+      width: 96px;
+      height: 74px;
+      border: 6px solid #fff;
+      border-radius: 16px;
+      box-shadow: 0 0 0 3px #efcbb0, 0 4px 0 3px #e2b392;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: background 2s ease;
+      background: linear-gradient(#bfe3ff, #e9f6ff);
+      z-index: 2;
+    }
+    .wall-window::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 5px; background: #fff; transform: translateX(-50%); z-index: 2; }
+    .wall-window::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 5px; background: #fff; transform: translateY(-50%); z-index: 2; }
+    .window-sun { position: absolute; font-size: 24px; top: 6px; left: 10px; transition: all 2s ease; z-index: 1; }
+    .counter-top {
+      position: relative;
+      z-index: 3;
+      height: 56px;
+      background: linear-gradient(#e2a877, #c98a5a);
+      border-top: 9px solid #f6cfa9;
+      box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .counter-sign {
+      background: #fff6e8;
+      border: 3px solid #f0c8a6;
+      border-radius: 999px;
+      padding: 3px 16px;
+      font-weight: 900;
+      font-size: 13px;
+      color: #a0613f;
+      box-shadow: 0 3px 0 #b77a50;
+    }
+    .counter-cat { position: absolute; bottom: 44px; right: 18px; font-size: 30px; z-index: 4; animation: catNap 3s ease-in-out infinite; }
+    .counter-cat::after { content: 'z'; position: absolute; top: -12px; right: -8px; font-size: 13px; font-weight: 900; color: #9b7bd1; animation: zzz 2s ease-in-out infinite; }
+    .fairy-lights {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 18px;
+      background:
+        radial-gradient(circle at 12px 10px, #ff9aa2 5px, transparent 6px) 0 0 / 48px 18px,
+        radial-gradient(circle at 36px 10px, #ffd166 5px, transparent 6px) 0 0 / 48px 18px;
+      animation: twinkle 1.4s ease-in-out infinite alternate;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .fairy-lights::before { content: ''; position: absolute; left: 0; right: 0; top: 4px; height: 2px; background: #c9a58a; opacity: 0.6; }
+    .customer-spot { min-height: 172px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .customer-empty {
+      height: 100%;
+      min-height: 150px;
+      border: 3px dashed #f0cfb6;
+      border-radius: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #c7a089;
+      font-weight: 800;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .customer-card {
+      position: relative;
+      background: rgba(255, 251, 245, 0.97);
+      border: 3px solid #f3d2b8;
+      border-radius: 22px;
+      padding: 8px 6px 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      box-shadow: 0 4px 0 #f3d2b8;
+      text-align: center;
+    }
+    .customer-card.enter { animation: popIn 0.5s cubic-bezier(0.2, 1.5, 0.4, 1); }
+    .customer-card:hover { transform: translateY(-2px); }
+    .customer-card.selected { border-color: #ff9c7a; box-shadow: 0 0 0 4px #ffd8c9, 0 5px 0 #ff9c7a; transform: translateY(-4px); }
+    .customer-card.critic { background: linear-gradient(#fff9e3, #fff3d1); border-color: #e9c46a; box-shadow: 0 4px 0 #e9c46a; }
+    .customer-card.critic.selected { box-shadow: 0 0 0 4px #fff0b8, 0 5px 0 #d9ae3f; }
+    .critic-ribbon {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #e9c46a;
+      color: #5b4310;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+      box-shadow: 0 2px 0 #c9a443;
+    }
+    .order-bubble {
+      background: #fff;
+      border: 2.5px solid #f0c9ad;
+      border-radius: 16px;
+      padding: 5px 5px;
+      position: relative;
+      font-weight: 800;
+      font-size: 12px;
+      line-height: 1.2;
+      margin-bottom: 11px;
+    }
+    .order-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 10px solid #f0c9ad;
+    }
+    .order-line { display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .order-line .oi { font-size: 18px; }
+    .avatar-wrap { position: relative; display: inline-block; }
+    .avatar { font-size: 50px; line-height: 1; display: inline-block; animation: bob 2.4s ease-in-out infinite; }
+    .mood {
+      position: absolute;
+      right: -16px;
+      top: -4px;
+      font-size: 17px;
+      background: #fff;
+      border-radius: 999px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
+      border: 2px solid #f3d2b8;
+    }
+    .cust-name { font-weight: 900; font-size: 13px; margin-top: 2px; }
+    .patience { height: 11px; border-radius: 99px; background: #f1e4d8; overflow: hidden; margin-top: 5px; border: 2px solid #eedccd; }
+    .patience-fill { height: 100%; border-radius: 99px; transition: width 0.25s linear, background-color 0.3s ease; }
+    .pat-good { background-color: #7fd89d; }
+    .pat-mid { background-color: #ffd166; }
+    .pat-low { background-color: #ff7b7b; }
+    .customer-card.impatient .avatar { animation: shake 0.35s linear infinite; }
+    #prep-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(255, 244, 232, 0.86);
+      text-align: center;
+    }
+    #prep-overlay.hidden { display: none; }
+
+    /* ---------- Khu bếp ---------- */
+    #kitchen {
+      position: relative;
+      z-index: 0;
+      border-radius: 28px;
+      padding: 14px;
+      border: 3px solid var(--line);
+      box-shadow: 0 6px 0 var(--line);
+      background-color: #fbf1e6;
+      background-image:
+        linear-gradient(45deg, rgba(255, 255, 255, 0.55) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.55) 75%),
+        linear-gradient(45deg, rgba(255, 255, 255, 0.55) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.55) 75%);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+    }
+    #kitchen.power-off::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 25px;
+      background: rgba(28, 24, 60, 0.36);
+      pointer-events: none;
+      z-index: 5;
+      animation: flicker 2.6s infinite;
+    }
+    #kitchen-locked {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      border-radius: 25px;
+      background: rgba(255, 246, 236, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 900;
+      padding: 20px;
+    }
+    #kitchen-locked.hidden { display: none; }
+    .station {
+      background: var(--paper);
+      border: 3px solid var(--line);
+      border-radius: 24px;
+      box-shadow: 0 5px 0 var(--line);
+      padding: 12px;
+      position: relative;
+    }
+    .station-title { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 15px; margin-bottom: 10px; flex-wrap: wrap; }
+    .station-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: #ffb38a;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 2px 0 #e08b62;
+      flex-shrink: 0;
+    }
+    .premium-tag { font-size: 11px; background: #fff1bf; border: 2px solid #e2b84c; color: #8a6400; border-radius: 999px; padding: 1px 8px; }
+    .grill-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .grill-slot {
+      background: #fff7ef;
+      border: 2.5px solid #f0d5bf;
+      border-radius: 18px;
+      padding: 6px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+    .slot-label { font-size: 11px; font-weight: 900; color: var(--cocoa-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .grill-plate {
+      height: 84px;
+      border-radius: 16px;
+      border: 4px solid #9a9aa6;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: repeating-linear-gradient(90deg, #55555f 0 6px, #34343b 6px 12px);
+      transition: box-shadow 0.4s ease, filter 0.4s ease;
+    }
+    .grill-plate.hot { box-shadow: inset 0 0 18px rgba(255, 120, 40, 0.6); }
+    .grill-plate.cold { filter: grayscale(0.5) brightness(0.8); }
+    .grill-plate.premium { border-color: #e2b84c; }
+    .grill-plate.premium.hot { box-shadow: 0 0 0 2px #fff1bf, inset 0 0 18px rgba(255, 170, 60, 0.75); }
+    .grill-slot.is-perfect .grill-plate { animation: glowPerfect 0.8s ease-in-out infinite alternate; }
+    .grill-slot.is-burnt .grill-plate { animation: shakeSmall 0.3s linear infinite; }
+    .slot-empty {
+      height: 84px;
+      border-radius: 16px;
+      border: 2.5px dashed #ead2be;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: #c6a48e;
+      background: repeating-linear-gradient(90deg, #f7ede4 0 6px, #f2e5da 6px 12px);
+    }
+    .cook-bar { position: relative; height: 13px; border-radius: 99px; overflow: hidden; display: flex; border: 2px solid #ead6c4; }
+    .cook-bar .z-raw { width: 50%; background: #9ee0a8; }
+    .cook-bar .z-ok { width: 30%; background: #ffe27a; }
+    .cook-bar .z-burn { width: 20%; background: linear-gradient(90deg, #ff8a7a, #3d2b25); }
+    .cook-marker {
+      position: absolute;
+      top: -2px;
+      bottom: -2px;
+      width: 5px;
+      margin-left: -2px;
+      background: #5a3a2a;
+      border-radius: 4px;
+      box-shadow: 0 0 0 1.5px #fff;
+      left: 0;
+    }
+    .stage-label { display: inline-block; font-size: 11px; font-weight: 900; border-radius: 999px; padding: 1px 7px; }
+    .st-raw { background: #dff6e3; color: #2f7a43; }
+    .st-perfect { background: #fff1b8; color: #8a6400; }
+    .st-burnt { background: #3d2b25; color: #ffd4c4; }
+
+    /* ---------- Hình minh họa đồ ăn trên bếp ---------- */
+    .food {
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      position: relative;
+      transition: background 0.9s ease, filter 0.9s ease;
+      box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
+    }
+    .food.mini { width: 30px; height: 30px; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15); }
+    .food-beef.stage-raw {
+      background:
+        radial-gradient(circle at 30% 35%, #ffd0d0 0 4px, transparent 5px),
+        radial-gradient(circle at 65% 60%, #ffd6d6 0 3px, transparent 4px),
+        radial-gradient(circle at 45% 72%, #ffdada 0 3px, transparent 4px),
+        radial-gradient(circle, #f08f8f 0%, #d76a6a 100%);
+    }
+    .food-beef.stage-perfect {
+      background:
+        repeating-linear-gradient(45deg, rgba(40, 20, 10, 0.35) 0 4px, transparent 4px 13px),
+        radial-gradient(circle, #a8623a 0%, #7a4122 100%);
+    }
+    .food-beef.stage-burnt {
+      background:
+        repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.5) 0 4px, transparent 4px 13px),
+        radial-gradient(circle, #3a2a22 0%, #140d0a 100%);
+    }
+    .food-chicken { border-radius: 46% 54% 52% 48% / 58% 44% 56% 42%; }
+    .food-chicken.stage-raw {
+      background:
+        radial-gradient(circle at 35% 35%, #fff1e6 0 5px, transparent 6px),
+        radial-gradient(circle, #f9d9c5 0%, #efbfa3 100%);
+    }
+    .food-chicken.stage-perfect {
+      background:
+        radial-gradient(circle at 30% 30%, #ffe08a 0 3px, transparent 4px),
+        radial-gradient(circle at 62% 55%, #ffd36b 0 3px, transparent 4px),
+        radial-gradient(circle at 45% 75%, #ffe7a1 0 2px, transparent 3px),
+        radial-gradient(circle, #f2b24c 0%, #d48a26 100%);
+    }
+    .food-chicken.stage-burnt { background: radial-gradient(circle, #4b3020 0%, #1d120b 100%); }
+    .food-emoji {
+      display: inline-block;
+      font-size: 44px;
+      line-height: 1;
+      transition: filter 0.9s ease;
+      filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.2));
+    }
+    .food-emoji.mini { font-size: 24px; }
+    .food-emoji.stage-raw { filter: saturate(0.85) drop-shadow(0 3px 0 rgba(0, 0, 0, 0.2)); }
+    .food-emoji.stage-burnt { filter: brightness(0.35) sepia(0.6) drop-shadow(0 3px 0 rgba(0, 0, 0, 0.2)); }
+    .fx { position: absolute; pointer-events: none; font-size: 18px; }
+    .fx-steam { top: 2px; left: 50%; animation: steam 1.4s ease-out infinite; }
+    .fx-steam.d2 { left: 28%; animation-delay: 0.7s; }
+    .fx-smoke { top: 0; left: 50%; font-size: 22px; filter: grayscale(1) brightness(0.35); animation: steam 1s ease-out infinite; }
+    .fx-fire { bottom: 2px; right: 6px; font-size: 18px; animation: flame 0.4s ease-in-out infinite alternate; }
+
+    /* ---------- Khay đồ chín ---------- */
+    .holding {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 56px;
+      padding: 8px;
+      border-radius: 16px;
+      background: #f7efe7;
+      border: 2.5px dashed #e8cdb7;
+      align-items: center;
+    }
+    .hold-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #fff;
+      border: 2px solid #f0d5bf;
+      border-radius: 14px;
+      padding: 4px 4px 4px 4px;
+      font-size: 11px;
+      font-weight: 800;
+      box-shadow: 0 3px 0 #f0d5bf;
+      animation: popIn 0.35s cubic-bezier(0.2, 1.5, 0.4, 1);
+    }
+    .hold-item > button:first-child { display: flex; align-items: center; gap: 5px; background: transparent; border: none; padding: 0 2px; text-align: left; }
+    .hold-x {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #ffdbe1;
+      border: 2px solid #e88f9e;
+      font-size: 10px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .dn { font-size: 10px; font-weight: 900; }
+    .dn-raw { color: #2f7a43; }
+    .dn-perfect { color: #b08000; }
+    .dn-burnt { color: #5a3a2a; }
+
+    /* ---------- Bàn lắp ráp & bánh burger ---------- */
+    .plate-area {
+      min-height: 196px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+      padding-bottom: 4px;
+      border-radius: 18px;
+      background: radial-gradient(ellipse at 50% 85%, #fff3e6 0 45%, transparent 70%);
+    }
+    .plate {
+      width: 178px;
+      height: 30px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at 50% 40%, #ffffff 0 55%, #ece6df 72%, #d9d0c6 100%);
+      box-shadow: 0 4px 0 #cfc3b6;
+      margin-top: -12px;
+      position: relative;
+      z-index: 0;
+    }
+    .burger-stack { display: flex; flex-direction: column-reverse; align-items: center; position: relative; z-index: 1; }
+    .burger-stack .layer { margin-top: -3px; position: relative; animation: dropIn 0.35s cubic-bezier(0.3, 1.5, 0.5, 1); }
+    .burger-stack .layer.static { animation: none; }
+    .layer-bun_bottom { width: 122px; height: 24px; border-radius: 8px 8px 20px 20px; background: linear-gradient(#f6c472, #d8903c); box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.08); }
+    .layer-beef {
+      width: 128px;
+      height: 19px;
+      border-radius: 10px;
+      background:
+        radial-gradient(circle at 20% 40%, rgba(255, 255, 255, 0.14) 0 2px, transparent 3px) 0 0 / 14px 10px,
+        linear-gradient(#91502d, #5f2f19);
+    }
+    .layer-beef.stage-raw { background: linear-gradient(#f3a3a3, #d77474); }
+    .layer-beef.stage-burnt { background: linear-gradient(#3b2b24, #140d0a); }
+    .layer-chicken {
+      width: 132px;
+      height: 22px;
+      border-radius: 12px 16px 10px 14px;
+      background:
+        radial-gradient(circle at 30% 40%, #ffe08a 0 2px, transparent 3px) 0 0 / 10px 9px,
+        linear-gradient(#f4bb57, #d48a26);
+    }
+    .layer-chicken.stage-raw { background: linear-gradient(#fbe1d1, #efbfa3); }
+    .layer-chicken.stage-burnt { background: linear-gradient(#4b3020, #1d120b); }
+    .layer-cheese { width: 134px; height: 8px; background: #ffd23f; border-radius: 3px; }
+    .layer-cheese::before, .layer-cheese::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 12px solid #ffd23f;
+    }
+    .layer-cheese::before { left: 18%; }
+    .layer-cheese::after { right: 22%; border-top-width: 9px; }
+    .layer-lettuce {
+      width: 140px;
+      height: 12px;
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at 7px 12px, #6cc04a 6px, transparent 7px) 0 0 / 14px 12px repeat-x,
+        linear-gradient(#a3e67d, #74c955);
+    }
+    .layer-sauce { width: 114px; height: 7px; border-radius: 99px; background: linear-gradient(#ff5a5f, #d62839); }
+    .layer-bun_top {
+      width: 124px;
+      height: 50px;
+      border-radius: 62px 62px 12px 12px / 50px 50px 12px 12px;
+      background:
+        radial-gradient(3px 2px at 30% 30%, #fff7e0 98%, transparent 100%),
+        radial-gradient(3px 2px at 52% 20%, #fff7e0 98%, transparent 100%),
+        radial-gradient(3px 2px at 70% 34%, #fff7e0 98%, transparent 100%),
+        radial-gradient(3px 2px at 42% 46%, #fff7e0 98%, transparent 100%),
+        radial-gradient(3px 2px at 62% 52%, #fff7e0 98%, transparent 100%),
+        radial-gradient(3px 2px at 22% 52%, #fff7e0 98%, transparent 100%),
+        linear-gradient(#f9cc7c, #e39a40 75%, #cf8732);
+      box-shadow: inset 0 6px 10px rgba(255, 255, 255, 0.35), inset 0 -4px 0 rgba(0, 0, 0, 0.08);
+    }
+    .recipe-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 3px;
+      padding: 5px 6px;
+      border-radius: 12px;
+      background: #fff8f1;
+      border: 2px solid #f4dfcd;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .recipe-row.target { background: #fff3c9; border-color: #ecc95c; box-shadow: 0 0 0 3px #fff7d9; }
+    .step-chip { display: inline-flex; align-items: center; gap: 2px; background: #fff; border: 1.5px solid #eed6c3; border-radius: 8px; padding: 1px 4px; }
+    .step-chip.done { background: #d9f5e2; border-color: #8ccfa3; }
+    .step-chip.next { background: #ffe1d1; border-color: #f0a37e; animation: pulse 1s ease-in-out infinite; }
+    .arrow { color: #d0a98f; font-size: 10px; }
+
+    /* ---------- Trạm giao món ---------- */
+    .serve-box { background: #fff8f1; border: 2.5px solid #f4dfcd; border-radius: 16px; padding: 10px; text-align: center; }
+    .tray {
+      min-height: 96px;
+      border-radius: 18px;
+      background: repeating-linear-gradient(45deg, #ffe7d6 0 10px, #ffefe3 10px 20px);
+      border: 3px solid #f0c8a8;
+      padding: 10px 8px 8px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .tray-item {
+      background: #fff;
+      border: 2px solid #f0d5bf;
+      border-radius: 14px;
+      padding: 4px 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 800;
+      position: relative;
+      animation: popIn 0.4s cubic-bezier(0.2, 1.5, 0.4, 1);
+      min-width: 0;
+    }
+    .tray-item.static { animation: none; }
+    .tray-item .x {
+      position: absolute;
+      top: -8px;
+      right: -7px;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      background: #ffdbe1;
+      border: 2px solid #e88f9e;
+      font-size: 10px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tray-empty {
+      border: 2px dashed #efc9ab;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e3b896;
+      font-weight: 900;
+      font-size: 18px;
+      min-height: 72px;
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .mini-wrap { position: relative; width: 60px; height: 44px; }
+    .mini-wrap .burger-stack { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%) scale(0.4); transform-origin: bottom center; }
+    .mini-wrap .burger-stack .layer { animation: none; }
+
+    /* ---------- Sự cố mất điện ---------- */
+    #power-overlay {
+      position: absolute;
+      inset: -6px;
+      z-index: 10;
+      border-radius: 20px;
+      background: rgba(30, 26, 60, 0.62);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-align: center;
+      color: #fff;
+      padding: 10px;
+    }
+    #power-overlay.hidden { display: none; }
+    #btn-fix-breaker { animation: wiggle 1.2s ease-in-out infinite; }
+    #btn-fix-breaker:active { animation: none; }
+    .breaker-bar { width: 80%; max-width: 240px; height: 14px; border-radius: 99px; background: rgba(255, 255, 255, 0.25); overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.6); }
+    .breaker-bar > div { height: 100%; width: 0; background: linear-gradient(90deg, #ffe066, #7fd89d); transition: width 0.12s linear; }
+
+    /* ---------- Kho & Cửa hàng ---------- */
+    .batch-chip { display: inline-flex; align-items: center; gap: 3px; background: #fff3e6; border: 1.5px solid #f0d5bf; border-radius: 999px; padding: 1px 8px; font-size: 11px; font-weight: 800; }
+    .batch-chip.old { background: #ffe3e3; border-color: #f2a5a5; color: #b23b3b; }
+    .upgrade-icon {
+      font-size: 46px;
+      width: 74px;
+      height: 74px;
+      border-radius: 22px;
+      background: #fff1e4;
+      border: 3px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .upgrade-card.owned { background: linear-gradient(#f2fff6, #e4f8ec); border-color: #9ad8b0; box-shadow: 0 6px 0 #9ad8b0, 0 14px 28px rgba(80, 160, 110, 0.12); }
+    .upgrade-card.owned .upgrade-icon { background: #dff6e7; border-color: #9ad8b0; }
+
+    /* ---------- Hộp thoại (Modal) ---------- */
+    #modal-root {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(92, 58, 38, 0.4);
+    }
+    #modal-root.hidden { display: none; }
+    #modal-box {
+      width: 100%;
+      max-width: 500px;
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
+      animation: modalIn 0.35s cubic-bezier(0.2, 1.4, 0.4, 1);
+      padding: 20px;
+      text-align: center;
+    }
+    #modal-icon { font-size: 60px; line-height: 1.1; display: inline-block; animation: bob 2s ease-in-out infinite; }
+    #modal-title { font-size: 22px; font-weight: 900; margin-top: 6px; }
+    #modal-body { margin-top: 8px; font-size: 15px; font-weight: 600; line-height: 1.55; color: #7a5644; }
+    #modal-actions { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .summary-table { width: 100%; text-align: left; border-collapse: separate; border-spacing: 0 4px; font-size: 14px; }
+    .summary-table td { padding: 5px 10px; background: #fff7ef; }
+    .summary-table td:first-child { border-radius: 10px 0 0 10px; }
+    .summary-table td:last-child { border-radius: 0 10px 10px 0; text-align: right; font-weight: 900; }
+    .summary-table tr.total td { background: #fff0c2; }
+    .help-list { text-align: left; font-size: 14px; }
+    .help-list li { margin: 6px 0; padding-left: 4px; }
+
+    /* ---------- Thông báo nổi ---------- */
+    #popup-stack {
+      position: fixed;
+      top: 120px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: min(440px, calc(100vw - 24px));
+      pointer-events: none;
+    }
+    .popup {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      border-radius: 20px;
+      border: 3px solid;
+      box-shadow: 0 5px 0 rgba(0, 0, 0, 0.08), 0 12px 24px rgba(120, 70, 40, 0.18);
+      animation: popupIn 0.4s cubic-bezier(0.2, 1.4, 0.4, 1);
+      background: #fff;
+    }
+    .popup.out { animation: popupOut 0.35s ease-in forwards; }
+    .popup .p-avatar { font-size: 36px; line-height: 1; }
+    .popup .p-title { font-weight: 900; font-size: 14px; }
+    .popup .p-text { font-weight: 700; font-size: 13px; line-height: 1.4; }
+    .popup.angry { background: #fff0f1; border-color: #f2a0aa; }
+    .popup.happy { background: #effbf3; border-color: #94d8ad; }
+    .popup.ok { background: #fffbe8; border-color: #ead27a; }
+    .popup.info { background: #eef6ff; border-color: #9cc6ef; }
+    #toast-stack {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 95;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+      pointer-events: none;
+      width: calc(100vw - 24px);
+    }
+    .toast {
+      background: #6b4a3a;
+      color: #fff8ef;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      box-shadow: 0 4px 0 #4a3127;
+      animation: toastIn 0.3s ease-out;
+      max-width: 100%;
+      text-align: center;
+      transition: opacity 0.3s ease;
+    }
+    .toast.warn { background: #d9534f; box-shadow: 0 4px 0 #a33b38; }
+    .toast.good { background: #3c9a63; box-shadow: 0 4px 0 #2a6e46; }
+    .float-text {
+      position: fixed;
+      z-index: 120;
+      font-weight: 900;
+      font-size: 20px;
+      pointer-events: none;
+      animation: floatUp 1.5s ease-out forwards;
+      text-shadow: 0 2px 0 #fff, 0 0 6px #fff;
+      white-space: nowrap;
+    }
+
+    /* ---------- Hoạt ảnh ---------- */
+    @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0) rotate(0); } 25% { transform: translateX(-3px) rotate(-5deg); } 75% { transform: translateX(3px) rotate(5deg); } }
+    @keyframes shakeSmall { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(2px); } }
+    @keyframes popIn { 0% { transform: scale(0.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+    @keyframes dropIn { 0% { transform: translateY(-40px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    @keyframes steam { 0% { transform: translate(-50%, 18px) scale(0.6); opacity: 0; } 30% { opacity: 0.85; } 100% { transform: translate(-50%, -22px) scale(1.25); opacity: 0; } }
+    @keyframes flame { from { transform: scale(1) rotate(-6deg); } to { transform: scale(1.2) rotate(6deg); } }
+    @keyframes glowPerfect { from { box-shadow: 0 0 0 3px #ffe27a, 0 0 8px 2px rgba(255, 214, 102, 0.6); } to { box-shadow: 0 0 0 5px #ffd23f, 0 0 20px 6px rgba(255, 214, 102, 0.9); } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+    @keyframes flicker { 0%, 90%, 100% { opacity: 1; } 93% { opacity: 0.55; } 96% { opacity: 1; } 98% { opacity: 0.7; } }
+    @keyframes twinkle { from { filter: brightness(1); } to { filter: brightness(1.3) saturate(1.3); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+    @keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+    @keyframes catNap { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06, 0.96); } }
+    @keyframes zzz { 0% { opacity: 0; transform: translate(0, 4px); } 50% { opacity: 1; } 100% { opacity: 0; transform: translate(6px, -8px); } }
+    @keyframes modalIn { 0% { transform: scale(0.7) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+    @keyframes popupIn { 0% { transform: translateY(-20px) scale(0.9); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+    @keyframes popupOut { to { transform: translateY(-12px) scale(0.95); opacity: 0; } }
+    @keyframes toastIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes floatUp {
+      0% { transform: translate(-50%, 0) scale(0.8); opacity: 0; }
+      15% { opacity: 1; transform: translate(-50%, -8px) scale(1.1); }
+      100% { transform: translate(-50%, -70px) scale(1); opacity: 0; }
+    }
+    @media (max-width: 640px) {
+      #hud { position: relative; }
+      .avatar { font-size: 40px; }
+      .hud-chip { font-size: 12px; padding: 3px 9px; }
+      .hud-chip .big { font-size: 15px; }
+      .menu-board { min-width: 0; font-size: 11px; }
+      .order-bubble { font-size: 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ================= THANH TRẠNG THÁI TRÊN CÙNG ================= -->
+  <header id="hud">
+    <div class="max-w-7xl mx-auto px-3 sm:px-5 py-2">
+      <div class="flex flex-wrap items-center gap-2 justify-between">
+        <div class="flex items-center gap-2">
+          <div class="text-3xl">🍔</div>
+          <div>
+            <h1 class="font-title font-bold text-lg sm:text-xl leading-tight m-0">Tiny Fast-Food Story</h1>
+            <div class="text-[11px] font-bold opacity-70">Tiệm Ăn Nhanh Tí Hon của bạn</div>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="hud-chip">📅 <span>Ngày thứ</span> <span id="hud-day" class="big">1</span></div>
+          <div class="hud-chip"><span id="hud-clock-icon">🌤️</span><span id="hud-clock" class="big">08:00</span></div>
+          <div class="hud-chip">💰 <span id="hud-money" class="big">$0</span></div>
+          <div class="hud-chip">⭐ <span id="hud-rep" class="big">50</span><span class="text-xs opacity-60">/100</span><div class="rep-bar"><div id="hud-rep-bar"></div></div></div>
+          <div id="hud-power" class="hud-chip chip-power-on">⚡ Đang có điện</div>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-2 mt-2">
+        <nav class="flex flex-wrap gap-2">
+          <button class="tab-btn active" data-action="tab" data-tab="kitchen">🍳 Quầy &amp; Bếp<span id="tab-kitchen-badge" class="tab-badge hidden">0</span></button>
+          <button class="tab-btn" data-action="tab" data-tab="storage">📦 Kho &amp; Nhập hàng</button>
+          <button class="tab-btn" data-action="tab" data-tab="shop">🛠️ Cửa hàng Nâng cấp</button>
+        </nav>
+        <div class="flex flex-wrap gap-2">
+          <button id="btn-pause" class="btn btn-sm btn-sky" data-action="pause">⏸️ Tạm dừng</button>
+          <button id="btn-sound" class="btn btn-sm btn-lilac" data-action="sound" title="Bật/tắt âm thanh">🔊</button>
+          <button class="btn btn-sm btn-butter" data-action="help">❓ Hướng dẫn</button>
+          <button class="btn btn-sm btn-pink" data-action="reset">🔄 Chơi lại từ đầu (Reset)</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-3 sm:px-5 py-4 pb-24">
+    <!-- ================= MÀN HÌNH QUẦY & BẾP ================= -->
+    <section id="screen-kitchen" class="space-y-4">
+      <div id="counter">
+        <div id="decor-lights" class="fairy-lights hidden"></div>
+        <div class="wainscot"></div>
+        <div class="relative flex items-start justify-between gap-3 px-3 sm:px-4 pt-5">
+          <div id="menu-board" class="menu-board"></div>
+          <div id="decor-items" class="flex-1 min-w-0 flex justify-center gap-2 text-3xl pt-2 relative z-[2] overflow-hidden"></div>
+          <div class="wall-window" id="wall-window"><div class="window-sun" id="window-sun">☀️</div></div>
+        </div>
+        <div id="customer-spots" class="grid grid-cols-3 gap-2 sm:gap-4 px-2 sm:px-6 pt-4 pb-1 relative z-[2]"></div>
+        <div class="counter-top"><div class="counter-sign">🛎️ Quầy gọi món</div></div>
+        <div id="decor-cat" class="counter-cat hidden">🐈</div>
+        <div id="prep-overlay">
+          <div class="card px-5 py-5 max-w-md w-full">
+            <div class="text-5xl mb-1">🏪</div>
+            <div id="prep-title" class="text-xl font-black">☀️ Ngày thứ 1 sắp bắt đầu!</div>
+            <div class="text-sm font-bold opacity-80 mt-1">Quán mở cửa từ 8:00 đến 20:00. Kiểm tra kho hàng, nhập thêm nguyên liệu rồi mở cửa đón khách nhé!</div>
+            <div id="prep-info" class="text-sm font-bold mt-3"></div>
+            <button class="btn btn-mint btn-big mt-4" data-action="open-shop">🏪 Mở cửa đón khách!</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="kitchen">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <!-- Trạm 1 -->
+          <div class="station" id="station-grill">
+            <div class="station-title"><span class="station-num">1</span> Bếp Nướng / Chiên <span id="grill-premium-tag"></span></div>
+            <div id="grill-zone" class="relative">
+              <div id="grill-buttons" class="grid grid-cols-3 gap-2 mb-3"></div>
+              <div id="grill-slots" class="grill-slots"></div>
+              <div id="power-overlay" class="hidden">
+                <div class="text-4xl">🔌⚡</div>
+                <div class="font-black text-lg leading-tight">Mất điện! Bếp ngừng hoạt động</div>
+                <div class="text-xs font-bold opacity-90">Bấm thật nhanh, liên tục vào nút bên dưới để sửa cầu dao!</div>
+                <button class="btn btn-butter btn-big" data-action="fix-breaker" id="btn-fix-breaker">🔧 Sửa cầu dao</button>
+                <div class="breaker-bar"><div id="breaker-fill"></div></div>
+                <div class="text-xs font-black" id="breaker-pct">0%</div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <div class="flex flex-wrap items-center justify-between text-xs font-black mb-1 gap-x-2 gap-y-1"><span>🍽️ Khay đồ chín <span class="font-bold opacity-60">(bấm để dùng)</span></span><span id="trash-info" class="opacity-70 whitespace-nowrap">🗑️ Thùng rác: 0</span></div>
+              <div id="holding-area" class="holding"></div>
+            </div>
+          </div>
+          <!-- Trạm 2 -->
+          <div class="station" id="station-assembly">
+            <div class="station-title"><span class="station-num">2</span> Bàn Lắp Ráp</div>
+            <div class="plate-area"><div id="plate-stack" class="burger-stack"></div><div class="plate"></div></div>
+            <div id="plate-status" class="text-center text-xs font-bold my-2 min-h-[16px]"></div>
+            <div id="assembly-buttons" class="grid grid-cols-4 gap-2 pt-2"></div>
+            <div class="flex justify-between items-center mt-3 gap-2">
+              <span class="text-[11px] font-bold opacity-70">Vỏ bánh trên = hoàn tất bánh ➜ khay giao</span>
+              <button class="btn btn-sm btn-pink" data-action="plate-clear">🗑️ Dọn đĩa</button>
+            </div>
+            <div class="mt-3">
+              <div class="text-xs font-black mb-1">📖 Sổ công thức (xếp từ dưới lên trên)</div>
+              <div id="recipe-book" class="space-y-1.5"></div>
+            </div>
+          </div>
+          <!-- Trạm 3 -->
+          <div class="station" id="station-serve">
+            <div class="station-title"><span class="station-num">3</span> Giao Món</div>
+            <div id="serve-target"></div>
+            <div class="text-xs font-black mt-3 mb-1">🛎️ Khay giao món</div>
+            <div id="tray-items" class="tray"></div>
+            <button id="btn-deliver" class="btn btn-mint btn-big w-full mt-3" data-action="deliver">🛎️ Giao cho khách</button>
+            <div class="text-[11px] font-bold opacity-70 mt-2 text-center">✅ đúng món • ⚠️ có món nhưng chưa chuẩn • ⏳ chưa có món</div>
+            <div id="day-mini-stats" class="mt-3 text-xs font-bold"></div>
+          </div>
+        </div>
+        <div id="kitchen-locked" class="hidden">
+          <div class="card px-6 py-4"><div class="text-4xl">🔒</div><div class="text-lg">Bếp đang nghỉ</div><div class="text-sm font-bold opacity-70">Bếp sẽ hoạt động khi quán mở cửa đón khách.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MÀN HÌNH KHO & NHẬP HÀNG ================= -->
+    <section id="screen-storage" class="hidden space-y-4">
+      <div class="card p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-2xl font-black m-0">📦 Kho &amp; Nhập hàng</h2>
+            <div class="text-sm font-bold opacity-70">Nguyên liệu tươi có hạn sử dụng và có thể bị hỏng qua đêm. Nhập vừa đủ dùng nhé!</div>
+          </div>
+          <div id="storage-summary" class="text-sm font-bold"></div>
+        </div>
+      </div>
+      <div id="storage-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- ================= MÀN HÌNH CỬA HÀNG NÂNG CẤP ================= -->
+    <section id="screen-shop" class="hidden space-y-4">
+      <div class="card p-4 sm:p-5">
+        <h2 class="text-2xl font-black m-0">🛠️ Cửa hàng Nâng cấp</h2>
+        <div class="text-sm font-bold opacity-70">Đầu tư cho quán để kinh doanh nhàn hơn và kiếm nhiều tiền hơn. Mỗi nâng cấp chỉ cần mua một lần.</div>
+      </div>
+      <div id="shop-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </section>
+  </main>
+
+  <div id="popup-stack"></div>
+  <div id="toast-stack"></div>
+  <div id="modal-root" class="hidden">
+    <div id="modal-box" class="card">
+      <div id="modal-icon">🍔</div>
+      <div id="modal-title"></div>
+      <div id="modal-body"></div>
+      <div id="modal-actions"></div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* =====================================================
+       HẰNG SỐ & DỮ LIỆU GAME
+       ===================================================== */
+    const SAVE_KEY = 'tinyFastFoodStory_save_v1';
+    const SETTINGS_KEY = 'tinyFastFoodStory_settings_v1';
+    const OPEN_MIN = 8 * 60;
+    const CLOSE_MIN = 20 * 60;
+    const LAST_ORDER_MIN = 19 * 60 + 30;
+    const GAME_MIN_PER_SEC = 2.4;
+    const COOK_DONE = 50;
+    const COOK_BURN = 80;
+    const GRILL_SLOTS = 3;
+    const HOLD_CAP = 4;
+    const TRAY_CAP = 4;
+    const PLATE_CAP = 9;
+    const SPOTS = 3;
+    const DAILY_RENT = 15;
+    const LATE_RATIO = 0.2;
+    const START_MONEY = 100;
+    const START_REP = 50;
+
+    const INGREDIENTS = {
+      bun: { name: 'Vỏ bánh', emoji: '🍞', price: 1, shelfLife: 4, spoilRate: 0.05, desc: 'Bánh mì burger mềm xốp (1 phần = đế + vỏ trên).' },
+      beef: { name: 'Thịt bò', emoji: '🥩', price: 3, shelfLife: 3, spoilRate: 0.18, desc: 'Thịt bò xay tươi, nướng lên thơm phức.' },
+      chicken: { name: 'Thịt gà', emoji: '🍗', price: 2, shelfLife: 3, spoilRate: 0.18, desc: 'Phi lê gà tẩm bột, chiên giòn rụm.' },
+      cheese: { name: 'Phô mai', emoji: '🧀', price: 1, shelfLife: 5, spoilRate: 0.1, desc: 'Phô mai lát cheddar béo ngậy.' },
+      lettuce: { name: 'Rau tươi', emoji: '🥬', price: 1, shelfLife: 2, spoilRate: 0.25, desc: 'Xà lách giòn mát, nhưng rất mau héo!' },
+      potato: { name: 'Khoai tây', emoji: '🥔', price: 1, shelfLife: 6, spoilRate: 0.04, desc: 'Khoai tây cắt thanh, sẵn sàng để chiên.' },
+      sauce: { name: 'Sốt', emoji: '🍅', price: 1, shelfLife: 20, spoilRate: 0, desc: 'Sốt cà chua & tương ớt đóng chai, để được rất lâu.' }
+    };
+
+    const COOKABLES = {
+      beef: { name: 'Thịt bò sống', cookedName: 'Bò nướng', emoji: '🥩', inv: 'beef', speed: 6.5 },
+      chicken: { name: 'Gà sống', cookedName: 'Gà chiên', emoji: '🍗', inv: 'chicken', speed: 5.8 },
+      potato: { name: 'Khoai tây', cookedName: 'Khoai chiên', emoji: '🥔', inv: 'potato', speed: 7.2 }
+    };
+
+    const LAYERS = {
+      bun_bottom: { name: 'Đế bánh mì', short: 'Đế bánh', emoji: '🍞', inv: 'bun' },
+      beef: { name: 'Thịt bò nướng', short: 'Bò nướng', emoji: '🥩', inv: null },
+      chicken: { name: 'Gà chiên giòn', short: 'Gà chiên', emoji: '🍗', inv: null },
+      cheese: { name: 'Phô mai', short: 'Phô mai', emoji: '🧀', inv: 'cheese' },
+      lettuce: { name: 'Rau xà lách', short: 'Xà lách', emoji: '🥬', inv: 'lettuce' },
+      sauce: { name: 'Sốt cà / tương ớt', short: 'Sốt cà', emoji: '🍅', inv: 'sauce' },
+      bun_top: { name: 'Vỏ bánh trên', short: 'Vỏ trên', emoji: '🍔', inv: 'bun' }
+    };
+
+    const RECIPES = {
+      bo_phomai: { name: 'Burger Bò Phô Mai', icon: '🍔', type: 'burger', price: 15, unlockDay: 1, layers: ['bun_bottom', 'beef', 'cheese', 'lettuce', 'sauce', 'bun_top'] },
+      ga_gion: { name: 'Burger Gà Giòn', icon: '🍗', type: 'burger', price: 12, unlockDay: 1, layers: ['bun_bottom', 'chicken', 'lettuce', 'sauce', 'bun_top'] },
+      khoai: { name: 'Khoai Tây Chiên', icon: '🍟', type: 'fries', price: 5, unlockDay: 1, layers: [] },
+      bo_codien: { name: 'Burger Bò Cổ Điển', icon: '🥩', type: 'burger', price: 13, unlockDay: 2, layers: ['bun_bottom', 'beef', 'lettuce', 'sauce', 'bun_top'] },
+      ga_phomai: { name: 'Burger Gà Phô Mai', icon: '🧀', type: 'burger', price: 14, unlockDay: 3, layers: ['bun_bottom', 'chicken', 'cheese', 'lettuce', 'sauce', 'bun_top'] }
+    };
+
+    const UPGRADES = {
+      grill: {
+        name: 'Bếp Chiên/Nướng Cao Cấp', icon: '🔥', price: 220,
+        tagline: 'Inox sáng bóng, lửa đều tay',
+        desc: 'Vỉ nướng hợp kim dẫn nhiệt siêu tốc, đi kèm bộ điều nhiệt thông minh.',
+        effects: ['Tốc độ chín nhanh hơn 60%', 'Tốc độ bị cháy khét chậm hơn 55%', 'Khoảng "chín vừa" kéo dài hơn gấp đôi']
+      },
+      freezer: {
+        name: 'Tủ Đông Công Nghiệp', icon: '🧊', price: 180,
+        tagline: 'Lạnh sâu −18°C, giữ trọn độ tươi',
+        desc: 'Tủ đông hai cánh dung tích lớn, bảo quản nguyên liệu cực tốt.',
+        effects: ['Giảm 90% tỷ lệ hỏng nguyên liệu qua đêm', 'Hạn sử dụng nguyên liệu kéo dài gấp đôi', 'Chặn hoàn toàn sự kiện đồ ăn bị ôi thiu']
+      },
+      generator: {
+        name: 'Máy Phát Điện Tự Động', icon: '🔋', price: 160,
+        tagline: 'Tự khởi động chỉ trong 0,1 giây',
+        desc: 'Máy phát điện dự phòng chạy êm ru, tự kích hoạt ngay khi lưới điện bị cúp.',
+        effects: ['Khắc phục ngay lập tức mọi sự cố mất điện', 'Bếp không bao giờ bị gián đoạn']
+      },
+      decor: {
+        name: 'Trang Trí Quán Ấm Cúng', icon: '🪴', price: 250,
+        tagline: 'Đèn vàng, cây xanh, mèo ngủ trưa',
+        desc: 'Dây đèn lấp lánh, chậu cây xinh xắn, tranh treo tường và một bé mèo mascot.',
+        effects: ['Khách hàng kiên nhẫn chờ lâu hơn 40%', 'Tiền Tip tăng thêm 50%', 'Quán trông xinh xắn hơn hẳn!']
+      }
+    };
+
+    const CUSTOMER_TYPES = [
+      { name: 'Chị Lan', avatar: '👩' },
+      { name: 'Anh Tuấn', avatar: '👨' },
+      { name: 'Bé Na', avatar: '👧' },
+      { name: 'Ông Ba', avatar: '👴' },
+      { name: 'Bà Tư', avatar: '👵' },
+      { name: 'Cô Hoa', avatar: '👩‍🦰' },
+      { name: 'Chú Bảy', avatar: '🧔' },
+      { name: 'Anh Minh', avatar: '👨‍💼' },
+      { name: 'Chị Thảo', avatar: '👩‍💼' },
+      { name: 'Bé Bin', avatar: '👦' },
+      { name: 'Cậu Khoa', avatar: '🧑‍🎓' },
+      { name: 'Cô Mai', avatar: '👩‍🏫' },
+      { name: 'Anh Hùng', avatar: '👷' },
+      { name: 'Chị Vy', avatar: '👱‍♀️' },
+      { name: 'Chú Tám', avatar: '👨‍🔧' },
+      { name: 'Bác sĩ Hà', avatar: '👩‍⚕️' }
+    ];
+    const CRITIC = { name: 'Nhà phê bình', avatar: '🧐' };
+
+    const COMPLAINTS = {
+      burnt: ['Thịt cháy khét lẹt, đen thui như than! Ăn sao nổi?', 'Trời ơi, mùi khét lẹt! Bạn định cho tôi ăn than à?', 'Miếng thịt cháy đen thế này mà cũng dám bán sao?'],
+      raw: ['Thịt còn sống nhăn, đỏ hỏn kìa! Muốn tôi đau bụng hả?', 'Ơ kìa, miếng thịt còn chưa chín nữa! Ghê quá đi!', 'Thịt sống thế này ăn vào nhập viện mất!'],
+      noMeat: ['Bánh gì mà không có miếng thịt nào vậy?!', 'Tôi trả tiền mua burger chứ đâu phải bánh mì không!'],
+      wrongBeef: ['Tôi gọi burger BÒ mà sao lại là gà thế này?', 'Nhầm món rồi! Tôi muốn thịt bò cơ mà!'],
+      wrongChicken: ['Tôi gọi burger GÀ mà sao lại đưa thịt bò?', 'Nhầm rồi! Tôi kiêng thịt bò, tôi gọi gà mà!'],
+      missingTail: ['Làm ăn cẩu thả quá!', 'Bớt xén nguyên liệu à?', 'Thật là thất vọng!'],
+      wrongOrder: ['Bánh xếp lộn xộn quá, sai thứ tự hết trơn!', 'Chẳng đúng công thức gì cả, xếp lung tung beng!', 'Ủa, sao lớp nào nằm sai chỗ lớp nấy vậy?'],
+      rawFries: ['Khoai tây còn sống, cứng ngắc như đá!', 'Khoai chưa chín mà đã mang ra rồi à?'],
+      burntFries: ['Khoai chiên cháy đen hết rồi, đắng nghét!', 'Khoai gì mà đen thui như than củi vậy?'],
+      late: ['Đợi lâu muốn mọc rễ luôn! Trễ quá rồi, tôi không trả tiền đâu!', 'Đồ ăn tới trễ quá, tôi hết muốn ăn rồi! Không chấp nhận được!', 'Trễ giờ làm của tôi rồi! Quán gì mà chậm như rùa!'],
+      slow: ['Hơi lâu đó nha...', 'Chờ lâu ghê, nhưng thôi bỏ qua.', 'Lần sau làm nhanh tay hơn chút nhé!'],
+      leave: ['Chờ hoài không thấy, tôi đi quán khác đây! 😤', 'Phục vụ chậm như rùa bò! Không bao giờ quay lại!', 'Mất cả buổi của tôi rồi! Hừ!', 'Thôi khỏi, tôi đi ăn phở cho nhanh!']
+    };
+    const HAPPY_LINES = ['Ngon tuyệt cú mèo! 😋', 'Đúng chuẩn vị luôn, mai mình quay lại nha!', 'Quán dễ thương mà đồ ăn cũng ngon quá trời!', 'Tuyệt vời! Cảm ơn bạn nhiều nhé! 💕', 'Thơm phức, nóng hổi, quá đã luôn!', 'Burger ngon nhất khu phố này đó!'];
+    const OK_LINES = ['Cũng được đó, cảm ơn nha!', 'Ăn ổn áp đó!', 'Tạm ổn, lần sau cố gắng hơn nhé!', 'Được, không có gì để chê nhiều.'];
+    const CRITIC_PRAISE = ['Một kiệt tác ẩm thực! Tôi sẽ viết bài khen ngợi quán!', 'Hoàn hảo đến từng lớp bánh. Năm sao!'];
+    const CRITIC_ANGRY = 'Tôi sẽ cho quán này 1 sao trên báo ngày mai!';
+
+    /* =====================================================
+       HÀM TIỆN ÍCH
+       ===================================================== */
+    const $ = (id) => document.getElementById(id);
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const randInt = (a, b) => Math.floor(rand(a, b + 1));
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    let uidCounter = 0;
+    const uid = () => 'u' + Date.now().toString(36) + (uidCounter++).toString(36) + Math.floor(Math.random() * 1000);
+    const pad2 = (n) => String(n).padStart(2, '0');
+    function fmtMoney(v) { return '$' + Math.round(v).toLocaleString('vi-VN'); }
+    function fmtClock(m) { const mm = Math.floor(m); return pad2(Math.floor(mm / 60)) + ':' + pad2(mm % 60); }
+    function timeIcon(m) { if (m < 11 * 60) return '🌤️'; if (m < 16 * 60) return '☀️'; if (m < 18 * 60) return '🌇'; return '🌙'; }
+    function setText(el, v) { const s = String(v); if (el && el.textContent !== s) el.textContent = s; }
+
+    /* =====================================================
+       TRẠNG THÁI GAME & LƯU TRỮ (LocalStorage)
+       ===================================================== */
+    function defaultInventory() {
+      return {
+        bun: [{ qty: 8, age: 0 }],
+        beef: [{ qty: 5, age: 0 }],
+        chicken: [{ qty: 5, age: 0 }],
+        cheese: [{ qty: 5, age: 0 }],
+        lettuce: [{ qty: 6, age: 0 }],
+        potato: [{ qty: 6, age: 0 }],
+        sauce: [{ qty: 8, age: 0 }]
+      };
+    }
+    function freshDayStats() {
+      return { revenue: 0, tips: 0, served: 0, happy: 0, angry: 0, lost: 0, spent: 0, upgrades: 0, wasted: 0, repStart: START_REP };
+    }
+    function defaultKitchen() {
+      return { grill: [null, null, null], holding: [], plate: [], plateBunCredit: 0, tray: [] };
+    }
+    function createDefaultState() {
+      return {
+        version: 1,
+        day: 1,
+        money: START_MONEY,
+        reputation: START_REP,
+        phase: 'prep',
+        minutes: OPEN_MIN,
+        paused: false,
+        inventory: defaultInventory(),
+        upgrades: { grill: false, freezer: false, generator: false, decor: false },
+        kitchen: defaultKitchen(),
+        customers: [null, null, null],
+        selectedSpot: -1,
+        spawnTimer: 2,
+        power: { on: true, fix: 0 },
+        events: { outages: [], spoils: [] },
+        dayStats: freshDayStats(),
+        lifetime: { served: 0, earned: 0, bestDay: 0, angry: 0 },
+        trashCount: 0,
+        seenIntro: false
+      };
+    }
+
+    let state = createDefaultState();
+
+    function sanitizeBatches(list) {
+      if (!Array.isArray(list)) return [];
+      return list
+        .map((b) => ({ qty: Math.max(0, Math.floor(Number(b && b.qty) || 0)), age: Math.max(0, Math.floor(Number(b && b.age) || 0)) }))
+        .filter((b) => b.qty > 0);
+    }
+
+    function loadGame() {
+      let data = null;
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (raw) data = JSON.parse(raw);
+      } catch (e) {
+        data = null;
+      }
+      const base = createDefaultState();
+      if (!data || typeof data !== 'object' || data.version !== 1) return { state: base, loaded: false };
+      const s = Object.assign(base, data);
+      s.upgrades = Object.assign(createDefaultState().upgrades, data.upgrades || {});
+      s.inventory = {};
+      Object.keys(INGREDIENTS).forEach((id) => { s.inventory[id] = sanitizeBatches(data.inventory ? data.inventory[id] : []); });
+      s.kitchen = Object.assign(defaultKitchen(), data.kitchen || {});
+      if (!Array.isArray(s.kitchen.grill) || s.kitchen.grill.length !== GRILL_SLOTS) s.kitchen.grill = [null, null, null];
+      ['holding', 'plate', 'tray'].forEach((k) => { if (!Array.isArray(s.kitchen[k])) s.kitchen[k] = []; });
+      s.kitchen.plateBunCredit = Math.max(0, Math.floor(Number(s.kitchen.plateBunCredit) || 0));
+      if (!Array.isArray(s.customers) || s.customers.length !== SPOTS) s.customers = [null, null, null];
+      s.power = Object.assign({ on: true, fix: 0 }, data.power || {});
+      s.events = Object.assign({ outages: [], spoils: [] }, data.events || {});
+      if (!Array.isArray(s.events.outages)) s.events.outages = [];
+      if (!Array.isArray(s.events.spoils)) s.events.spoils = [];
+      s.dayStats = Object.assign(freshDayStats(), data.dayStats || {});
+      s.lifetime = Object.assign(createDefaultState().lifetime, data.lifetime || {});
+      s.money = Number(s.money) || 0;
+      s.reputation = clamp(Number(s.reputation) || 0, 0, 100);
+      s.day = Math.max(1, Math.floor(Number(s.day) || 1));
+      s.minutes = clamp(Number(s.minutes) || OPEN_MIN, OPEN_MIN, CLOSE_MIN);
+      if (['prep', 'open', 'closed'].indexOf(s.phase) < 0) s.phase = 'prep';
+      if (s.selectedSpot < 0 || s.selectedSpot >= SPOTS || !s.customers[s.selectedSpot]) s.selectedSpot = s.customers.findIndex((c) => !!c);
+      s.paused = false;
+      return { state: s, loaded: true };
+    }
+
+    function saveGame() {
+      try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+      } catch (e) {
+        /* Trình duyệt chặn LocalStorage: game vẫn chạy bình thường nhưng không lưu được */
+      }
+    }
+
+    function loadSettings() {
+      try {
+        const raw = localStorage.getItem(SETTINGS_KEY);
+        if (raw) {
+          const s = JSON.parse(raw);
+          Sound.enabled = s.sound !== false;
+        }
+      } catch (e) {
+        Sound.enabled = true;
+      }
+    }
+    function saveSettings() {
+      try { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ sound: Sound.enabled })); } catch (e) { /* bỏ qua */ }
+    }
+
+    /* =====================================================
+       KHO HÀNG THEO LÔ (có tuổi để tính hạn sử dụng)
+       ===================================================== */
+    function invCount(id) { return (state.inventory[id] || []).reduce((s, b) => s + b.qty, 0); }
+    function invAdd(id, qty) {
+      const arr = state.inventory[id];
+      const fresh = arr.find((b) => b.age === 0);
+      if (fresh) fresh.qty += qty; else arr.push({ qty: qty, age: 0 });
+    }
+    function invTake(id, qty) {
+      const need0 = qty || 1;
+      if (invCount(id) < need0) return false;
+      let need = need0;
+      const arr = state.inventory[id];
+      arr.sort((a, b) => b.age - a.age);
+      for (const b of arr) {
+        const t = Math.min(b.qty, need);
+        b.qty -= t;
+        need -= t;
+        if (need <= 0) break;
+      }
+      state.inventory[id] = arr.filter((b) => b.qty > 0);
+      return true;
+    }
+    function shelfLifeOf(id) { return INGREDIENTS[id].shelfLife * (state.upgrades.freezer ? 2 : 1); }
+    function spoilRateOf(id) { return INGREDIENTS[id].spoilRate * (state.upgrades.freezer ? 0.1 : 1); }
+    function invDaysLeft(id) {
+      const arr = state.inventory[id];
+      if (!arr.length) return null;
+      const oldest = Math.max.apply(null, arr.map((b) => b.age));
+      return shelfLifeOf(id) - oldest;
+    }
+    function applyOvernightSpoilage() {
+      const report = [];
+      Object.keys(INGREDIENTS).forEach((id) => {
+        const life = shelfLifeOf(id);
+        const rate = spoilRateOf(id);
+        let expired = 0;
+        let spoiled = 0;
+        state.inventory[id].forEach((b) => {
+          b.age += 1;
+          if (b.age > life) {
+            expired += b.qty;
+            b.qty = 0;
+            return;
+          }
+          if (rate > 0) {
+            let k = 0;
+            for (let i = 0; i < b.qty; i++) if (Math.random() < rate) k++;
+            b.qty -= k;
+            spoiled += k;
+          }
+        });
+        state.inventory[id] = state.inventory[id].filter((b) => b.qty > 0);
+        if (expired || spoiled) report.push({ id: id, expired: expired, spoiled: spoiled });
+      });
+      return report;
+    }
+
+    /* =====================================================
+       ÂM THANH (Web Audio – không cần file ngoài)
+       ===================================================== */
+    const Sound = {
+      enabled: true,
+      ctx: null,
+      ensure() {
+        if (this.ctx) return this.ctx;
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        try { this.ctx = new AC(); } catch (e) { this.ctx = null; }
+        return this.ctx;
+      },
+      tone(freq, dur, type, vol, delay) {
+        const ctx = this.ensure();
+        if (!ctx) return;
+        if (ctx.state === 'suspended') ctx.resume();
+        const t0 = ctx.currentTime + (delay || 0);
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type || 'sine';
+        osc.frequency.setValueAtTime(freq, t0);
+        gain.gain.setValueAtTime(0.0001, t0);
+        gain.gain.exponentialRampToValueAtTime(vol || 0.1, t0 + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t0);
+        osc.stop(t0 + dur + 0.05);
+      },
+      play(name) {
+        if (!this.enabled) return;
+        switch (name) {
+          case 'click': this.tone(660, 0.06, 'triangle', 0.05); break;
+          case 'place': this.tone(520, 0.08, 'sine', 0.08); this.tone(780, 0.08, 'sine', 0.06, 0.05); break;
+          case 'bell': this.tone(1046, 0.25, 'sine', 0.08); this.tone(1318, 0.35, 'sine', 0.06, 0.12); break;
+          case 'cooked': this.tone(880, 0.12, 'sine', 0.08); this.tone(1175, 0.18, 'sine', 0.07, 0.1); break;
+          case 'burnt': this.tone(220, 0.25, 'sawtooth', 0.05); this.tone(180, 0.3, 'sawtooth', 0.05, 0.15); break;
+          case 'coin': this.tone(988, 0.08, 'square', 0.045); this.tone(1319, 0.22, 'square', 0.045, 0.08); break;
+          case 'angry': this.tone(200, 0.2, 'square', 0.05); this.tone(150, 0.3, 'square', 0.05, 0.18); break;
+          case 'alert': for (let i = 0; i < 3; i++) this.tone(440, 0.12, 'square', 0.05, i * 0.22); break;
+          case 'power': this.tone(330, 0.1, 'triangle', 0.08); this.tone(660, 0.12, 'triangle', 0.08, 0.1); this.tone(990, 0.2, 'triangle', 0.08, 0.2); break;
+          case 'trash': this.tone(160, 0.15, 'triangle', 0.08); break;
+          case 'buy': this.tone(700, 0.08, 'triangle', 0.06); this.tone(940, 0.12, 'triangle', 0.06, 0.07); break;
+          case 'fanfare': [523, 659, 784, 1046].forEach((f, i) => this.tone(f, 0.22, 'triangle', 0.07, i * 0.12)); break;
+          default: break;
+        }
+      }
+    };
+
+    /* =====================================================
+       HỘP THOẠI, THÔNG BÁO NỔI, CHỮ BAY
+       ===================================================== */
+    const Modal = {
+      queue: [],
+      current: null,
+      isOpen() { return !!this.current; },
+      show(cfg) {
+        if (this.current) { this.queue.push(cfg); return; }
+        this.current = cfg;
+        this.render(cfg);
+        updatePauseButton();
+      },
+      render(cfg) {
+        $('modal-icon').textContent = cfg.icon || '🍔';
+        $('modal-title').textContent = cfg.title || '';
+        $('modal-body').innerHTML = cfg.html || '';
+        const actions = $('modal-actions');
+        actions.innerHTML = '';
+        const buttons = cfg.buttons && cfg.buttons.length ? cfg.buttons : [{ label: 'Đã hiểu', cls: 'btn-mint' }];
+        buttons.forEach((b) => {
+          const el = document.createElement('button');
+          el.className = 'btn btn-big ' + (b.cls || 'btn-peach');
+          el.innerHTML = b.label;
+          el.addEventListener('click', () => {
+            Sound.play('click');
+            this.close();
+            if (b.onClick) b.onClick();
+          });
+          actions.appendChild(el);
+        });
+        $('modal-root').classList.remove('hidden');
+        const box = $('modal-box');
+        box.style.animation = 'none';
+        void box.offsetWidth;
+        box.style.animation = '';
+        box.scrollTop = 0;
+      },
+      close() {
+        this.current = null;
+        $('modal-root').classList.add('hidden');
+        if (this.queue.length) {
+          const next = this.queue.shift();
+          setTimeout(() => this.show(next), 140);
+        }
+        updatePauseButton();
+      }
+    };
+
+    function isPaused() { return state.paused || Modal.isOpen(); }
+
+    function updatePauseButton() {
+      const btn = $('btn-pause');
+      if (!btn) return;
+      btn.innerHTML = isPaused() && state.phase === 'open' ? '▶️ Tiếp tục' : '⏸️ Tạm dừng';
+    }
+
+    function toast(msg, type) {
+      const stack = $('toast-stack');
+      const el = document.createElement('div');
+      el.className = 'toast ' + (type || '');
+      el.textContent = msg;
+      stack.appendChild(el);
+      while (stack.children.length > 3) stack.removeChild(stack.firstChild);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 320);
+      }, 2300);
+    }
+
+    function positionPopups() {
+      const hud = $('hud');
+      const sticky = getComputedStyle(hud).position === 'sticky';
+      $('popup-stack').style.top = (sticky ? hud.offsetHeight + 10 : 10) + 'px';
+    }
+
+    function showPopup(opt) {
+      const stack = $('popup-stack');
+      positionPopups();
+      const el = document.createElement('div');
+      el.className = 'popup ' + (opt.tone || 'info');
+      el.innerHTML =
+        '<div class="p-avatar">' + (opt.avatar || '💬') + '</div>' +
+        '<div class="flex-1 min-w-0">' +
+        '<div class="p-title">' + (opt.title || '') + '</div>' +
+        '<div class="p-text">' + (opt.text || '') + '</div>' +
+        (opt.extra ? '<div class="text-xs font-black mt-1">' + opt.extra + '</div>' : '') +
+        '</div>';
+      stack.appendChild(el);
+      while (stack.children.length > 3) stack.removeChild(stack.firstChild);
+      setTimeout(() => {
+        el.classList.add('out');
+        setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 380);
+      }, opt.tone === 'angry' ? 4800 : 3400);
+    }
+
+    function floatText(text, el, color, index) {
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      if (!r.width) return;
+      const f = document.createElement('div');
+      f.className = 'float-text';
+      f.textContent = text;
+      f.style.color = color || '#2f8f57';
+      f.style.left = (r.left + r.width / 2) + 'px';
+      f.style.top = (r.top + 18 + (index || 0) * 26) + 'px';
+      f.style.animationDelay = ((index || 0) * 0.12) + 's';
+      document.body.appendChild(f);
+      setTimeout(() => { if (f.parentNode) f.parentNode.removeChild(f); }, 1900);
+    }
+
+    /* =====================================================
+       HUD & CÁC MÀN HÌNH
+       ===================================================== */
+    let currentTab = 'kitchen';
+    let lastSkyKey = '';
+
+    function renderHUD() {
+      setText($('hud-day'), state.day);
+      setText($('hud-clock'), fmtClock(state.minutes));
+      setText($('hud-clock-icon'), timeIcon(state.minutes));
+      setText($('hud-money'), fmtMoney(state.money));
+      setText($('hud-rep'), Math.round(state.reputation));
+      const w = Math.round(state.reputation) + '%';
+      if ($('hud-rep-bar').style.width !== w) $('hud-rep-bar').style.width = w;
+      const p = $('hud-power');
+      const cls = state.power.on ? 'hud-chip chip-power-on' : 'hud-chip chip-power-off';
+      if (p.className !== cls) p.className = cls;
+      setText(p, state.power.on ? (state.upgrades.generator ? '⚡ Đang có điện • 🔋' : '⚡ Đang có điện') : '🔌 Mất điện!');
+      const waiting = state.customers.filter((c) => !!c).length;
+      const badge = $('tab-kitchen-badge');
+      const showBadge = currentTab !== 'kitchen' && waiting > 0;
+      badge.classList.toggle('hidden', !showBadge);
+      setText(badge, waiting + '👤');
+      updateWindowSky();
+    }
+
+    function updateWindowSky() {
+      const m = state.minutes;
+      let key;
+      let bg;
+      let sun;
+      let pos;
+      if (m < 10 * 60) { key = 'morning'; bg = 'linear-gradient(#ffd9b3, #cfe9ff)'; sun = '🌤️'; pos = ['26px', '8px']; }
+      else if (m < 16 * 60) { key = 'noon'; bg = 'linear-gradient(#a9dcff, #e6f5ff)'; sun = '☀️'; pos = ['6px', '30px']; }
+      else if (m < 18 * 60) { key = 'sunset'; bg = 'linear-gradient(#ffb38a, #ffe0a8)'; sun = '🌇'; pos = ['36px', '50px']; }
+      else { key = 'night'; bg = 'linear-gradient(#2e3a6b, #5b5f97)'; sun = '🌙'; pos = ['8px', '48px']; }
+      if (key === lastSkyKey) return;
+      lastSkyKey = key;
+      $('wall-window').style.background = bg;
+      const s = $('window-sun');
+      s.textContent = sun;
+      s.style.top = pos[0];
+      s.style.left = pos[1];
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      ['kitchen', 'storage', 'shop'].forEach((t) => { $('screen-' + t).classList.toggle('hidden', t !== tab); });
+      document.querySelectorAll('.tab-btn').forEach((b) => { b.classList.toggle('active', b.dataset.tab === tab); });
+      if (tab === 'storage') renderStorage();
+      if (tab === 'shop') renderShop();
+      renderHUD();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function unlockedRecipes() {
+      return Object.keys(RECIPES).filter((id) => RECIPES[id].unlockDay <= state.day);
+    }
+
+    function renderMenuBoard() {
+      $('menu-board').innerHTML = '<h3>📋 THỰC ĐƠN</h3>' + unlockedRecipes().map((id) => {
+        const r = RECIPES[id];
+        return '<div class="row"><span>' + r.icon + ' ' + r.name + '</span><span>' + fmtMoney(r.price) + '</span></div>';
+      }).join('');
+    }
+
+    function renderDecor() {
+      const on = state.upgrades.decor;
+      $('counter').classList.toggle('cozy', on);
+      $('decor-lights').classList.toggle('hidden', !on);
+      $('decor-cat').classList.toggle('hidden', !on);
+      $('decor-items').innerHTML = on ? '<span>🪴</span><span>🖼️</span><span>🌷</span><span>🕯️</span><span>🪴</span>' : '';
+    }
+
+    function renderPrepOverlay() {
+      const show = state.phase === 'prep';
+      $('prep-overlay').classList.toggle('hidden', !show);
+      if (!show) return;
+      setText($('prep-title'), '☀️ Ngày thứ ' + state.day + ' sắp bắt đầu!');
+      const low = Object.keys(INGREDIENTS).filter((id) => invCount(id) < 3).map((id) => INGREDIENTS[id].emoji + ' ' + INGREDIENTS[id].name + ' (' + invCount(id) + ')');
+      $('prep-info').innerHTML = low.length
+        ? '⚠️ Sắp hết: <b>' + low.join(', ') + '</b>.<br>Hãy ghé <button class="underline font-black" data-action="tab" data-tab="storage">📦 Kho &amp; Nhập hàng</button> trước khi mở cửa!'
+        : '✅ Kho hàng khá đầy đủ. Sẵn sàng đón khách!';
+    }
+
+    function buyCost(id, qty) {
+      const base = INGREDIENTS[id].price * qty;
+      return qty >= 10 ? Math.round(base * 0.9) : base;
+    }
+
+    function renderStorage() {
+      $('storage-grid').innerHTML = Object.keys(INGREDIENTS).map((id) => {
+        const ing = INGREDIENTS[id];
+        const count = invCount(id);
+        const days = invDaysLeft(id);
+        const life = shelfLifeOf(id);
+        const rate = Math.round(spoilRateOf(id) * 100);
+        const batches = state.inventory[id].slice().sort((a, b) => a.age - b.age).map((b) => {
+          const left = life - b.age;
+          const old = left <= 0;
+          return '<span class="batch-chip ' + (old ? 'old' : '') + '">📦 ' + b.qty + ' • ' + (b.age === 0 ? 'mới nhập' : b.age + ' ngày tuổi') + (old ? ' • sắp hỏng!' : '') + '</span>';
+        }).join('');
+        let expiry;
+        if (count === 0) expiry = '<span class="opacity-60">Hết hàng</span>';
+        else if (days <= 0) expiry = '<span style="color:#c0392b">⚠️ Lô cũ nhất sẽ hỏng sau đêm nay!</span>';
+        else expiry = 'Lô cũ nhất còn <b>' + days + '</b> ngày';
+        const buttons = [1, 5, 10].map((q) => {
+          const cost = buyCost(id, q);
+          return '<button class="btn btn-sm ' + (q === 10 ? 'btn-butter' : 'btn-mint') + '" data-action="buy" data-item="' + id + '" data-qty="' + q + '" ' + (state.money < cost ? 'disabled' : '') + '>+' + q + ' <span class="opacity-70">(' + fmtMoney(cost) + (q === 10 ? ', −10%' : '') + ')</span></button>';
+        }).join('');
+        return '<div class="card p-4 flex flex-col gap-2">' +
+          '<div class="flex items-center gap-3">' +
+          '<div class="text-5xl">' + ing.emoji + '</div>' +
+          '<div class="flex-1 min-w-0"><div class="font-black text-lg">' + ing.name + '</div><div class="text-xs font-bold opacity-70">' + ing.desc + '</div></div>' +
+          '<div class="text-right"><div class="text-3xl font-black ' + (count < 3 ? 'text-red-500' : '') + '">' + count + '</div><div class="text-[11px] font-bold opacity-60">trong kho</div></div>' +
+          '</div>' +
+          '<div class="flex flex-wrap gap-1">' + (batches || '<span class="text-xs font-bold opacity-50">Kho trống</span>') + '</div>' +
+          '<div class="text-xs font-bold flex flex-wrap justify-between gap-2"><span>⏳ ' + expiry + '</span><span>🦠 Hỏng qua đêm: <b>' + rate + '%</b>/phần</span></div>' +
+          '<div class="text-xs font-bold opacity-80">💵 Giá: ' + fmtMoney(ing.price) + '/phần • 📅 Hạn dùng: ' + life + ' ngày</div>' +
+          '<div class="flex flex-wrap gap-2 mt-1">' + buttons + '</div>' +
+          '</div>';
+      }).join('');
+      $('storage-summary').innerHTML =
+        '<div>💰 Tiền hiện có: <b>' + fmtMoney(state.money) + '</b></div>' +
+        '<div>' + (state.upgrades.freezer ? '🧊 Tủ Đông Công Nghiệp: <b style="color:#2f8f57">Đã lắp đặt</b>' : '🧊 Chưa có tủ đông – đồ tươi dễ hỏng qua đêm') + '</div>' +
+        '<div class="opacity-70">🧾 Hôm nay đã nhập: ' + fmtMoney(state.dayStats.spent) + '</div>';
+    }
+
+    function buyIngredient(id, qty) {
+      if (!INGREDIENTS[id] || !qty) return;
+      const cost = buyCost(id, qty);
+      if (state.money < cost) { toast('Không đủ tiền để nhập hàng!', 'warn'); Sound.play('angry'); return; }
+      state.money -= cost;
+      state.dayStats.spent += cost;
+      invAdd(id, qty);
+      Sound.play('buy');
+      toast('📦 Đã nhập ' + qty + ' phần ' + INGREDIENTS[id].name + ' (−' + fmtMoney(cost) + ')', 'good');
+      refreshAll();
+      saveGame();
+    }
+
+    function renderShop() {
+      $('shop-grid').innerHTML = Object.keys(UPGRADES).map((id) => {
+        const u = UPGRADES[id];
+        const owned = state.upgrades[id];
+        const action = owned
+          ? '<div class="btn btn-mint is-disabled">✅ Đã sở hữu</div>'
+          : '<button class="btn btn-peach btn-big" data-action="buy-upgrade" data-id="' + id + '" ' + (state.money < u.price ? 'disabled' : '') + '>🛒 Mua ngay</button>';
+        return '<div class="card upgrade-card ' + (owned ? 'owned' : '') + ' p-5 flex flex-col gap-3">' +
+          '<div class="flex items-center gap-3"><div class="upgrade-icon">' + u.icon + '</div>' +
+          '<div><div class="font-black text-lg leading-tight">' + u.name + '</div><div class="text-xs font-bold opacity-70">' + u.tagline + '</div></div></div>' +
+          '<div class="text-sm font-semibold leading-relaxed">' + u.desc + '</div>' +
+          '<ul class="text-xs font-bold space-y-1">' + u.effects.map((e) => '<li>✔️ ' + e + '</li>').join('') + '</ul>' +
+          '<div class="mt-auto flex items-center justify-between gap-2 pt-1">' +
+          '<div class="text-2xl font-black">' + (owned ? '🎉' : fmtMoney(u.price)) + '</div>' + action +
+          '</div></div>';
+      }).join('');
+    }
+
+    function buyUpgrade(id) {
+      const u = UPGRADES[id];
+      if (!u || state.upgrades[id]) return;
+      if (state.money < u.price) { toast('Chưa đủ tiền mua nâng cấp này!', 'warn'); Sound.play('angry'); return; }
+      state.money -= u.price;
+      state.dayStats.upgrades += u.price;
+      state.upgrades[id] = true;
+      Sound.play('fanfare');
+      if (id === 'generator' && !state.power.on) restorePower(true);
+      refreshAll();
+      saveGame();
+      Modal.show({
+        icon: u.icon,
+        title: 'Nâng cấp thành công!',
+        html: '<b>' + u.name + '</b> đã được lắp đặt trong quán.<br><br>' + u.effects.map((e) => '✔️ ' + e).join('<br>')
+      });
+    }
+
+    function changeRep(delta) {
+      state.reputation = clamp(state.reputation + delta, 0, 100);
+      renderHUD();
+    }
+
+    function renderAll() {
+      renderHUD();
+      renderMenuBoard();
+      renderDecor();
+      renderPrepOverlay();
+      renderCustomers();
+      refreshKitchen();
+      renderStorage();
+      renderShop();
+      updatePauseButton();
+    }
+
+    function refreshAll() {
+      renderHUD();
+      renderPrepOverlay();
+      refreshKitchen();
+      renderStorage();
+      renderShop();
+    }
+
+    /* =====================================================
+       KHÁCH HÀNG
+       ===================================================== */
+    const animatedCustomers = new Set();
+
+    function generateOrder() {
+      const burgers = unlockedRecipes().filter((id) => RECIPES[id].type === 'burger');
+      if (Math.random() < 0.22) return ['khoai'];
+      const b = pick(burgers);
+      if (state.day >= 2 && Math.random() < 0.3) return [b, 'khoai'];
+      return [b];
+    }
+
+    function patienceFor(order, critic) {
+      let p = 48 + (order.length - 1) * 18;
+      p *= Math.max(0.75, 1 - (state.day - 1) * 0.03);
+      if (state.upgrades.decor) p *= 1.4;
+      if (critic) p *= 0.85;
+      return Math.round(p);
+    }
+
+    function orderPrice(c) {
+      const base = c.order.reduce((s, id) => s + RECIPES[id].price, 0);
+      return Math.round(base * (c.critic ? 1.5 : 1));
+    }
+
+    function spawnCustomer() {
+      const free = [];
+      for (let i = 0; i < SPOTS; i++) if (!state.customers[i]) free.push(i);
+      if (!free.length) return false;
+      const spot = pick(free);
+      const isCritic = state.day >= 2 && Math.random() < 0.07;
+      const present = state.customers.filter((c) => !!c).map((c) => c.name);
+      const pool = CUSTOMER_TYPES.filter((t) => present.indexOf(t.name) < 0);
+      const type = isCritic ? CRITIC : pick(pool.length ? pool : CUSTOMER_TYPES);
+      const order = generateOrder();
+      const maxP = patienceFor(order, isCritic);
+      state.customers[spot] = { id: uid(), name: type.name, avatar: type.avatar, order: order, patience: maxP, maxPatience: maxP, critic: isCritic };
+      if (state.selectedSpot < 0 || !state.customers[state.selectedSpot]) state.selectedSpot = spot;
+      Sound.play('bell');
+      if (isCritic) toast('🎩 Một nhà phê bình ẩm thực vừa ghé quán! Phục vụ thật chu đáo nhé!');
+      renderCustomers();
+      refreshKitchen();
+      return true;
+    }
+
+    function renderCustomers() {
+      $('customer-spots').innerHTML = state.customers.map((c, i) => {
+        if (!c) return '<div class="customer-spot"><div class="customer-empty"><div class="text-3xl opacity-60">🪑</div><div>' + (state.phase === 'open' ? 'Chờ khách...' : 'Chỗ trống') + '</div></div></div>';
+        const isNew = !animatedCustomers.has(c.id);
+        animatedCustomers.add(c.id);
+        const items = c.order.map((rid) => '<div class="order-line"><span class="oi">' + RECIPES[rid].icon + '</span><span>' + RECIPES[rid].name + '</span></div>').join('');
+        return '<div class="customer-spot"><div class="customer-card ' + (isNew ? 'enter ' : '') + (state.selectedSpot === i ? 'selected ' : '') + (c.critic ? 'critic' : '') + '" data-action="select-customer" data-spot="' + i + '" id="cust-' + i + '" title="Bấm để chọn khách này">' +
+          (c.critic ? '<div class="critic-ribbon">🎩 Nhà phê bình • x2 ⭐</div>' : '') +
+          '<div class="order-bubble">' + items + '</div>' +
+          '<div class="avatar-wrap"><span class="avatar">' + c.avatar + '</span><span class="mood" id="mood-' + i + '">😊</span></div>' +
+          '<div class="cust-name">' + c.name + '</div>' +
+          '<div class="patience"><div class="patience-fill pat-good" id="pat-' + i + '" style="width:100%"></div></div>' +
+          '</div></div>';
+      }).join('');
+      updateCustomerBars();
+    }
+
+    function updateCustomerBars() {
+      state.customers.forEach((c, i) => {
+        if (!c) return;
+        const fill = $('pat-' + i);
+        const mood = $('mood-' + i);
+        const card = $('cust-' + i);
+        if (!fill || !mood || !card) return;
+        const r = clamp(c.patience / c.maxPatience, 0, 1);
+        const w = (r * 100).toFixed(1) + '%';
+        if (fill.style.width !== w) fill.style.width = w;
+        const cls = r > 0.5 ? 'pat-good' : r > LATE_RATIO ? 'pat-mid' : 'pat-low';
+        if (!fill.classList.contains(cls)) {
+          fill.classList.remove('pat-good', 'pat-mid', 'pat-low');
+          fill.classList.add(cls);
+        }
+        setText(mood, r > 0.6 ? '😊' : r > 0.35 ? '😐' : r > LATE_RATIO ? '😟' : '😡');
+        const impatient = r <= LATE_RATIO;
+        if (card.classList.contains('impatient') !== impatient) card.classList.toggle('impatient', impatient);
+      });
+    }
+
+    function updateCustomers(dt) {
+      for (let i = 0; i < SPOTS; i++) {
+        const c = state.customers[i];
+        if (!c) continue;
+        c.patience -= dt;
+        if (c.patience <= 0) customerLeaves(i);
+      }
+    }
+
+    function autoSelect() {
+      state.selectedSpot = state.customers.findIndex((c) => !!c);
+    }
+
+    function selectCustomer(i) {
+      if (!state.customers[i]) return;
+      state.selectedSpot = i;
+      Sound.play('click');
+      renderCustomers();
+      renderRecipeBook();
+      renderServeTarget();
+    }
+
+    function customerLeaves(i) {
+      const c = state.customers[i];
+      if (!c) return;
+      const loss = c.critic ? 10 : 5;
+      const el = $('cust-' + i);
+      floatText('−' + loss + ' ⭐', el, '#e05561', 0);
+      changeRep(-loss);
+      state.dayStats.lost++;
+      state.lifetime.angry++;
+      showPopup({
+        avatar: c.avatar,
+        title: c.name + ' bỏ về trong giận dữ!',
+        text: '“' + (c.critic ? CRITIC_ANGRY : pick(COMPLAINTS.leave)) + '”',
+        tone: 'angry',
+        extra: '💸 Không trả tiền • −' + loss + ' ⭐ Danh tiếng'
+      });
+      Sound.play('angry');
+      state.customers[i] = null;
+      if (state.selectedSpot === i) autoSelect();
+      renderCustomers();
+      refreshKitchen();
+      saveGame();
+    }
+
+    function isRushHour(m) {
+      return (m >= 11 * 60 && m < 13 * 60) || (m >= 17 * 60 && m < 19 * 60);
+    }
+
+    function nextSpawnDelay() {
+      const repF = 1.3 - (state.reputation / 100) * 0.6;
+      const dayF = Math.max(0.78, 1 - (state.day - 1) * 0.03);
+      const rush = isRushHour(state.minutes) ? 0.65 : 1;
+      return rand(11, 18) * repF * dayF * rush;
+    }
+
+    function updateSpawning(dt) {
+      if (state.minutes >= LAST_ORDER_MIN) return;
+      state.spawnTimer -= dt;
+      if (state.spawnTimer <= 0) {
+        const ok = spawnCustomer();
+        state.spawnTimer = ok ? nextSpawnDelay() : 2.5;
+      }
+    }
+
+    /* =====================================================
+       VÒNG NGÀY: CHUẨN BỊ -> MỞ CỬA -> ĐÓNG CỬA
+       ===================================================== */
+    function beginPrep() {
+      state.phase = 'prep';
+      state.minutes = OPEN_MIN;
+      state.paused = false;
+      state.power = { on: true, fix: 0 };
+      state.customers = [null, null, null];
+      state.selectedSpot = -1;
+      state.kitchen = defaultKitchen();
+      state.events = { outages: [], spoils: [] };
+      state.dayStats = freshDayStats();
+      state.dayStats.repStart = state.reputation;
+      renderAll();
+      saveGame();
+    }
+
+    function openShop() {
+      if (state.phase !== 'prep') return;
+      state.phase = 'open';
+      state.minutes = OPEN_MIN;
+      state.spawnTimer = 2;
+      state.dayStats.repStart = state.reputation;
+      planEvents();
+      Sound.play('bell');
+      toast('🏪 Quán đã mở cửa! Chúc một ngày đông khách!', 'good');
+      renderAll();
+      saveGame();
+    }
+
+    function planEvents() {
+      const outages = [];
+      const pOut = Math.min(0.65, 0.45 + state.day * 0.03);
+      if (Math.random() < pOut) outages.push(randInt(9 * 60 + 30, 18 * 60 + 30));
+      if (state.day >= 4 && Math.random() < 0.25) outages.push(randInt(10 * 60, 19 * 60));
+      outages.sort((a, b) => a - b);
+      const spoils = [];
+      if (Math.random() < 0.32) spoils.push(randInt(9 * 60, 18 * 60));
+      state.events = { outages: outages, spoils: spoils };
+    }
+
+    function checkScheduledEvents() {
+      const ev = state.events;
+      if (ev.outages.length && state.minutes >= ev.outages[0]) {
+        ev.outages.shift();
+        triggerOutage();
+      }
+      if (ev.spoils.length && state.minutes >= ev.spoils[0]) {
+        ev.spoils.shift();
+        triggerSpoilEvent();
+      }
+    }
+
+    /* ---------- Sự kiện: Mất điện ---------- */
+    function triggerOutage() {
+      if (!state.power.on) return;
+      if (state.upgrades.generator) {
+        Sound.play('power');
+        showPopup({
+          avatar: '🔋',
+          title: 'Máy phát điện tự động đã khởi động!',
+          text: 'Lưới điện khu phố vừa bị cúp nhưng máy phát đã bật ngay lập tức. Bếp vẫn hoạt động bình thường!',
+          tone: 'info'
+        });
+        return;
+      }
+      state.power.on = false;
+      state.power.fix = 0;
+      Sound.play('alert');
+      renderPower();
+      renderHUD();
+      refreshKitchen();
+      Modal.show({
+        icon: '⚡',
+        title: 'Mất điện đột ngột!',
+        html: 'Cầu dao tổng vừa nhảy “tạch” một cái! 😱<br>Bếp Nướng/Chiên đã <b>ngừng hoạt động</b> và cả gian bếp tối om.<br><br>👉 Hãy <b>bấm liên tục</b> vào nút <b>“🔧 Sửa cầu dao”</b> ở Trạm 1 để khôi phục điện.<br><br><span class="text-xs opacity-80">Mẹo: Mua <b>Máy Phát Điện Tự Động</b> ở Cửa hàng Nâng cấp để không bao giờ lo mất điện nữa.</span>',
+        buttons: [{ label: '🔧 Đi sửa ngay!', cls: 'btn-butter', onClick: () => { if (currentTab !== 'kitchen') switchTab('kitchen'); } }]
+      });
+      saveGame();
+    }
+
+    function fixBreaker() {
+      if (state.power.on || state.phase !== 'open' || isPaused()) return;
+      state.power.fix = Math.min(100, state.power.fix + 7);
+      Sound.tone(300 + state.power.fix * 6, 0.05, 'square', 0.04);
+      if (state.power.fix >= 100) restorePower(false);
+      else renderPowerBar();
+    }
+
+    function restorePower(byGenerator) {
+      state.power.on = true;
+      state.power.fix = 0;
+      Sound.play('power');
+      toast(byGenerator ? '🔋 Máy phát điện đã cấp điện trở lại!' : '💡 Đã sửa xong cầu dao, có điện lại rồi!', 'good');
+      renderPower();
+      renderHUD();
+      refreshKitchen();
+      saveGame();
+    }
+
+    function updatePower(dt) {
+      if (!state.power.on && state.power.fix > 0) {
+        state.power.fix = Math.max(0, state.power.fix - 6 * dt);
+        renderPowerBar();
+      }
+    }
+
+    function renderPower() {
+      const off = !state.power.on;
+      $('kitchen').classList.toggle('power-off', off);
+      $('power-overlay').classList.toggle('hidden', !off);
+      renderPowerBar();
+    }
+
+    function renderPowerBar() {
+      $('breaker-fill').style.width = state.power.fix.toFixed(1) + '%';
+      setText($('breaker-pct'), Math.floor(state.power.fix) + '%');
+    }
+
+    /* ---------- Sự kiện: Nguyên liệu ôi thiu đột xuất ---------- */
+    function triggerSpoilEvent() {
+      const candidates = ['lettuce', 'beef', 'chicken', 'cheese'].filter((id) => invCount(id) >= 2);
+      if (state.upgrades.freezer) {
+        if (candidates.length) {
+          showPopup({
+            avatar: '🧊',
+            title: 'Tủ đông công nghiệp bảo vệ kho hàng!',
+            text: 'Tủ lạnh khu bếp chập chờn nhưng Tủ Đông Công Nghiệp giữ mọi nguyên liệu tươi ngon. Không có gì bị hỏng!',
+            tone: 'info'
+          });
+        }
+        return;
+      }
+      if (!candidates.length) return;
+      const id = pick(candidates);
+      const count = invCount(id);
+      const amount = Math.max(1, Math.round(count * rand(0.3, 0.5)));
+      invTake(id, amount);
+      state.dayStats.wasted += amount;
+      Sound.play('alert');
+      refreshAll();
+      saveGame();
+      Modal.show({
+        icon: '🤢',
+        title: 'Nguyên liệu bị ôi thiu!',
+        html: 'Tủ lạnh cũ kêu rè rè suốt buổi rồi tắt ngúm... 😵<br>Bạn phát hiện <b>' + amount + ' phần ' + INGREDIENTS[id].name + ' ' + INGREDIENTS[id].emoji + '</b> đã bốc mùi và buộc phải bỏ đi.<br><br>Kho còn lại: <b>' + invCount(id) + '</b> phần.<br><span class="text-xs opacity-80">Mẹo: <b>Tủ Đông Công Nghiệp</b> sẽ chặn hoàn toàn sự cố này.</span>',
+        buttons: [{ label: 'Haizz... Đành vậy', cls: 'btn-pink' }]
+      });
+    }
+
+    /* ---------- Kết thúc ngày ---------- */
+    function endDay() {
+      if (state.phase !== 'open') return;
+      state.phase = 'closed';
+      state.minutes = CLOSE_MIN;
+      const remaining = state.customers.filter((c) => !!c).length;
+      state.customers = [null, null, null];
+      state.selectedSpot = -1;
+      const k = state.kitchen;
+      const leftovers = k.grill.filter((s) => !!s).length + k.holding.length + k.plate.length + k.tray.length;
+      state.kitchen = defaultKitchen();
+      state.power = { on: true, fix: 0 };
+      const spoilReport = applyOvernightSpoilage();
+      const rent = Math.min(DAILY_RENT, Math.max(0, state.money));
+      state.money -= rent;
+      const ds = state.dayStats;
+      const income = ds.revenue + ds.tips;
+      const profit = income - ds.spent - rent;
+      state.lifetime.bestDay = Math.max(state.lifetime.bestDay, income);
+      const repDelta = Math.round(state.reputation - ds.repStart);
+
+      const spoilHtml = spoilReport.length
+        ? spoilReport.map((r) => '<div>' + INGREDIENTS[r.id].emoji + ' ' + INGREDIENTS[r.id].name + ': ' +
+          (r.spoiled ? '<b>' + r.spoiled + '</b> phần bị hỏng' : '') + (r.spoiled && r.expired ? ', ' : '') +
+          (r.expired ? '<b>' + r.expired + '</b> phần quá hạn' : '') + '</div>').join('')
+        : '<div>🎉 Không có nguyên liệu nào bị hỏng qua đêm!</div>';
+
+      const html =
+        '<table class="summary-table">' +
+        '<tr><td>👥 Khách đã phục vụ</td><td>' + ds.served + '</td></tr>' +
+        '<tr><td>😊 Khách hài lòng</td><td>' + ds.happy + '</td></tr>' +
+        '<tr><td>😡 Khách nổi giận / bỏ về</td><td>' + ds.angry + ' / ' + ds.lost + '</td></tr>' +
+        '<tr><td>💵 Doanh thu bán hàng</td><td>' + fmtMoney(ds.revenue) + '</td></tr>' +
+        '<tr><td>💝 Tiền Tip</td><td>' + fmtMoney(ds.tips) + '</td></tr>' +
+        '<tr><td>📦 Chi phí nhập hàng</td><td>−' + fmtMoney(ds.spent) + '</td></tr>' +
+        '<tr><td>🏠 Tiền điện nước &amp; mặt bằng</td><td>−' + fmtMoney(rent) + '</td></tr>' +
+        (ds.upgrades ? '<tr><td>🛠️ Đầu tư nâng cấp</td><td>−' + fmtMoney(ds.upgrades) + '</td></tr>' : '') +
+        '<tr class="total"><td>📈 Lãi/lỗ kinh doanh</td><td style="color:' + (profit >= 0 ? '#2f8f57' : '#c0392b') + '">' + (profit >= 0 ? '+' : '−') + fmtMoney(Math.abs(profit)) + '</td></tr>' +
+        '<tr><td>⭐ Danh tiếng</td><td>' + Math.round(state.reputation) + ' (' + (repDelta >= 0 ? '+' : '') + repDelta + ')</td></tr>' +
+        '<tr><td>🗑️ Nguyên liệu lãng phí</td><td>' + (ds.wasted + leftovers) + '</td></tr>' +
+        '</table>' +
+        (remaining ? '<div class="text-sm mt-2">🚪 ' + remaining + ' vị khách chưa kịp phục vụ đã ra về khi quán đóng cửa.</div>' : '') +
+        (leftovers ? '<div class="text-sm mt-1">🍽️ ' + leftovers + ' món/nguyên liệu còn trên bếp đã được dọn bỏ.</div>' : '') +
+        '<div class="mt-3 text-left text-sm"><div class="font-black mb-1">🦠 Kiểm kho qua đêm' + (state.upgrades.freezer ? ' (🧊 Tủ đông giảm 90% hư hỏng)' : '') + ':</div>' + spoilHtml + '</div>' +
+        '<div class="mt-3 font-black">💰 Tiền hiện có: ' + fmtMoney(state.money) + '</div>';
+
+      Sound.play('fanfare');
+      renderAll();
+      saveGame();
+      Modal.show({
+        icon: '🌙',
+        title: 'Kết thúc ngày thứ ' + state.day,
+        html: html,
+        buttons: [{ label: '☀️ Sang ngày mới', cls: 'btn-mint', onClick: startNextDay }]
+      });
+    }
+
+    function startNextDay() {
+      state.day += 1;
+      beginPrep();
+      const newRecipes = Object.keys(RECIPES).filter((id) => RECIPES[id].unlockDay === state.day);
+      if (newRecipes.length) {
+        Sound.play('fanfare');
+        Modal.show({
+          icon: '📜',
+          title: 'Món mới được mở khóa!',
+          html: newRecipes.map((id) => {
+            const r = RECIPES[id];
+            return '<div class="mb-2"><span class="text-2xl">' + r.icon + '</span> <b>' + r.name + '</b> — ' + fmtMoney(r.price) +
+              '<br><span class="text-xs">Công thức: ' + r.layers.map((l) => LAYERS[l].emoji + ' ' + LAYERS[l].short).join(' ➜ ') + '</span></div>';
+          }).join('') + '<div class="text-xs opacity-80">Từ hôm nay khách còn có thể gọi combo kèm Khoai Tây Chiên.</div>'
+        });
+      }
+      checkBankrupt();
+    }
+
+    function checkBankrupt() {
+      const canCook = (invCount('bun') >= 1 && (invCount('beef') >= 1 || invCount('chicken') >= 1)) || invCount('potato') >= 1;
+      if (canCook || state.money >= 5) return;
+      Modal.show({
+        icon: '💸',
+        title: 'Cạn vốn rồi!',
+        html: 'Kho trống trơn và két tiền cũng không còn đủ để nhập hàng...<br>Hội tiểu thương khu phố đồng ý <b>hỗ trợ $60</b>, nhưng danh tiếng của quán sẽ <b>giảm 10 ⭐</b>.',
+        buttons: [
+          { label: '🤝 Nhận hỗ trợ $60', cls: 'btn-mint', onClick: () => { state.money += 60; changeRep(-10); refreshAll(); saveGame(); } },
+          { label: '🔄 Chơi lại từ đầu', cls: 'btn-pink', onClick: doReset }
+        ]
+      });
+    }
+
+    /* =====================================================
+       TRẠM 1: BẾP NƯỚNG / CHIÊN
+       ===================================================== */
+    const STAGE_TEXT = { raw: 'Chưa chín', perfect: 'Chín vừa – Hoàn hảo!', burnt: 'Cháy khét!' };
+    const DONENESS_TEXT = { raw: '🟢 Còn sống', perfect: '🟡 Hoàn hảo', burnt: '⚫ Cháy khét' };
+    const DONENESS_SHORT = { raw: 'còn sống', perfect: 'hoàn hảo', burnt: 'cháy khét' };
+
+    function stageOf(p) { return p < COOK_DONE ? 'raw' : p < COOK_BURN ? 'perfect' : 'burnt'; }
+
+    function cookSpeed(type, progress) {
+      const base = COOKABLES[type].speed;
+      if (progress < COOK_DONE) return base * (state.upgrades.grill ? 1.6 : 1);
+      return base * (state.upgrades.grill ? 0.45 : 1);
+    }
+
+    function foodClass(type, stage, mini) {
+      if (type === 'potato') return 'food-emoji ' + (mini ? 'mini ' : '') + 'stage-' + stage;
+      return 'food ' + (mini ? 'mini ' : '') + 'food-' + type + ' stage-' + stage;
+    }
+
+    function fxHTML(stage, powered) {
+      if (!powered) return '';
+      if (stage === 'burnt') return '<span class="fx fx-smoke">💨</span><span class="fx fx-fire">🔥</span>';
+      if (stage === 'perfect') return '<span class="fx fx-steam">💨</span><span class="fx fx-steam d2">✨</span>';
+      return '<span class="fx fx-steam">💨</span>';
+    }
+
+    function renderGrillButtons() {
+      const disabled = !state.power.on || state.phase !== 'open';
+      $('grill-buttons').innerHTML = Object.keys(COOKABLES).map((type) => {
+        const ck = COOKABLES[type];
+        const n = invCount(ck.inv);
+        return '<button class="btn btn-peach btn-col" data-action="grill-add" data-item="' + type + '" ' + (disabled ? 'disabled' : '') + '>' +
+          '<span class="text-2xl">' + ck.emoji + '</span><span class="text-[12px]">' + ck.name + '</span>' +
+          '<span class="badge ' + (n ? '' : 'zero') + '">' + n + '</span></button>';
+      }).join('');
+      $('grill-premium-tag').innerHTML = state.upgrades.grill ? '<span class="premium-tag">✨ Cao cấp</span>' : '';
+    }
+
+    function renderGrill() {
+      $('grill-slots').innerHTML = state.kitchen.grill.map((s, i) => {
+        if (!s) {
+          return '<div class="grill-slot"><div class="slot-label">Vỉ ' + (i + 1) + '</div><div class="slot-empty">Trống</div>' +
+            '<div class="text-[10px] font-bold opacity-60 flex items-center justify-center" style="min-height:58px">Chọn nguyên liệu<br>ở phía trên</div></div>';
+        }
+        const st = stageOf(s.progress);
+        const ck = COOKABLES[s.type];
+        const plateCls = 'grill-plate' + (state.upgrades.grill ? ' premium' : '') + (state.power.on ? ' hot' : ' cold');
+        return '<div class="grill-slot ' + (st === 'perfect' ? 'is-perfect' : '') + (st === 'burnt' ? 'is-burnt' : '') + '" id="slot-' + i + '" data-stage="' + st + '" data-fx="' + st + (state.power.on ? '1' : '0') + '">' +
+          '<div class="slot-label">Vỉ ' + (i + 1) + ' • ' + ck.cookedName + '</div>' +
+          '<div class="' + plateCls + '" id="grillplate-' + i + '">' +
+          '<span class="' + foodClass(s.type, st, false) + '" id="food-' + i + '">' + (s.type === 'potato' ? (st === 'raw' ? '🥔' : '🍟') : '') + '</span>' +
+          '<span id="fx-' + i + '">' + fxHTML(st, state.power.on) + '</span>' +
+          '</div>' +
+          '<div class="cook-bar"><div class="z-raw"></div><div class="z-ok"></div><div class="z-burn"></div><div class="cook-marker" id="marker-' + i + '" style="left:' + s.progress.toFixed(1) + '%"></div></div>' +
+          '<div><span class="stage-label st-' + st + '" id="stage-' + i + '">' + STAGE_TEXT[st] + '</span></div>' +
+          '<div class="flex gap-1 justify-center">' +
+          '<button class="btn btn-sm btn-mint flex-1" data-action="grill-take" data-slot="' + i + '">✋ Lấy ra</button>' +
+          '<button class="btn btn-sm btn-pink" data-action="grill-trash" data-slot="' + i + '" title="Vứt vào thùng rác">🗑️</button>' +
+          '</div></div>';
+      }).join('');
+    }
+
+    function updateGrillDynamic() {
+      state.kitchen.grill.forEach((s, i) => {
+        if (!s) return;
+        const slotEl = $('slot-' + i);
+        const marker = $('marker-' + i);
+        if (!slotEl || !marker) return;
+        const left = s.progress.toFixed(1) + '%';
+        if (marker.style.left !== left) marker.style.left = left;
+        const st = stageOf(s.progress);
+        if (slotEl.dataset.stage !== st) {
+          slotEl.dataset.stage = st;
+          slotEl.classList.toggle('is-perfect', st === 'perfect');
+          slotEl.classList.toggle('is-burnt', st === 'burnt');
+          const label = $('stage-' + i);
+          label.textContent = STAGE_TEXT[st];
+          label.className = 'stage-label st-' + st;
+          const food = $('food-' + i);
+          food.className = foodClass(s.type, st, false);
+          if (s.type === 'potato') food.textContent = st === 'raw' ? '🥔' : '🍟';
+        }
+        const fxKey = st + (state.power.on ? '1' : '0');
+        if (slotEl.dataset.fx !== fxKey) {
+          slotEl.dataset.fx = fxKey;
+          $('fx-' + i).innerHTML = fxHTML(st, state.power.on);
+          const plate = $('grillplate-' + i);
+          plate.classList.toggle('hot', state.power.on);
+          plate.classList.toggle('cold', !state.power.on);
+        }
+      });
+    }
+
+    function grillAdd(type) {
+      if (state.phase !== 'open' || !COOKABLES[type]) return;
+      if (!state.power.on) { toast('⚡ Mất điện! Bếp không hoạt động.', 'warn'); return; }
+      const slot = state.kitchen.grill.findIndex((s) => !s);
+      if (slot < 0) { toast('Bếp đã kín chỗ! Lấy đồ ra trước nhé.', 'warn'); return; }
+      const inv = COOKABLES[type].inv;
+      if (!invTake(inv, 1)) {
+        toast('Hết ' + INGREDIENTS[inv].name + ' trong kho! Vào "Kho & Nhập hàng" để mua thêm.', 'warn');
+        Sound.play('angry');
+        return;
+      }
+      state.kitchen.grill[slot] = { type: type, progress: 0, lastStage: 'raw' };
+      Sound.play('place');
+      refreshKitchen();
+      saveGame();
+    }
+
+    function updateGrill(dt) {
+      if (!state.power.on) return;
+      state.kitchen.grill.forEach((s, i) => {
+        if (!s) return;
+        s.progress = Math.min(100, s.progress + cookSpeed(s.type, s.progress) * dt);
+        const st = stageOf(s.progress);
+        if (st !== s.lastStage) {
+          s.lastStage = st;
+          if (st === 'perfect') Sound.play('cooked');
+          if (st === 'burnt') {
+            Sound.play('burnt');
+            toast('🔥 ' + COOKABLES[s.type].cookedName + ' ở Vỉ ' + (i + 1) + ' bị cháy khét rồi!', 'warn');
+          }
+        }
+      });
+    }
+
+    function grillTake(i) {
+      const s = state.kitchen.grill[i];
+      if (!s) return;
+      const st = stageOf(s.progress);
+      const k = state.kitchen;
+      if (s.type === 'potato') {
+        const item = { uid: uid(), kind: 'fries', doneness: st };
+        if (k.tray.length < TRAY_CAP) {
+          k.tray.push(item);
+          toast('🍟 Khoai tây chiên đã được cho vào hộp và đặt lên khay giao món!');
+        } else if (k.holding.length < HOLD_CAP) {
+          k.holding.push(item);
+          toast('Khay giao món đầy, khoai chiên được để tạm ở khay đồ chín.');
+        } else {
+          toast('Khay giao món và khay đồ chín đều đầy rồi!', 'warn');
+          return;
+        }
+      } else {
+        if (k.holding.length >= HOLD_CAP) { toast('Khay đồ chín đã đầy! Dùng bớt hoặc bỏ đi nhé.', 'warn'); return; }
+        k.holding.push({ uid: uid(), kind: 'patty', type: s.type, doneness: st });
+      }
+      if (st === 'raw') toast('⚠️ Món này còn sống đó nha!', 'warn');
+      if (st === 'burnt') toast('⚠️ Món này đã cháy khét, khách sẽ chê đấy!', 'warn');
+      k.grill[i] = null;
+      Sound.play('place');
+      refreshKitchen();
+      saveGame();
+    }
+
+    function trashed(n) {
+      state.trashCount += n;
+      state.dayStats.wasted += n;
+      Sound.play('trash');
+      toast('🗑️ Đã vứt vào thùng rác (mất nguyên liệu)');
+    }
+
+    function grillTrash(i) {
+      if (!state.kitchen.grill[i]) return;
+      state.kitchen.grill[i] = null;
+      trashed(1);
+      refreshKitchen();
+      saveGame();
+    }
+
+    function renderHolding() {
+      const h = state.kitchen.holding;
+      $('holding-area').innerHTML = h.length ? h.map((it, i) => {
+        const icon = it.kind === 'fries'
+          ? '<span class="' + foodClass('potato', it.doneness, true) + '">🍟</span>'
+          : '<span class="' + foodClass(it.type, it.doneness, true) + '"></span>';
+        const name = it.kind === 'fries' ? 'Khoai chiên' : COOKABLES[it.type].cookedName;
+        const hint = it.kind === 'fries' ? 'Bấm: cho vào khay giao' : 'Bấm: xếp lên bánh';
+        return '<div class="hold-item">' +
+          '<button data-action="holding-use" data-index="' + i + '" title="' + hint + '">' + icon +
+          '<span class="leading-tight">' + name + '<br><span class="dn dn-' + it.doneness + '">' + DONENESS_TEXT[it.doneness] + '</span></span></button>' +
+          '<button class="hold-x" data-action="holding-trash" data-index="' + i + '" title="Vứt bỏ">✕</button></div>';
+      }).join('') : '<div class="text-xs font-bold opacity-50 m-auto text-center">Chưa có đồ chín. Nấu xong thì bấm “✋ Lấy ra” để đặt vào đây.</div>';
+      setText($('trash-info'), '🗑️ Thùng rác: ' + state.trashCount);
+    }
+
+    function holdingUse(i) {
+      const k = state.kitchen;
+      const it = k.holding[i];
+      if (!it || state.phase !== 'open') return;
+      if (it.kind === 'fries') {
+        if (k.tray.length >= TRAY_CAP) { toast('Khay giao món đầy!', 'warn'); return; }
+        k.tray.push(it);
+        k.holding.splice(i, 1);
+        Sound.play('place');
+        refreshKitchen();
+        saveGame();
+        return;
+      }
+      if (k.plate.length >= PLATE_CAP) { toast('Đĩa đã quá đầy!', 'warn'); return; }
+      k.plate.push({ id: it.type, doneness: it.doneness });
+      k.holding.splice(i, 1);
+      Sound.play('place');
+      refreshKitchen();
+      saveGame();
+    }
+
+    function holdingTrash(i) {
+      if (!state.kitchen.holding[i]) return;
+      state.kitchen.holding.splice(i, 1);
+      trashed(1);
+      refreshKitchen();
+      saveGame();
+    }
+
+    /* =====================================================
+       TRẠM 2: BÀN LẮP RÁP
+       ===================================================== */
+    const ASSEMBLY_ORDER = ['bun_bottom', 'beef', 'chicken', 'cheese', 'lettuce', 'sauce', 'bun_top'];
+    let lastPlateLen = 0;
+
+    function renderAssemblyButtons() {
+      const k = state.kitchen;
+      const locked = state.phase !== 'open';
+      $('assembly-buttons').innerHTML = ASSEMBLY_ORDER.map((id) => {
+        const L = LAYERS[id];
+        let n;
+        if (id === 'beef' || id === 'chicken') n = k.holding.filter((h) => h.kind === 'patty' && h.type === id).length;
+        else if (id === 'bun_top') n = k.plateBunCredit > 0 ? '✓' : invCount('bun');
+        else n = invCount(L.inv);
+        return '<button class="btn btn-butter btn-col" data-action="plate-add" data-layer="' + id + '" ' + (locked ? 'disabled' : '') + ' title="' + L.name + '">' +
+          '<span class="text-2xl">' + L.emoji + '</span><span class="text-[11px] leading-tight">' + L.short + '</span>' +
+          '<span class="badge ' + (n === 0 ? 'zero' : '') + '">' + n + '</span></button>';
+      }).join('');
+    }
+
+    function plateAdd(id) {
+      if (state.phase !== 'open' || !LAYERS[id]) return;
+      const k = state.kitchen;
+      if (k.plate.length >= PLATE_CAP) { toast('Đĩa đầy quá rồi!', 'warn'); return; }
+      if (id === 'beef' || id === 'chicken') {
+        const idx = k.holding.findIndex((h) => h.kind === 'patty' && h.type === id);
+        if (idx < 0) { toast('Chưa có ' + LAYERS[id].name.toLowerCase() + ' trong khay đồ chín! Hãy nấu ở Trạm 1.', 'warn'); return; }
+        holdingUse(idx);
+        return;
+      }
+      if (id === 'bun_top') {
+        if (!k.plate.length) { toast('Đặt các nguyên liệu khác lên trước rồi mới đậy vỏ bánh trên nhé!', 'warn'); return; }
+        if (k.tray.length >= TRAY_CAP) { toast('Khay giao món đầy! Giao bớt món rồi hãy đậy bánh.', 'warn'); return; }
+        if (k.plateBunCredit > 0) k.plateBunCredit -= 1;
+        else if (!invTake('bun', 1)) { toast('Hết vỏ bánh trong kho!', 'warn'); Sound.play('angry'); return; }
+        k.plate.push({ id: 'bun_top' });
+        finishBurger();
+        return;
+      }
+      const inv = LAYERS[id].inv;
+      if (!invTake(inv, 1)) {
+        toast('Hết ' + INGREDIENTS[inv].name + ' trong kho!', 'warn');
+        Sound.play('angry');
+        return;
+      }
+      if (id === 'bun_bottom') k.plateBunCredit += 1;
+      k.plate.push({ id: id });
+      Sound.play('place');
+      refreshKitchen();
+      saveGame();
+    }
+
+    function matchRecipe(layers) {
+      const key = layers.map((l) => l.id).join('|');
+      return Object.keys(RECIPES).find((id) => RECIPES[id].type === 'burger' && RECIPES[id].layers.join('|') === key) || null;
+    }
+
+    function finishBurger() {
+      const k = state.kitchen;
+      const burger = { uid: uid(), kind: 'burger', layers: k.plate.slice() };
+      k.tray.push(burger);
+      k.plate = [];
+      k.plateBunCredit = 0;
+      lastPlateLen = 0;
+      const rid = matchRecipe(burger.layers);
+      Sound.play('cooked');
+      toast('🍔 ' + (rid ? RECIPES[rid].name : 'Burger tự chế') + ' đã được đặt lên khay giao món!', 'good');
+      refreshKitchen();
+      saveGame();
+    }
+
+    function clearPlate() {
+      const k = state.kitchen;
+      if (!k.plate.length) { toast('Đĩa đang trống mà!'); return; }
+      const n = k.plate.length;
+      k.plate = [];
+      k.plateBunCredit = 0;
+      trashed(n);
+      refreshKitchen();
+      saveGame();
+    }
+
+    function stackHTML(layers, animateFrom) {
+      return layers.map((l, idx) => '<div class="layer layer-' + l.id + (l.doneness ? ' stage-' + l.doneness : '') + (idx < animateFrom ? ' static' : '') + '"></div>').join('');
+    }
+
+    function renderPlate() {
+      const k = state.kitchen;
+      $('plate-stack').innerHTML = stackHTML(k.plate, Math.min(lastPlateLen, k.plate.length));
+      lastPlateLen = k.plate.length;
+      $('plate-status').innerHTML = k.plate.length
+        ? 'Đang xếp: ' + k.plate.map((l) => LAYERS[l.id].emoji).join(' ➜ ')
+        : (state.phase === 'open' ? 'Đĩa trống — bắt đầu với 🍞 Đế bánh nhé!' : 'Đĩa trống');
+    }
+
+    function selectedBurgerRecipe() {
+      const c = state.customers[state.selectedSpot];
+      if (!c) return null;
+      return c.order.find((id) => RECIPES[id].type === 'burger') || null;
+    }
+
+    function renderRecipeBook() {
+      const target = selectedBurgerRecipe();
+      const plateIds = state.kitchen.plate.map((l) => l.id);
+      const rows = unlockedRecipes().filter((id) => RECIPES[id].type === 'burger').map((id) => {
+        const r = RECIPES[id];
+        const isT = id === target;
+        let done = 0;
+        if (isT) {
+          while (done < plateIds.length && done < r.layers.length && plateIds[done] === r.layers[done]) done++;
+          if (done < plateIds.length) done = -1;
+        }
+        const chips = r.layers.map((l, j) => {
+          let cls = 'step-chip';
+          if (isT && done >= 0) {
+            if (j < done) cls += ' done';
+            else if (j === done) cls += ' next';
+          }
+          return '<span class="' + cls + '">' + LAYERS[l].emoji + ' ' + LAYERS[l].short + '</span>';
+        }).join('<span class="arrow">➜</span>');
+        return '<div class="recipe-row ' + (isT ? 'target' : '') + '">' +
+          '<span class="font-black mr-1 w-full">' + (isT ? '👉 ' : '') + r.icon + ' ' + r.name + ' — ' + fmtMoney(r.price) + '</span>' + chips +
+          (isT && done === -1 ? '<span class="text-[10px] font-black ml-1" style="color:#c0392b">⚠️ Sai thứ tự rồi! Dọn đĩa làm lại?</span>' : '') +
+          '</div>';
+      });
+      const friesTarget = !!(state.customers[state.selectedSpot] && state.customers[state.selectedSpot].order.indexOf('khoai') >= 0);
+      rows.push('<div class="recipe-row ' + (friesTarget && !target ? 'target' : '') + '"><span class="font-black mr-1 w-full">🍟 Khoai Tây Chiên — ' + fmtMoney(RECIPES.khoai.price) + '</span>' +
+        '<span class="step-chip">🥔 Chiên vàng ở Trạm 1</span><span class="arrow">➜</span><span class="step-chip">✋ Lấy ra = vào khay giao</span></div>');
+      $('recipe-book').innerHTML = rows.join('');
+    }
+
+    /* =====================================================
+       TRẠM 3: GIAO MÓN
+       ===================================================== */
+    const trayAnimated = new Set();
+
+    function isGoodBurgerFor(item, rid) {
+      return item.kind === 'burger' && matchRecipe(item.layers) === rid && item.layers.every((l) => !l.doneness || l.doneness === 'perfect');
+    }
+
+    function renderTray() {
+      const t = state.kitchen.tray;
+      let html = t.map((it, i) => {
+        let visual;
+        let label;
+        if (it.kind === 'burger') {
+          visual = '<div class="mini-wrap"><div class="burger-stack">' + stackHTML(it.layers, it.layers.length) + '</div></div>';
+          const rid = matchRecipe(it.layers);
+          label = rid ? RECIPES[rid].name : 'Burger tự chế ❓';
+          if (it.layers.some((l) => l.doneness && l.doneness !== 'perfect')) label += ' ⚠️';
+        } else {
+          visual = '<div class="mini-wrap flex items-end justify-center"><span class="' + foodClass('potato', it.doneness, false) + '" style="font-size:36px">🍟</span></div>';
+          label = 'Khoai chiên • ' + DONENESS_SHORT[it.doneness] + (it.doneness !== 'perfect' ? ' ⚠️' : '');
+        }
+        const cls = trayAnimated.has(it.uid) ? 'tray-item static' : 'tray-item';
+        return '<div class="' + cls + '">' + visual + '<div class="text-center leading-tight">' + label + '</div>' +
+          '<button class="x" data-action="tray-trash" data-index="' + i + '" title="Bỏ món này">✕</button></div>';
+      }).join('');
+      t.forEach((it) => trayAnimated.add(it.uid));
+      for (let i = t.length; i < TRAY_CAP; i++) html += '<div class="tray-empty">＋</div>';
+      $('tray-items').innerHTML = html;
+    }
+
+    function trayTrash(i) {
+      if (!state.kitchen.tray[i]) return;
+      state.kitchen.tray.splice(i, 1);
+      trashed(1);
+      refreshKitchen();
+      saveGame();
+    }
+
+    function renderServeTarget() {
+      const c = state.customers[state.selectedSpot];
+      const el = $('serve-target');
+      const tray = state.kitchen.tray;
+      if (!c) {
+        el.innerHTML = '<div class="serve-box"><div class="text-3xl">🙋</div><div class="text-sm font-bold opacity-70">' +
+          (state.phase === 'open' ? 'Chưa chọn khách. Bấm vào một vị khách ở quầy để chọn.' : 'Quán chưa mở cửa.') + '</div></div>';
+        $('btn-deliver').disabled = true;
+        return;
+      }
+      const rows = c.order.map((rid) => {
+        const r = RECIPES[rid];
+        let mark;
+        if (r.type === 'burger') {
+          const exact = tray.some((it) => isGoodBurgerFor(it, rid));
+          const any = tray.some((it) => it.kind === 'burger');
+          mark = exact ? '✅' : any ? '⚠️' : '⏳';
+        } else {
+          const good = tray.some((it) => it.kind === 'fries' && it.doneness === 'perfect');
+          const any = tray.some((it) => it.kind === 'fries');
+          mark = good ? '✅' : any ? '⚠️' : '⏳';
+        }
+        return '<div class="flex items-center justify-between gap-2 text-sm font-bold"><span>' + r.icon + ' ' + r.name + '</span><span>' + mark + '</span></div>';
+      }).join('');
+      el.innerHTML = '<div class="serve-box">' +
+        '<div class="flex items-center gap-2"><span class="text-4xl">' + c.avatar + '</span>' +
+        '<div class="text-left"><div class="font-black">Khách: ' + c.name + (c.critic ? ' 🎩' : '') + '</div>' +
+        '<div class="text-xs font-bold opacity-70">Hóa đơn: ' + fmtMoney(orderPrice(c)) + (c.critic ? ' (nhà phê bình trả x1.5)' : '') + '</div></div></div>' +
+        '<div class="mt-2 space-y-1">' + rows + '</div></div>';
+      $('btn-deliver').disabled = !tray.length || state.phase !== 'open';
+    }
+
+    function renderDayMini() {
+      const ds = state.dayStats;
+      $('day-mini-stats').innerHTML =
+        '<div class="serve-box text-left">' +
+        '<div class="font-black mb-1">📊 Hôm nay</div>' +
+        '<div class="flex flex-wrap gap-x-3 gap-y-1">' +
+        '<span>👥 Đã phục vụ: ' + ds.served + '</span>' +
+        '<span>😊 Hài lòng: ' + ds.happy + '</span>' +
+        '<span>😡 Nổi giận: ' + (ds.angry + ds.lost) + '</span>' +
+        '<span>💵 Doanh thu: ' + fmtMoney(ds.revenue + ds.tips) + '</span>' +
+        '</div></div>';
+    }
+
+    function refreshKitchen() {
+      renderGrillButtons();
+      renderGrill();
+      renderHolding();
+      renderAssemblyButtons();
+      renderPlate();
+      renderRecipeBook();
+      renderTray();
+      renderServeTarget();
+      renderDayMini();
+      renderPower();
+      $('kitchen-locked').classList.toggle('hidden', state.phase === 'open');
+    }
+
+    /* =====================================================
+       CHẤM ĐIỂM MÓN ĂN
+       ===================================================== */
+    function countIn(arr, x) { return arr.filter((v) => v === x).length; }
+    function uniq(arr) { return arr.filter((v, i) => arr.indexOf(v) === i); }
+
+    function evaluateBurger(burger, recipe) {
+      const issues = [];
+      const ids = burger.layers.map((l) => l.id);
+      const req = recipe.layers;
+      const reqPatty = req.indexOf('beef') >= 0 ? 'beef' : 'chicken';
+      const patties = burger.layers.filter((l) => l.id === 'beef' || l.id === 'chicken');
+      if (!patties.length) {
+        issues.push({ major: true, text: pick(COMPLAINTS.noMeat) });
+      } else {
+        if (!patties.some((p) => p.id === reqPatty)) {
+          issues.push({ major: true, text: pick(reqPatty === 'beef' ? COMPLAINTS.wrongBeef : COMPLAINTS.wrongChicken) });
+        }
+        if (patties.some((p) => p.doneness === 'burnt')) issues.push({ major: true, text: pick(COMPLAINTS.burnt) });
+        else if (patties.some((p) => p.doneness === 'raw')) issues.push({ major: true, text: pick(COMPLAINTS.raw) });
+        if (patties.length > 1) issues.push({ major: false, penalty: 10, text: 'Hai miếng thịt? Tôi đâu có gọi suất đôi...' });
+      }
+      const missing = uniq(req).filter((x) => x !== reqPatty && countIn(ids, x) < countIn(req, x));
+      if (missing.length) {
+        issues.push({ major: true, text: 'Thiếu ' + missing.map((x) => LAYERS[x].name.toLowerCase()).join(', ') + ' rồi! ' + pick(COMPLAINTS.missingTail) });
+      }
+      const extras = uniq(ids).filter((x) => x !== 'beef' && x !== 'chicken' && countIn(ids, x) > countIn(req, x));
+      if (extras.length) {
+        issues.push({ major: false, penalty: 15, text: 'Tôi đâu có gọi thêm ' + extras.map((x) => LAYERS[x].name.toLowerCase()).join(', ') + '...' });
+      }
+      if (!missing.length && !extras.length && patties.length === 1 && patties[0].id === reqPatty && ids.join('|') !== req.join('|')) {
+        issues.push({ major: false, penalty: 25, text: pick(COMPLAINTS.wrongOrder) });
+      }
+      const score = issues.reduce((s, it) => s - (it.major ? 100 : it.penalty), 100);
+      return { issues: issues, score: score };
+    }
+
+    function evaluateFries(item) {
+      if (item.doneness === 'raw') return { issues: [{ major: true, text: pick(COMPLAINTS.rawFries) }], score: 0 };
+      if (item.doneness === 'burnt') return { issues: [{ major: true, text: pick(COMPLAINTS.burntFries) }], score: 0 };
+      return { issues: [], score: 100 };
+    }
+
+    function deliver() {
+      if (state.phase !== 'open' || isPaused()) return;
+      const spot = state.selectedSpot;
+      const c = state.customers[spot];
+      if (!c) { toast('Hãy bấm chọn một vị khách ở quầy trước!', 'warn'); return; }
+      const tray = state.kitchen.tray;
+      if (!tray.length) { toast('Khay giao món đang trống!', 'warn'); return; }
+      const needB = c.order.filter((id) => RECIPES[id].type === 'burger').length;
+      const needF = c.order.filter((id) => RECIPES[id].type === 'fries').length;
+      const haveB = tray.filter((t) => t.kind === 'burger').length;
+      const haveF = tray.filter((t) => t.kind === 'fries').length;
+      if (haveB < needB || haveF < needF) {
+        const miss = [];
+        if (haveB < needB) miss.push('burger');
+        if (haveF < needF) miss.push('khoai tây chiên');
+        toast('Khay chưa có đủ món khách gọi: còn thiếu ' + miss.join(' và ') + '!', 'warn');
+        return;
+      }
+      const used = new Set();
+      const issues = [];
+      c.order.forEach((rid) => {
+        const r = RECIPES[rid];
+        let best = null;
+        let bestEval = null;
+        tray.forEach((it) => {
+          if (used.has(it.uid)) return;
+          if (r.type === 'burger' && it.kind !== 'burger') return;
+          if (r.type === 'fries' && it.kind !== 'fries') return;
+          const ev = r.type === 'burger' ? evaluateBurger(it, r) : evaluateFries(it);
+          if (!bestEval || ev.score > bestEval.score) { best = it; bestEval = ev; }
+        });
+        if (best) {
+          used.add(best.uid);
+          bestEval.issues.forEach((x) => issues.push(x));
+        }
+      });
+      state.kitchen.tray = tray.filter((it) => !used.has(it.uid));
+      const ratio = clamp(c.patience / c.maxPatience, 0, 1);
+      if (ratio <= LATE_RATIO) issues.push({ major: true, text: pick(COMPLAINTS.late) });
+      else if (ratio < 0.5) issues.push({ major: false, penalty: 10, text: pick(COMPLAINTS.slow) });
+      resolveCustomer(spot, issues, ratio);
+    }
+
+    function resolveCustomer(spot, issues, ratio) {
+      const c = state.customers[spot];
+      if (!c) return;
+      const el = $('cust-' + spot);
+      const price = orderPrice(c);
+      const majors = issues.filter((x) => x.major);
+      const minors = issues.filter((x) => !x.major);
+      const score = majors.length ? 0 : Math.max(0, 100 - minors.reduce((s, x) => s + x.penalty, 0));
+      const repMul = c.critic ? 2 : 1;
+      const decorMul = state.upgrades.decor ? 1.5 : 1;
+      let pay = 0;
+      let tip = 0;
+      let rep = 0;
+      let tone;
+      let title;
+      let text;
+      if (majors.length) {
+        rep = -6 * repMul;
+        tone = 'angry';
+        title = c.name + ' nổi giận và không trả tiền!';
+        text = majors.map((m) => '“' + m.text + '”').join('<br>');
+        if (c.critic) text += '<br>“' + CRITIC_ANGRY + '”';
+        state.dayStats.angry++;
+        state.lifetime.angry++;
+        Sound.play('angry');
+      } else if (score >= 90) {
+        pay = price;
+        tip = Math.max(1, Math.round(price * (0.12 + 0.25 * ratio) * (0.6 + state.reputation / 125) * decorMul));
+        rep = 3 * repMul;
+        tone = 'happy';
+        title = c.name + ' rất hài lòng!';
+        text = '“' + (c.critic ? pick(CRITIC_PRAISE) : pick(HAPPY_LINES)) + '”';
+        state.dayStats.happy++;
+        Sound.play('coin');
+      } else if (score >= 65) {
+        pay = price;
+        tip = Math.round(price * 0.06 * decorMul);
+        rep = 1 * repMul;
+        tone = 'ok';
+        title = c.name + ' thấy tạm ổn';
+        text = '“' + pick(OK_LINES) + '”' + (minors.length ? '<br><span class="opacity-80">Góp ý: “' + minors[0].text + '”</span>' : '');
+        Sound.play('coin');
+      } else {
+        pay = Math.round(price * 0.7);
+        tip = 0;
+        rep = -2 * repMul;
+        tone = 'ok';
+        title = c.name + ' không vui lắm...';
+        text = minors.map((m) => '“' + m.text + '”').join('<br>') + '<br><span class="opacity-80">Khách chỉ trả 70% tiền.</span>';
+        Sound.play('angry');
+      }
+      state.money += pay + tip;
+      state.dayStats.revenue += pay;
+      state.dayStats.tips += tip;
+      state.dayStats.served++;
+      state.lifetime.served++;
+      state.lifetime.earned += pay + tip;
+      if (pay) floatText('+' + fmtMoney(pay), el, '#2f8f57', 0);
+      if (tip) floatText('💝 Tip +' + fmtMoney(tip), el, '#d6457a', 1);
+      floatText((rep >= 0 ? '+' : '−') + Math.abs(rep) + ' ⭐', el, rep >= 0 ? '#c98a00' : '#e05561', 2);
+      changeRep(rep);
+      showPopup({
+        avatar: c.avatar,
+        title: title,
+        text: text,
+        tone: tone,
+        extra: '🏅 Điểm món: ' + score + '/100 • ' + (pay ? '💵 +' + fmtMoney(pay) : '💸 Không trả tiền') + (tip ? ' • 💝 Tip ' + fmtMoney(tip) : '') + ' • ' + (rep >= 0 ? '+' : '−') + Math.abs(rep) + ' ⭐'
+      });
+      state.customers[spot] = null;
+      autoSelect();
+      renderCustomers();
+      refreshAll();
+      saveGame();
+    }
+
+    /* =====================================================
+       ĐIỀU KHIỂN CHUNG: TẠM DỪNG, ÂM THANH, HƯỚNG DẪN, RESET
+       ===================================================== */
+    function togglePause() {
+      if (state.phase !== 'open') { toast('Quán chưa mở cửa nên thời gian đang đứng yên.'); return; }
+      if (Modal.isOpen()) return;
+      state.paused = true;
+      updatePauseButton();
+      Modal.show({
+        icon: '⏸️',
+        title: 'Đang tạm dừng',
+        html: 'Thời gian trong quán đã ngừng trôi. Khách, bếp và đồng hồ đều đứng yên. Nghỉ ngơi một chút nhé! ☕',
+        buttons: [{ label: '▶️ Tiếp tục', cls: 'btn-mint', onClick: () => { state.paused = false; updatePauseButton(); } }]
+      });
+    }
+
+    function toggleSound() {
+      Sound.enabled = !Sound.enabled;
+      $('btn-sound').textContent = Sound.enabled ? '🔊' : '🔇';
+      saveSettings();
+      if (Sound.enabled) Sound.play('click');
+    }
+
+    function helpHTML() {
+      return '<ol class="help-list list-decimal pl-5">' +
+        '<li><b>Mở cửa:</b> Quán mở từ 8:00 đến 20:00. Trước giờ mở cửa hãy kiểm tra <b>📦 Kho &amp; Nhập hàng</b>.</li>' +
+        '<li><b>Chọn khách:</b> Bấm vào một vị khách ở quầy để xem món họ gọi. Thanh màu dưới chân là độ kiên nhẫn.</li>' +
+        '<li><b>Trạm 1 – Bếp:</b> Bấm Thịt bò / Gà / Khoai tây để đặt lên vỉ. Canh vạch: <span style="color:#2f7a43">Xanh = sống</span>, <span style="color:#b08000">Vàng = chín hoàn hảo</span>, <span style="color:#a33b38">Đỏ/Đen = cháy</span>. Bấm “✋ Lấy ra” đúng lúc! Đồ cháy nên vứt vào 🗑️ thùng rác.</li>' +
+        '<li><b>Trạm 2 – Lắp ráp:</b> Xếp đúng thứ tự từ dưới lên: 🍞 Đế bánh ➜ 🥩 Thịt chín ➜ 🧀 Phô mai ➜ 🥬 Xà lách ➜ 🍅 Sốt ➜ 🍔 Vỏ bánh trên. Đậy vỏ trên là bánh hoàn tất và lên khay.</li>' +
+        '<li><b>Trạm 3 – Giao món:</b> Bấm “🛎️ Giao cho khách”. Món đúng công thức, thịt chín vừa, giao nhanh = nhiều tiền và Tip!</li>' +
+        '<li><b>Cẩn thận:</b> Thịt sống/cháy, thiếu nguyên liệu hoặc giao trễ (thanh kiên nhẫn đỏ) khiến khách nổi giận, không trả tiền và trừ ⭐.</li>' +
+        '<li><b>Sự cố:</b> Mất điện ➜ bấm liên tục “🔧 Sửa cầu dao”. Nguyên liệu tươi có thể hỏng qua đêm hoặc ôi thiu đột xuất.</li>' +
+        '<li><b>Nâng cấp:</b> Dùng tiền lời mua Bếp cao cấp, Tủ đông, Máy phát điện và Trang trí quán ở <b>🛠️ Cửa hàng Nâng cấp</b>.</li>' +
+        '</ol><div class="text-xs mt-2 opacity-80">💾 Tiến trình được tự động lưu vào trình duyệt (LocalStorage).</div>';
+    }
+
+    function showHelp() {
+      Modal.show({ icon: '📖', title: 'Hướng dẫn chơi', html: helpHTML(), buttons: [{ label: '👍 Đã hiểu', cls: 'btn-mint' }] });
+    }
+
+    function showIntro() {
+      Modal.show({
+        icon: '🍔',
+        title: 'Chào mừng đến Tiny Fast-Food Story!',
+        html: '<div class="mb-2">Bạn vừa nhận lại một tiệm ăn nhanh tí hon ở góc phố. Hãy biến nó thành quán burger được yêu thích nhất khu phố nhé! 💕</div>' + helpHTML(),
+        buttons: [{ label: '🚀 Bắt đầu thôi!', cls: 'btn-mint', onClick: () => { state.seenIntro = true; saveGame(); } }]
+      });
+    }
+
+    function confirmReset() {
+      Modal.show({
+        icon: '🔄',
+        title: 'Chơi lại từ đầu?',
+        html: 'Toàn bộ tiến trình (tiền, danh tiếng, ngày, kho hàng, nâng cấp) sẽ bị <b>xóa vĩnh viễn</b>.<br>Bạn chắc chắn chứ?',
+        buttons: [
+          { label: '↩️ Hủy', cls: 'btn-sky' },
+          { label: '🗑️ Xóa &amp; chơi lại', cls: 'btn-pink', onClick: doReset }
+        ]
+      });
+    }
+
+    function doReset() {
+      try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* bỏ qua */ }
+      Modal.queue = [];
+      state = createDefaultState();
+      animatedCustomers.clear();
+      trayAnimated.clear();
+      lastPlateLen = 0;
+      lastSkyKey = '';
+      switchTab('kitchen');
+      beginPrep();
+      toast('Đã bắt đầu lại từ đầu! Chúc bạn may mắn 🍀', 'good');
+      showIntro();
+    }
+
+    /* =====================================================
+       VÒNG LẶP GAME
+       ===================================================== */
+    let lastTs = 0;
+    let saveTimer = 0;
+    let lastRush = false;
+
+    function update(dt) {
+      if (state.phase !== 'open' || isPaused()) return;
+      state.minutes = Math.min(CLOSE_MIN, state.minutes + dt * GAME_MIN_PER_SEC);
+      checkScheduledEvents();
+      updatePower(dt);
+      updateCustomers(dt);
+      updateSpawning(dt);
+      updateGrill(dt);
+      const rush = isRushHour(state.minutes);
+      if (rush && !lastRush) toast('🔥 Giờ cao điểm! Khách sẽ kéo đến đông hơn!', 'warn');
+      lastRush = rush;
+      saveTimer += dt;
+      if (saveTimer > 5) {
+        saveTimer = 0;
+        saveGame();
+      }
+      if (state.minutes >= CLOSE_MIN && !isPaused()) endDay();
+    }
+
+    function frame(ts) {
+      const dt = lastTs ? Math.min(0.25, (ts - lastTs) / 1000) : 0;
+      lastTs = ts;
+      try {
+        update(dt);
+        renderHUD();
+        updateCustomerBars();
+        updateGrillDynamic();
+      } catch (err) {
+        console.error(err);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    /* =====================================================
+       SỰ KIỆN BẤM NÚT (event delegation)
+       ===================================================== */
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-action]');
+      if (!el || el.disabled) return;
+      Sound.ensure();
+      const a = el.dataset.action;
+      switch (a) {
+        case 'tab': Sound.play('click'); switchTab(el.dataset.tab); break;
+        case 'open-shop': openShop(); break;
+        case 'grill-add': grillAdd(el.dataset.item); break;
+        case 'grill-take': grillTake(Number(el.dataset.slot)); break;
+        case 'grill-trash': grillTrash(Number(el.dataset.slot)); break;
+        case 'holding-use': holdingUse(Number(el.dataset.index)); break;
+        case 'holding-trash': holdingTrash(Number(el.dataset.index)); break;
+        case 'plate-add': plateAdd(el.dataset.layer); break;
+        case 'plate-clear': clearPlate(); break;
+        case 'tray-trash': trayTrash(Number(el.dataset.index)); break;
+        case 'select-customer': selectCustomer(Number(el.dataset.spot)); break;
+        case 'deliver': deliver(); break;
+        case 'fix-breaker': fixBreaker(); break;
+        case 'buy': buyIngredient(el.dataset.item, Number(el.dataset.qty)); break;
+        case 'buy-upgrade': buyUpgrade(el.dataset.id); break;
+        case 'pause': togglePause(); break;
+        case 'sound': toggleSound(); break;
+        case 'help': Sound.play('click'); showHelp(); break;
+        case 'reset': Sound.play('click'); confirmReset(); break;
+        default: break;
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => { if (document.hidden) saveGame(); });
+    window.addEventListener('beforeunload', saveGame);
+    window.addEventListener('resize', positionPopups);
+
+    /* =====================================================
+       KHỞI ĐỘNG GAME
+       ===================================================== */
+    function init() {
+      loadSettings();
+      $('btn-sound').textContent = Sound.enabled ? '🔊' : '🔇';
+      const res = loadGame();
+      state = res.state;
+      switchTab('kitchen');
+      if (state.phase === 'closed') {
+        renderAll();
+        startNextDay();
+      } else {
+        renderAll();
+      }
+      if (!state.seenIntro) {
+        showIntro();
+      } else if (res.loaded && state.phase === 'open') {
+        state.paused = true;
+        Modal.show({
+          icon: '👋',
+          title: 'Chào mừng trở lại!',
+          html: 'Bạn đang ở <b>Ngày thứ ' + state.day + '</b>, lúc <b>' + fmtClock(state.minutes) + '</b>.<br>Quán vẫn đang mở cửa, khách đang chờ đó!',
+          buttons: [{ label: '▶️ Tiếp tục bán hàng', cls: 'btn-mint', onClick: () => { state.paused = false; updatePauseButton(); } }]
+        });
+      }
+      if (state.phase === 'prep') checkBankrupt();
+      positionPopups();
+      requestAnimationFrame(frame);
+    }
+
+    init();
+  })();
+  </script>
+</body>
+</html>
