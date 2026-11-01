@@ -24,12 +24,12 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Prepare web files (inline Tailwind so the app works offline)
+      - name: Prepare web files (inline Tailwind and Three.js so the app works offline)
         run: |
           mkdir -p app/www
           cd app
           npm init -y > /dev/null
-          npm install --no-audit --no-fund @capacitor/core@6.2.0 @capacitor/cli@6.2.0 @capacitor/android@6.2.0 tailwindcss@3.4.17
+          npm install --no-audit --no-fund @capacitor/core@6.2.0 @capacitor/cli@6.2.0 @capacitor/android@6.2.0 tailwindcss@3.4.17 three@0.149.0
           printf '@tailwind base;\n@tailwind components;\n@tailwind utilities;\n' > tw-input.css
           echo "module.exports = { content: ['../index.html'] };" > tailwind.config.js
           npx tailwindcss -c tailwind.config.js -i tw-input.css -o tw-out.css --minify
@@ -37,9 +37,12 @@ jobs:
             const fs = require('fs');
             const html = fs.readFileSync('../index.html', 'utf8');
             const css = fs.readFileSync('tw-out.css', 'utf8');
+            const three = fs.readFileSync('node_modules/three/build/three.min.js', 'utf8');
             const tag = '<script src=\"https://cdn.tailwindcss.com\"></script>';
-            if (!html.includes(tag)) { console.error('Tailwind tag not found'); process.exit(1); }
-            fs.writeFileSync('www/index.html', html.split(tag).join('<style>' + css + '</style>'));
+            const threeTag = '<script src=\"https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js\"></script>';
+            if (!html.includes(tag) || !html.includes(threeTag)) { console.error('CDN tags not found'); process.exit(1); }
+            const out = html.split(tag).join('<style>' + css + '</style>').split(threeTag).join('<script>' + three + '</script>');
+            fs.writeFileSync('www/index.html', out);
           "
 
       - name: Create Android project
@@ -47,6 +50,8 @@ jobs:
           cd app
           echo '{"appId":"com.tiemdoan.tinyfastfood","appName":"Tiny Fast-Food Story","webDir":"www"}' > capacitor.config.json
           npx cap add android
+          sed -i 's/<activity/<activity android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
+          grep -q 'sensorLandscape' android/app/src/main/AndroidManifest.xml
           npx cap sync android
 
       - name: Build debug APK
