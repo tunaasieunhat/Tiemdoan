@@ -1,12 +1,10 @@
 {
-  "version": "3.1.0",
+  "version": "3.1.1",
   "date": "01/11/2026",
-  "title": "Thông cáo cập nhật",
+  "title": "Toàn màn hình & sửa lỗi sàn",
   "notes": [
-    "Sau mỗi lần cập nhật, game tự hiện bảng “Có gì mới” khi bạn mở lại.",
-    "Màn hình chính báo khi đã có phiên bản mới, kèm nút tải về.",
-    "Xem lại lịch sử cập nhật bằng nút 📰 ở màn hình chính hoặc trong ❓ Hướng dẫn.",
-    "Màn hình chính và màn tạo hồ sơ gọn gàng hơn trên điện thoại xoay ngang."
+    "Ẩn thanh trạng thái của điện thoại để game dùng trọn màn hình (vuốt từ mép màn hình để hiện lại tạm thời).",
+    "Sửa lỗi sàn quán bị nhấp nháy, sọc vằn khi camera xoay sang góc khác."
   ],
   "download": "https://github.com/tunaasieunhat/Tiemdoan/releases/tag/apk-latest"
 }

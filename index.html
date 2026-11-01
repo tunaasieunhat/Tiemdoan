@@ -1371,11 +1371,18 @@
        Mỗi lần cập nhật game: tăng GAME_VERSION, thêm một mục lên đầu
        CHANGELOG và sửa file version.json ở thư mục gốc cho khớp.
        ===================================================== */
-    const GAME_VERSION = '3.1.0';
+    const GAME_VERSION = '3.1.1';
     const SEEN_VERSION_KEY = 'tinyFastFoodStory_seenVersion';
     const VERSION_URL = 'https://raw.githubusercontent.com/tunaasieunhat/Tiemdoan/main/version.json';
     const DOWNLOAD_URL = 'https://github.com/tunaasieunhat/Tiemdoan/releases/tag/apk-latest';
     const CHANGELOG = [
+      {
+        version: '3.1.1', date: '01/11/2026', title: 'Toàn màn hình & sửa lỗi sàn',
+        items: [
+          'Ẩn thanh trạng thái của điện thoại để game dùng trọn màn hình (vuốt từ mép màn hình để hiện lại tạm thời).',
+          'Sửa lỗi sàn quán bị nhấp nháy, sọc vằn khi camera xoay sang góc khác.'
+        ]
+      },
       {
         version: '3.1.0', date: '01/11/2026', title: 'Thông cáo cập nhật',
         items: [
@@ -2647,7 +2654,21 @@
       enterGame(false);
     }
 
+    /* Ẩn thanh trạng thái/thanh địa chỉ trên trình duyệt điện thoại (APK tự ẩn bằng chế độ immersive) */
+    function goFullscreen() {
+      if (window.Capacitor) return;
+      const el = document.documentElement;
+      const touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      if (!touch || document.fullscreenElement || document.webkitFullscreenElement) return;
+      try {
+        const req = el.requestFullscreen || el.webkitRequestFullscreen;
+        const p = req && req.call(el, { navigationUI: 'hide' });
+        if (p && p.catch) p.catch(() => {});
+      } catch (err) { /* bỏ qua */ }
+    }
+
     function enterGame(isNew) {
+      goFullscreen();
       showScreen('game');
       World.init();
       World.resize();
@@ -4584,7 +4605,8 @@
       fl.rotation.x = -Math.PI / 2;
       fl.receiveShadow = true;
       root.add(fl);
-      root.add(B(16.8, 0.5, 10.8, '#d9a777', 0, -0.5, 0.05));
+      /* Bệ sàn thấp hơn mặt sàn một chút để không bị nhấp nháy (z-fighting) khi xoay camera */
+      root.add(B(16.8, 0.5, 10.8, '#d9a777', 0, -0.53, 0.05));
       root.add(B(17.2, 0.25, 11.2, '#f3c9a3', 0, -0.75, 0.05, false));
 
       const wallTex = canvasTex(1024, 256, (g, w, h) => {
@@ -5416,6 +5438,7 @@
         const sc = L.sun.shadow.camera;
         sc.left = -12; sc.right = 12; sc.top = 10; sc.bottom = -10; sc.near = 1; sc.far = 45;
         L.sun.shadow.bias = -0.0008;
+        L.sun.shadow.normalBias = 0.02;
         SCN.add(L.sun);
         const root = new THREE.Group();
         SCN.add(root);

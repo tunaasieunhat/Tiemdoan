@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches: [main, claude/untitled-session-hrxf6u]
-    paths: ['index.html', 'version.json', 'android-signing/**', '.github/workflows/build-apk.yml']
+    paths: ['index.html', 'version.json', 'android-signing/**', 'android-native/**', '.github/workflows/build-apk.yml']
   workflow_dispatch:
 
 permissions:
@@ -61,6 +61,8 @@ jobs:
           npx cap add android
           sed -i 's/<activity/<activity android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
           grep -q 'sensorLandscape' android/app/src/main/AndroidManifest.xml
+          cp ../android-native/MainActivity.java android/app/src/main/java/com/tiemdoan/tinyfastfood/MainActivity.java
+          grep -q 'hideSystemBars' android/app/src/main/java/com/tiemdoan/tinyfastfood/MainActivity.java
           VER=$(node -p "require('../version.json').version")
           sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"$VER\"/" android/app/build.gradle
           grep -E 'versionCode|versionName' android/app/build.gradle

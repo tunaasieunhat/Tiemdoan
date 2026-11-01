@@ -93,6 +93,7 @@ The script runs top to bottom in this order:
 ## Progress (as of 2026-11-01)
 
 Shipped, newest first (each version is a `CHANGELOG` entry):
+- **3.1.1:** immersive full screen (APK hides status/navigation bars via `android-native/MainActivity.java`, which CI copies over Capacitor's; mobile browsers call `requestFullscreen` on entering the game), and fixed floor z-fighting (the floor base box top sat exactly at the floor plane's y=0).
 - **Fixed APK signing:** all builds now share `android-signing/debug.keystore`. Players still on an older APK must uninstall once; after that, updates install in place.
 - **3.1.0:** in-game update announcements, the `version.json` new-version banner, versioned APKs and release notes, compact loading/profile screens on short landscape screens.
 - **3.0.0:** landscape Three.js restaurant with tappable zones, walking 3D customers, state-mirrored food, time-of-day lighting, and upgrades shown in the room.
