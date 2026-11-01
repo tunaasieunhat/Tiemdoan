@@ -89,3 +89,17 @@ The script runs top to bottom in this order:
 - **Rendering:** structural changes re-render with `innerHTML` (`refreshKitchen`, `renderCounter`, `renderServe`, `refreshAll`). Per-frame changes update existing nodes: `[data-pat]` patience bars, `[data-mood]` faces, cook markers and the drink level. Don't rebuild clickable DOM every frame, or clicks get lost.
 - **`.hidden`** is `display:none !important`, because Tailwind and the custom display rules would otherwise override it.
 - **Layout** is landscape-first. `@media (max-height: 520px)` compacts the UI for phones held sideways, and a rotate hint covers the game in portrait.
+
+## Progress (as of 2026-11-01)
+
+Shipped, newest first (each version is a `CHANGELOG` entry):
+- **Fixed APK signing:** all builds now share `android-signing/debug.keystore`. Players still on an older APK must uninstall once; after that, updates install in place.
+- **3.1.0:** in-game update announcements, the `version.json` new-version banner, versioned APKs and release notes, compact loading/profile screens on short landscape screens.
+- **3.0.0:** landscape Three.js restaurant with tappable zones, walking 3D customers, state-mirrored food, time-of-day lighting, and upgrades shown in the room.
+- **2.0.0:** SVG chibi art, per-station panels, tutorial, loading and profile screens, tap effects, one-by-one customer queue, 12-item menu.
+- **1.0.0:** core loop (cook, assemble, serve, grade), inventory with spoilage, power-outage and spoilage events, 4 upgrades.
+- **CI:** APK workflow publishing the `apk-latest` pre-release.
+
+Open items:
+- PR #1 (dev branch into `main`) is not merged yet. Until it is, the new-version banner can't find `version.json` on `main`.
+- Untested so far: frame rate on real phones and loading from the live CDNs (development tests used local copies under SwiftShader). A low-graphics option (no shadows, lower pixel ratio) was offered if phones stutter.
