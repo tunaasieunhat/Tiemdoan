@@ -3,7 +3,7 @@ name: Build APK
 on:
   push:
     branches: [main, claude/untitled-session-hrxf6u]
-    paths: ['index.html', 'version.json', '.github/workflows/build-apk.yml']
+    paths: ['index.html', 'version.json', 'android-signing/**', '.github/workflows/build-apk.yml']
   workflow_dispatch:
 
 permissions:
@@ -68,6 +68,8 @@ jobs:
 
       - name: Build debug APK
         run: |
+          mkdir -p ~/.android
+          cp android-signing/debug.keystore ~/.android/debug.keystore
           cd app/android
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon

@@ -44,6 +44,7 @@ Standing requirements from the owner:
   - Forces `sensorLandscape`.
   - Sets `versionCode` to `run_number` and `versionName` from `version.json`.
   - Builds a debug APK and republishes the `apk-latest` pre-release, with notes taken from `version.json`.
+  - Signs with the committed key `android-signing/debug.keystore` (standard debug credentials: store/key password `android`, alias `androiddebugkey`), so a new APK installs over the old one and keeps player data. Don't regenerate or replace this key, or every player must uninstall and loses progress.
 - **The inlining string-matches the exact `<head>` tags.** Change these together with the workflow:
   - `<script src="https://cdn.tailwindcss.com"></script>`
   - `<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>`
