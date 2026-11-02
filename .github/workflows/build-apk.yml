@@ -63,6 +63,10 @@ jobs:
           grep -q 'sensorLandscape' android/app/src/main/AndroidManifest.xml
           cp ../android-native/MainActivity.java android/app/src/main/java/com/tiemdoan/tinyfastfood/MainActivity.java
           grep -q 'hideSystemBars' android/app/src/main/java/com/tiemdoan/tinyfastfood/MainActivity.java
+          STYLES=android/app/src/main/res/values/styles.xml
+          sed -i 's#<item name="windowNoTitle">true</item>#<item name="windowNoTitle">true</item><item name="android:windowFullscreen">true</item>#' $STYLES
+          sed -i 's#<item name="android:background">@drawable/splash</item>#<item name="android:background">@drawable/splash</item><item name="android:windowFullscreen">true</item>#' $STYLES
+          test "$(grep -c 'android:windowFullscreen' $STYLES)" -eq 2
           VER=$(node -p "require('../version.json').version")
           sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"$VER\"/" android/app/build.gradle
           grep -E 'versionCode|versionName' android/app/build.gradle

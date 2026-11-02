@@ -1,10 +1,14 @@
 {
-  "version": "3.1.1",
-  "date": "01/11/2026",
-  "title": "Toàn màn hình & sửa lỗi sàn",
+  "version": "3.2.0",
+  "date": "02/11/2026",
+  "title": "Cấp độ quán & thuê nhân viên",
   "notes": [
-    "Ẩn thanh trạng thái của điện thoại để game dùng trọn màn hình (vuốt từ mép màn hình để hiện lại tạm thời).",
-    "Sửa lỗi sàn quán bị nhấp nháy, sọc vằn khi camera xoay sang góc khác."
+    "Cấp độ quán Lv 1–10: lúc mới mở quán còn vắng (tối đa 2 khách cùng lúc), lên cấp thì khách kéo đến đông dần.",
+    "Nhận XP khi khách hài lòng và mỗi khi kết thúc ngày; lên cấp được thưởng tiền, mở món mới và vị trí nhân viên mới.",
+    "Thuê nhân viên: Thu ngân, Phụ bếp, Pha chế, Lắp ráp, Phục vụ tự làm từng phần việc; trả lương mỗi tối và đào tạo để làm nhanh hơn.",
+    "Góc Nhân viên mới trong quán 3D, nhân viên đứng làm việc ngay tại từng quầy.",
+    "Các bảng khu vực gọn gàng hơn trên điện thoại: nút bấm hiện ngay, không phải kéo xuống sâu.",
+    "Game tràn kín màn hình, kể cả chỗ camera đục lỗ; sàn quán không còn bị sọc khi xoay camera."
   ],
   "download": "https://github.com/tunaasieunhat/Tiemdoan/releases/tag/apk-latest"
 }

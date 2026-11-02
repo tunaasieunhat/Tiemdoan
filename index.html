@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Tiny Fast-Food Story</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -153,8 +156,14 @@
     /* =====================================================
        BỐ CỤC GAME MÀN HÌNH NGANG (3D)
        ===================================================== */
-    :root { --hud-h: 58px; }
-    #screen-game { position: fixed; inset: 0; overflow: hidden; background: #fbe9d7; }
+    :root {
+      --hud-h: 58px;
+      /* Vùng camera đục lỗ / tai thỏ: trình duyệt cho env(), bản APK gửi số đo qua --nsa-* */
+      --sal: max(env(safe-area-inset-left, 0px), var(--nsa-l, 0px));
+      --sar: max(env(safe-area-inset-right, 0px), var(--nsa-r, 0px));
+    }
+    #screen-game { position: fixed; inset: 0; overflow: hidden; background: #fbe9d7; --zp-w: min(600px, 52vw); }
+    #screen-game.panel-wide { --zp-w: min(960px, 74vw); }
     #stage3d { position: absolute; inset: 0; }
     #stage3d canvas { display: block; width: 100% !important; height: 100% !important; touch-action: none; outline: none; }
     #stage3d.grab canvas { cursor: grabbing; }
@@ -185,7 +194,7 @@
     /* ---------- HUD nổi trên cùng ---------- */
     #hud {
       position: absolute; top: 0; left: 0; right: 0; z-index: 40; display: flex; align-items: center; gap: 8px;
-      padding: 6px 10px; background: linear-gradient(rgba(255, 248, 238, 0.97), rgba(255, 248, 238, 0.9));
+      padding: 6px calc(10px + var(--sar)) 6px calc(10px + var(--sal)); background: linear-gradient(rgba(255, 248, 238, 0.97), rgba(255, 248, 238, 0.9));
       border-bottom: 3px solid var(--line); box-shadow: 0 4px 16px rgba(166, 110, 70, 0.1);
     }
     .hud-left { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 0 1 auto; }
@@ -206,7 +215,7 @@
 
     /* ---------- Thanh khu vực (góc trái dưới) ---------- */
     #scene-nav {
-      position: absolute; left: 10px; bottom: 10px; z-index: 30; padding: 6px; border-radius: 22px;
+      position: absolute; left: calc(10px + var(--sal)); bottom: 10px; z-index: 30; padding: 6px; border-radius: 22px;
       background: rgba(255, 248, 238, 0.96); border: 3px solid var(--line); box-shadow: 0 5px 0 var(--line), 0 10px 22px rgba(120, 70, 40, 0.15);
     }
     .nav-inner { display: flex; gap: 4px; }
@@ -227,22 +236,22 @@
     .nav-badge.warn { background: #ffb020; animation: pulse 0.8s ease-in-out infinite; }
     .nav-badge.danger { background: #e5484d; animation: pulse 0.5s ease-in-out infinite; }
     .nav-badge.good { background: #3cb371; }
-    .view-hint { position: absolute; right: 12px; bottom: 12px; z-index: 6; font-size: 11px; font-weight: 800; color: #8a6a58; background: rgba(255, 255, 255, 0.75); border-radius: 999px; padding: 4px 10px; pointer-events: none; }
+    .view-hint { position: absolute; right: calc(12px + var(--sar)); bottom: 12px; z-index: 6; font-size: 11px; font-weight: 800; color: #8a6a58; background: rgba(255, 255, 255, 0.75); border-radius: 999px; padding: 4px 10px; pointer-events: none; }
 
     /* ---------- Bảng thao tác khu vực (trượt từ phải) ---------- */
     #zone-panel {
-      position: absolute; top: var(--hud-h); right: 0; bottom: 0; width: min(600px, 52vw); z-index: 35;
+      position: absolute; top: var(--hud-h); right: 0; bottom: 0; width: var(--zp-w); z-index: 35;
       background: var(--paper); border-left: 3px solid var(--line); border-top: 3px solid var(--line); border-radius: 26px 0 0 0;
       box-shadow: -10px 0 26px rgba(120, 70, 40, 0.2); display: flex; flex-direction: column;
       transform: translateX(106%); transition: transform 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.05);
     }
     #zone-panel.open { transform: translateX(0); }
-    .zp-head { display: flex; align-items: center; gap: 8px; padding: 8px 10px 8px 12px; border-bottom: 3px dashed var(--line); }
+    .zp-head { display: flex; align-items: center; gap: 8px; padding: 8px calc(10px + var(--sar)) 8px 12px; border-bottom: 3px dashed var(--line); }
     .zp-head .ico { width: 38px; height: 38px; }
     .zp-title { font-weight: 900; font-size: 17px; line-height: 1.15; flex: 1; min-width: 0; }
     .zp-sub { font-size: 11px; font-weight: 800; color: var(--cocoa-soft); }
     .zp-close { width: 38px; height: 38px; border-radius: 50%; font-size: 16px; padding: 0; flex-shrink: 0; }
-    .zp-body { flex: 1; overflow-y: auto; padding: 10px 12px 18px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+    .zp-body { flex: 1; overflow-y: auto; padding: 10px calc(12px + var(--sar)) 18px 12px; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
     #zone-panel .scene-head { display: none; }
     #zone-panel .cook-row, #zone-panel .assembly-room, #zone-panel .drinks-room, #zone-panel .serve-room { grid-template-columns: 1fr; }
     #zone-panel .kitchen-room, #zone-panel .assembly-room, #zone-panel .drinks-room { border-radius: 22px; }
@@ -260,7 +269,8 @@
     /* ---------- Thẻ chuẩn bị mở cửa ---------- */
     #prep-card { position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 32; width: min(440px, calc(100vw - 24px)); text-align: center; padding: 12px 16px; animation: popupIn 0.4s cubic-bezier(0.2, 1.4, 0.4, 1); }
     #prep-card.hidden { display: none; }
-    #zone-panel.open ~ #prep-card { left: calc((100vw - min(600px, 52vw)) / 2); }
+    #zone-panel.open ~ #prep-card { left: calc((100vw - var(--zp-w)) / 2); width: min(440px, calc(100vw - var(--zp-w) - 24px)); }
+    #screen-game.panel-wide #zone-panel.open ~ #prep-card { display: none; }
 
     /* ---------- Nhắc xoay ngang điện thoại ---------- */
     #rotate-hint { display: none; position: fixed; inset: 0; z-index: 300; background: #fff3e4; align-items: center; justify-content: center; flex-direction: column; gap: 12px; text-align: center; font-weight: 900; font-size: 18px; padding: 24px; }
@@ -272,6 +282,7 @@
 
     /* ---------- Màn hình thấp (điện thoại xoay ngang) ---------- */
     @media (max-width: 1100px) { .hud-actions .lbl { display: none; } .hud-left .hud-names { max-width: 150px; } }
+    @media (max-width: 760px) { #hud-power.chip-power-on { display: none; } #hud { gap: 4px; } .hud-stats { gap: 4px; } .hud-actions { gap: 4px; } }
     @media (max-height: 520px) {
       #screen-loading, #screen-profile { align-items: flex-start; padding: 10px; }
       .loading-card { padding: 12px 16px 14px; }
@@ -284,26 +295,26 @@
       .look-opt .mini { width: 46px; height: 46px; }
       .field input { padding: 7px 12px; font-size: 15px; }
       :root { --hud-h: 48px; }
-      #hud { padding: 4px 8px; gap: 6px; }
+      #hud { padding: 4px calc(8px + var(--sar)) 4px calc(8px + var(--sal)); gap: 6px; }
       .hud-avatar { width: 34px; height: 34px; }
       .hud-chip { font-size: 11px; padding: 1px 7px; }
       .hud-chip .big { font-size: 13px; }
       .hud-left .hud-names { display: none; }
-      .rep-bar { display: none; }
+      .rep-bar, .xp-bar { display: none; }
       .btn-sm { padding: 3px 7px; font-size: 11px; }
       .nav-btn { width: 54px; font-size: 9px; padding: 3px 1px; }
       .nav-btn .nav-ico { width: 26px; height: 26px; }
-      #scene-nav { padding: 4px; left: 6px; bottom: 6px; border-radius: 18px; }
+      #scene-nav { padding: 4px; left: calc(6px + var(--sal)); bottom: 6px; border-radius: 18px; }
       #prep-card { bottom: 74px; padding: 8px 12px; }
       #prep-card .prep-desc { display: none; }
       .zone-tag { font-size: 10px; padding: 2px 8px 2px 3px; }
       .zone-tag .zt-ico { width: 20px; height: 20px; }
       .grill-plate, .fryer-vat { height: 72px; }
       .food-view { width: 64px; height: 64px; }
-      .zp-head { padding: 5px 8px; }
+      .zp-head { padding: 5px calc(8px + var(--sar)) 5px 8px; }
       .zp-head .ico { width: 30px; height: 30px; }
       .zp-title { font-size: 14px; }
-      .zp-body { padding: 8px; }
+      .zp-body { padding: 8px calc(8px + var(--sar)) 8px 8px; }
       .view-hint { display: none; }
     }
 
@@ -664,6 +675,46 @@
     .upgrade-card.owned .upgrade-icon { background: #dff6e7; border-color: #9ad8b0; }
 
     /* =====================================================
+       CẤP ĐỘ QUÁN & NHÂN VIÊN
+       ===================================================== */
+    .hud-level { cursor: pointer; background: #f6efff; border-color: #cdb8f2; box-shadow: 0 3px 0 #cdb8f2; color: #6a4fa3; }
+    .xp-bar { width: 42px; height: 8px; background: #e7dcfa; border-radius: 99px; overflow: hidden; }
+    .xp-bar > div { height: 100%; width: 0; background: linear-gradient(90deg, #c9a7ff, #8e6bd6); border-radius: 99px; transition: width 0.4s ease; }
+    .xp-big { height: 14px; border-radius: 99px; background: #efe6fb; border: 2px solid #d9c8f5; overflow: hidden; margin: 8px 0 4px; }
+    .xp-big > div { height: 100%; background: linear-gradient(90deg, #c9a7ff, #8e6bd6); border-radius: 99px; }
+    .lv-title { font-weight: 900; color: #7d5ba6; margin-bottom: 4px; }
+    .lv-line { text-align: left; background: #f8f3ff; border: 2px solid #e6dafa; border-radius: 14px; padding: 6px 10px; margin-top: 6px; font-size: 14px; }
+    .lv-pill { display: inline-flex; align-items: center; gap: 3px; background: #fff; border: 1.5px solid #e6dafa; border-radius: 999px; padding: 1px 8px 1px 3px; margin: 2px 0; font-weight: 800; font-size: 12px; }
+    .lv-pill .ico { width: 22px; height: 22px; }
+    .lv-table { font-size: 12px; }
+    .lv-table td { padding: 4px 8px; vertical-align: middle; }
+    .lv-table td:first-child { white-space: nowrap; }
+    .lv-table tr.cur td { background: #f1e7ff; }
+    .lv-table tr.done td { opacity: 0.7; }
+    .lv-un { font-size: 11px; font-weight: 700; opacity: 0.85; display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+    .lv-un .ico { width: 18px; height: 18px; }
+    .staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+    .staff-card { padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .staff-card.hired { background: linear-gradient(#f2fff6, #e4f8ec); border-color: #9ad8b0; box-shadow: 0 6px 0 #9ad8b0; }
+    .staff-card.locked { opacity: 0.72; }
+    .staff-card.locked .staff-face { filter: grayscale(0.7); }
+    .staff-top { display: flex; align-items: center; gap: 10px; }
+    .staff-face { width: 56px; height: 56px; border-radius: 50%; background: #fff1e4; border: 3px solid var(--line); overflow: hidden; flex-shrink: 0; }
+    .staff-face svg { width: 100%; height: 100%; }
+    .staff-name { font-weight: 900; font-size: 15px; line-height: 1.2; }
+    .staff-sub { font-size: 12px; font-weight: 800; color: var(--cocoa-soft); }
+    .skill-stars { color: #f0ad1f; letter-spacing: 1px; }
+    .skill-stars .off { color: #e6d6c6; }
+    .staff-desc { font-size: 12.5px; font-weight: 700; line-height: 1.4; }
+    .staff-meta { font-size: 12px; font-weight: 800; }
+    .staff-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+    .staff-tag .st-ico { font-size: 13px; line-height: 1; }
+    .staff-tag .ct-name { background: #f4ecff; box-shadow: 0 0 0 2px #cdb8f2; }
+    .staff-tag .st-emote { font-size: 22px; line-height: 1; animation: bob 0.9s ease-in-out infinite; }
+    .staff-tag .st-bar { width: 48px; height: 6px; border-radius: 99px; background: rgba(255, 255, 255, 0.85); border: 1.5px solid #cdb8f2; overflow: hidden; }
+    .staff-tag .st-bar > div { height: 100%; width: 0; background: #8e6bd6; }
+
+    /* =====================================================
        HỘP THOẠI, THÔNG BÁO, CHỮ BAY
        ===================================================== */
     #modal-root { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(92, 58, 38, 0.42); }
@@ -718,7 +769,7 @@
        SỰ CỐ MẤT ĐIỆN
        ===================================================== */
     #power-panel {
-      position: absolute; left: 12px; bottom: 100px; z-index: 60; width: 250px;
+      position: absolute; left: calc(12px + var(--sal)); bottom: 100px; z-index: 60; width: 250px;
       background: #2f2a4d; color: #fff; border: 3px solid #6f66b8; border-radius: 22px; padding: 12px; text-align: center;
       box-shadow: 0 6px 0 #1e1a36, 0 16px 32px rgba(20, 16, 50, 0.4); animation: popIn 0.4s cubic-bezier(0.2, 1.5, 0.4, 1);
     }
@@ -833,6 +884,183 @@
       .tut-avatar { width: 58px; height: 58px; }
       #tut-text { font-size: 13px; }
     }
+    /* =====================================================
+       BẢNG KHU VỰC GỌN GÀNG – nút quan trọng hiện ngay, ít phải cuộn
+       (đặc biệt cho điện thoại xoay ngang)
+       ===================================================== */
+    .lock-banner { font-size: 12px; font-weight: 900; text-align: center; padding: 5px 10px; margin-bottom: 8px; border-radius: 14px; background: #fff3c9; border: 2px dashed #ecc95c; }
+    .staff-note { font-size: 12px; font-weight: 800; padding: 5px 10px; margin-bottom: 8px; border-radius: 14px; background: #f4ecff; border: 2px solid #cdb8f2; color: #5d4590; }
+    .zp-staff { display: inline-block; margin-left: 6px; vertical-align: middle; font-size: 11px; font-weight: 900; padding: 1px 8px; border-radius: 999px; background: #f4ecff; border: 2px solid #cdb8f2; color: #5d4590; white-space: nowrap; }
+    #zone-panel #ticket-rail { min-height: 0; padding: 7px 2px 8px; margin-bottom: 6px; }
+    #zone-panel .rail-empty { padding: 6px 10px; font-size: 11px; }
+    /* Quầy gọi món */
+    .counter-panel { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 10px; align-items: start; }
+    #zone-panel #order-panel { display: block; padding-top: 0; }
+    #zone-panel .front-card { padding: 8px; gap: 8px; margin-bottom: 0; }
+    #zone-panel .front-card .f-head { width: 58px; height: 58px; }
+    #zone-panel .order-bubble { font-size: 12px; padding: 5px 8px; min-width: 0; }
+    #zone-panel .order-bubble .o-line .ico { width: 26px !important; height: 26px !important; }
+    #zone-panel #order-panel .btn-big { font-size: 15px; padding: 9px 12px; }
+    #zone-panel #queue-line { display: block; min-height: 0; }
+    #zone-panel .queue-row { padding: 4px 6px; gap: 6px; margin-bottom: 4px; }
+    #zone-panel .queue-row .q-head { width: 34px; height: 34px; }
+    #zone-panel .queue-row .q-items .ico { width: 20px !important; height: 20px !important; }
+    #zone-panel .queue-row .pbar { width: 54px; }
+    #zone-panel .rail-empty { width: 100%; }
+    /* Bếp nướng & chiên */
+    #zone-panel .hood { display: none; }
+    #zone-panel .kitchen-room { padding: 8px; }
+    #zone-panel .cook-row { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 8px; }
+    #zone-panel .machine { padding: 6px; border-radius: 16px; box-shadow: 0 4px 0 #8a93a0; }
+    #zone-panel .machine-label { font-size: 11px; margin-bottom: 5px; }
+    #zone-panel .machine-label .knobs { display: none; }
+    #zone-panel .slots { gap: 5px; }
+    #zone-panel .cook-slot { padding: 4px; gap: 3px; border-radius: 12px; }
+    #zone-panel .slot-label { font-size: 10px; }
+    #zone-panel .grill-plate, #zone-panel .fryer-vat { height: 62px; border-width: 3px; }
+    #zone-panel .food-view { width: 54px; height: 54px; }
+    #zone-panel .cook-slot .text-\[10px\] { min-height: 0 !important; font-size: 9px; }
+    #zone-panel .cook-bar { height: 10px; }
+    #zone-panel .stage-label { font-size: 10px; padding: 0 5px; }
+    #zone-panel .cook-slot .btn-sm { padding: 3px 4px; font-size: 11px; white-space: nowrap; }
+    #zone-panel .fridge { margin-top: 8px; padding: 6px 8px; border-radius: 16px; }
+    #zone-panel .ing-buttons { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; margin-top: 5px; }
+    #zone-panel .ing-btn { padding: 4px 2px; }
+    #zone-panel .ing-btn .ico { width: 34px !important; height: 34px !important; }
+    #zone-panel .ing-btn .lbl { font-size: 10px; }
+    #zone-panel .ing-btn .where { display: none; }
+    #zone-panel .warmer { margin-top: 8px; padding: 6px 8px; border-radius: 16px; }
+    #zone-panel .warmer-lamps { display: none; }
+    #zone-panel .holding { min-height: 44px; padding: 5px; gap: 5px; }
+    #zone-panel .hold-item .ico { width: 30px !important; height: 30px !important; }
+    #zone-panel .trash-can { width: 36px; height: 42px; }
+    /* Bàn lắp ráp: đĩa | khay nguyên liệu, tủ giữ nóng & sổ công thức ở dưới */
+    #zone-panel .assembly-room { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 10px; padding: 8px; border-radius: 22px; align-items: start; }
+    .asm-extra { grid-column: 1 / -1; }
+    #zone-panel .board { min-height: 200px; padding: 8px; border-radius: 18px; border-width: 3px; }
+    #zone-panel .stack-layer { margin-top: -7px; }
+    #zone-panel .stack-layer svg { width: 112px; }
+    #zone-panel .plate-svg { width: 168px; height: 34px; }
+    #zone-panel #plate-stack { margin-bottom: -16px; }
+    #zone-panel #plate-status { font-size: 10.5px; margin-top: 4px; line-height: 1.25; padding: 2px 8px; border-radius: 12px; }
+    #zone-panel .board-actions { top: 6px; right: 6px; }
+    #zone-panel .bins { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+    #zone-panel .bin { padding: 4px 2px; font-size: 10px; border-radius: 12px; }
+    #zone-panel .bin .ico { width: 34px !important; height: 34px !important; }
+    #zone-panel .bin .badge { top: -7px; right: -5px; min-width: 18px; height: 18px; font-size: 10px; }
+    /* Quầy nước: máy + vạch đo | chọn vị & nút */
+    #zone-panel .drinks-room { grid-template-columns: auto minmax(0, 1fr); gap: 10px; padding: 8px; border-radius: 22px; align-items: start; }
+    .drink-left { display: flex; align-items: flex-end; gap: 6px; }
+    #zone-panel .soda-wrap { transform: none; zoom: 0.62; height: 380px; margin: 0; }
+    #zone-panel .gauge-wrap { margin: 0; gap: 4px; }
+    #zone-panel .fill-gauge { height: 170px; width: 24px; border-radius: 12px; }
+    #zone-panel .gauge-legend { font-size: 9px; }
+    #zone-panel .flavor-btns { gap: 5px; }
+    #zone-panel .flavor-btn .ico { width: 32px !important; height: 32px !important; }
+    #zone-panel .drink-right .btn { font-size: 13px; padding: 7px 6px; }
+    /* Quầy giao món: khay | khách đang đợi */
+    #zone-panel .serve-room { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+    #zone-panel .pickup { padding: 8px; border-radius: 22px; }
+    #zone-panel .awning { display: none; }
+    #zone-panel .tray-big { min-height: 0; padding: 8px; gap: 6px; border-radius: 16px; }
+    #zone-panel .tray-item, #zone-panel .tray-empty { min-height: 74px; font-size: 10px; padding: 4px 3px; border-radius: 12px; }
+    #zone-panel .tray-item .ico { width: 44px !important; height: 44px !important; }
+    #zone-panel #btn-deliver { font-size: 15px; padding: 9px 10px; margin-top: 8px; }
+    #zone-panel #serve-target { margin-top: 6px; }
+    #zone-panel .serve-cards { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    #zone-panel .serve-card { padding: 7px; border-radius: 16px; }
+    #zone-panel .serve-card .sc-head { width: 40px; height: 40px; }
+    #zone-panel .serve-card .sc-row { font-size: 11px; margin-top: 1px; }
+    #zone-panel .serve-card .sc-row .ico { width: 20px !important; height: 20px !important; }
+    /* Kho, nâng cấp, nhân viên: bảng rộng, thẻ gọn nhiều cột */
+    #zone-panel #storage-grid, #zone-panel #shop-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .ing-card { padding: 10px; display: flex; flex-direction: column; gap: 5px; border-radius: 20px; }
+    .ing-top { display: flex; align-items: center; gap: 8px; }
+    .ing-card .ing-ico { width: 46px; height: 46px; border-radius: 14px; padding: 3px; }
+    .ing-name { font-weight: 900; font-size: 15px; line-height: 1.15; }
+    .ing-sub { font-size: 10.5px; font-weight: 800; opacity: 0.75; line-height: 1.3; }
+    .ing-count { font-size: 24px; font-weight: 900; text-align: right; line-height: 1; }
+    .ing-count span { display: block; font-size: 9px; font-weight: 800; opacity: 0.6; }
+    .ing-exp { font-size: 11px; font-weight: 800; }
+    .ing-batches { display: flex; flex-wrap: wrap; gap: 3px; }
+    .ing-buy { display: flex; flex-wrap: wrap; gap: 5px; }
+    .ing-buy .btn { padding: 4px 7px; font-size: 11px; }
+    #zone-panel .upgrade-card { padding: 12px !important; gap: 8px !important; border-radius: 20px; }
+    #zone-panel .upgrade-icon { width: 58px; height: 58px; border-radius: 16px; padding: 4px; }
+    #zone-panel .upgrade-card .text-lg { font-size: 15px; }
+    #zone-panel .upgrade-card .text-sm { font-size: 12px; }
+    #zone-panel .upgrade-card .text-2xl { font-size: 18px; }
+    #zone-panel .upgrade-card .btn-big { font-size: 14px; padding: 8px 12px; }
+    #zone-panel #scene-storage > .card, #zone-panel #scene-shop > .card, #zone-panel .staff-head { padding: 10px 12px; margin-bottom: 10px; border-radius: 20px; }
+    #zone-panel #scene-storage h2, #zone-panel #scene-shop h2, #zone-panel #scene-staff h2 { font-size: 18px; }
+    #zone-panel .staff-grid { gap: 10px; }
+
+    /* Điện thoại xoay ngang (màn hình thấp): gọn thêm nữa */
+    @media (max-height: 520px) {
+      #screen-game { --zp-w: min(640px, 60vw); }
+      #screen-game.panel-wide { --zp-w: 78vw; }
+      .zp-sub { display: none; }
+      .zp-head .ico { width: 26px; height: 26px; }
+      .zp-close { width: 32px; height: 32px; font-size: 14px; }
+      .zp-body { padding: 6px calc(8px + var(--sar)) 14px 8px; }
+      .panel-hint { display: none; }
+      #zone-panel .ticket { padding: 3px 6px 5px 3px; font-size: 11px; }
+      #zone-panel .ticket .t-head { width: 26px; height: 26px; }
+      #zone-panel .ticket .t-items .ico { width: 20px !important; height: 20px !important; }
+      #zone-panel .ticket > .text-left { display: flex; align-items: center; gap: 4px; }
+      #zone-panel .ticket .t-no { display: inline !important; }
+      #zone-panel #ticket-rail { padding: 6px 2px 6px; margin-bottom: 4px; gap: 6px; }
+      #zone-panel .front-card .f-head { width: 46px; height: 46px; }
+      #zone-panel .board { min-height: 168px; }
+      #zone-panel .stack-layer svg { width: 96px; }
+      #zone-panel .stack-layer { margin-top: -6px; }
+      #zone-panel .plate-svg { width: 140px; height: 28px; }
+      #zone-panel .bins { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+      #zone-panel .bin { font-size: 9px; padding: 3px 1px; }
+      #zone-panel .bin .ico { width: 28px !important; height: 28px !important; }
+      #zone-panel .grill-plate, #zone-panel .fryer-vat { height: 52px; }
+      #zone-panel .food-view { width: 46px; height: 46px; }
+      #zone-panel .cook-slot .text-\[10px\] { display: none !important; }
+      #zone-panel .ing-btn .ico { width: 28px !important; height: 28px !important; }
+      #zone-panel .stage-label { display: none; }
+      #zone-panel .cook-slot .btn-sm { padding: 2px 3px; font-size: 10px; }
+      #zone-panel .machine-label { margin-bottom: 3px; }
+      #zone-panel .soda-wrap { zoom: 0.5; }
+      #zone-panel .fill-gauge { height: 140px; }
+      #zone-panel .gauge-legend { display: none; }
+      #zone-panel .flavor-btn .ico { width: 24px !important; height: 24px !important; }
+      #zone-panel .flavor-btn { padding: 3px 2px; }
+      #zone-panel .flavor-btn .text-\[12px\] { font-size: 10px; }
+      #zone-panel #drink-status { font-size: 11px; margin: 5px 0; line-height: 1.3; }
+      #zone-panel .drink-right .btn { font-size: 12px; padding: 6px 4px; }
+      #zone-panel .drink-right .zone-title { margin-bottom: 4px; }
+      #zone-panel #btn-deliver { font-size: 13px; padding: 7px 8px; }
+      #zone-panel .pickup > .text-\[11px\] { display: none; }
+      #zone-panel .tray-item, #zone-panel .tray-empty { min-height: 64px; }
+      #zone-panel .tray-item .ico { width: 38px !important; height: 38px !important; }
+      #zone-panel #scene-storage h2, #zone-panel #scene-shop h2, #zone-panel #scene-staff h2 { display: none; }
+      #zone-panel #storage-grid { grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 8px; }
+      #zone-panel .ing-card { padding: 8px; gap: 4px; }
+      #zone-panel .ing-card .ing-ico { width: 38px; height: 38px; }
+      #zone-panel .ing-name { font-size: 13px; }
+      #zone-panel .ing-count { font-size: 20px; }
+      #zone-panel .ing-buy .btn { padding: 3px 5px; font-size: 10px; }
+      #zone-panel .ing-batches { display: none; }
+      #zone-panel .staff-desc { font-size: 11px; }
+      #zone-panel .staff-face { width: 44px; height: 44px; }
+      #zone-panel .day-mini, #zone-panel #day-mini-stats { display: none; }
+      .staff-note { display: none !important; }
+      #zone-panel #ticket-rail { padding: 7px 2px 3px; }
+      #zone-panel .ticket::before { top: -5px; width: 10px; height: 10px; margin-left: -5px; }
+      #zone-panel .kitchen-room { padding: 6px; }
+      #zone-panel .grill-plate, #zone-panel .fryer-vat { height: 46px; }
+      #zone-panel .food-view { width: 42px; height: 42px; }
+      #zone-panel .slot-label { font-size: 9px; }
+      #zone-panel .fridge { margin-top: 6px; padding: 4px 6px; }
+      #zone-panel .ing-btn .lbl { font-size: 9px; }
+      #zone-panel .ing-btn .badge { top: -6px; right: -4px; min-width: 18px; height: 18px; font-size: 10px; }
+      .lock-banner { padding: 3px 8px; margin-bottom: 6px; font-size: 11px; }
+    }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
     }
@@ -925,6 +1153,7 @@
         </div>
       </div>
       <div class="hud-stats" id="hud-stats">
+        <div class="hud-chip hud-level" id="chip-level" data-action="level-info" title="Cấp độ quán – chạm để xem chi tiết">🏅 <span id="hud-level" class="big">Lv 1</span><div class="xp-bar"><div id="hud-xp-bar"></div></div></div>
         <div class="hud-chip">📅 <span id="hud-day" class="big">1</span></div>
         <div class="hud-chip"><span id="hud-clock-icon">🌤️</span><span id="hud-clock" class="big">08:00</span></div>
         <div class="hud-chip" id="chip-money">💰 <span id="hud-money" class="big">$0</span></div>
@@ -934,6 +1163,7 @@
       <div class="hud-actions" id="hud-actions">
         <button class="btn btn-sm btn-peach" data-action="scene" data-scene="storage" title="Kho &amp; Nhập hàng">📦<span class="lbl"> Kho</span></button>
         <button class="btn btn-sm btn-lilac" data-action="scene" data-scene="shop" title="Cửa hàng Nâng cấp">🛠️<span class="lbl"> Nâng cấp</span></button>
+        <button class="btn btn-sm btn-mint" data-action="scene" data-scene="staff" title="Thuê nhân viên">👥<span class="lbl"> Nhân viên</span></button>
         <button id="btn-pause" class="btn btn-sm btn-sky" data-action="pause" title="Tạm dừng">⏸️</button>
         <button id="btn-sound" class="btn btn-sm btn-lilac" data-action="sound" title="Bật/tắt âm thanh">🔊</button>
         <button class="btn btn-sm btn-butter" data-action="help" title="Hướng dẫn">❓</button>
@@ -944,7 +1174,7 @@
     <aside id="zone-panel" aria-hidden="true">
       <div class="zp-head">
         <span class="ico" id="zp-icon"></span>
-        <div class="min-w-0 flex-1"><div class="zp-title" id="zp-title">Khu vực</div><div class="zp-sub" id="zp-sub"></div></div>
+        <div class="min-w-0 flex-1"><div class="zp-title"><span id="zp-title">Khu vực</span><span id="zp-staff" class="zp-staff hidden"></span></div><div class="zp-sub" id="zp-sub"></div></div>
         <button class="btn btn-pink zp-close" data-action="close-panel" title="Đóng">✕</button>
       </div>
       <div class="zp-body" id="zp-body">
@@ -952,11 +1182,15 @@
 
         <!-- Khu vực: Quầy gọi món -->
         <section id="scene-counter" class="scene hidden">
-          <div id="order-panel"></div>
-          <div class="zone-title mt-3 mb-2">🚶 Hàng chờ gọi món</div>
-          <div id="queue-line"></div>
-          <div class="zone-title mt-3 mb-2">🪑 Khu chờ lấy món (bấm để chọn khách)</div>
-          <div id="waiting-area"></div>
+          <div class="counter-panel">
+            <div class="cp-main"><div id="staff-note-counter" class="staff-note hidden"></div><div id="order-panel"></div></div>
+            <div class="cp-lists">
+              <div class="zone-title mb-1">🚶 Hàng chờ gọi món</div>
+              <div id="queue-line"></div>
+              <div class="zone-title mt-2 mb-1">🪑 Khu chờ lấy món (bấm để chọn)</div>
+              <div id="waiting-area"></div>
+            </div>
+          </div>
           <div class="zone-title mt-3 mb-2">📋 Thực đơn hôm nay</div>
           <div id="menu-board" class="menu-board"></div>
         </section>
@@ -967,6 +1201,7 @@
           <div class="scene-hint">Canh vạch vàng rồi bấm “Lấy ra” trước khi cháy!</div>
         </div>
         <div class="lock-banner kitchen-lock">🔒 Quán chưa mở cửa – bếp chưa nhóm lửa.</div>
+        <div id="staff-note-grill" class="staff-note hidden"></div>
         <div class="kitchen-room" id="kitchen-grill">
           <div class="hood"><span class="vent"></span>MÁY HÚT KHÓI<span class="vent"></span></div>
           <div class="cook-row">
@@ -980,7 +1215,7 @@
             </div>
           </div>
           <div class="fridge">
-            <div class="zone-title">🧊 Tủ nguyên liệu sống – bấm để cho vào bếp</div>
+            <div class="zone-title">🧊 Tủ nguyên liệu sống<span class="panel-hint"> – bấm để cho vào bếp</span></div>
             <div id="cook-buttons" class="ing-buttons"></div>
           </div>
           <div class="warmer">
@@ -1002,23 +1237,26 @@
         </div>
         <div class="lock-banner kitchen-lock">🔒 Quán chưa mở cửa – bàn lắp ráp đang nghỉ.</div>
         <div class="assembly-room">
-          <div>
+          <div class="asm-board">
             <div class="board">
               <div class="board-actions"><button class="btn btn-sm btn-pink" data-action="plate-clear">🗑️ Dọn đĩa</button></div>
               <div id="plate-stack"></div>
               <div class="plate-svg" id="plate-svg"></div>
               <div id="plate-status"></div>
             </div>
+          </div>
+          <div class="asm-bins">
+            <div id="staff-note-assembly" class="staff-note hidden"></div>
+            <div class="zone-title mb-2">🥫 Khay nguyên liệu<span class="panel-hint"> (bấm để xếp lên bánh)</span></div>
+            <div id="assembly-bins" class="bins"></div>
+          </div>
+          <div class="asm-extra">
             <div class="warmer">
               <div class="warmer-lamps"></div>
               <div class="zone-title">♨️ Tủ giữ nóng</div>
               <div id="holding-area-2" class="holding mt-2"></div>
             </div>
-          </div>
-          <div>
-            <div class="zone-title mb-2">🥫 Khay nguyên liệu (bấm để xếp lên bánh)</div>
-            <div id="assembly-bins" class="bins"></div>
-            <div class="zone-title mt-4 mb-2">📖 Sổ công thức (xếp từ dưới lên)</div>
+            <div class="zone-title mt-3 mb-2">📖 Sổ công thức (xếp từ dưới lên)</div>
             <div id="recipe-book" class="space-y-1.5"></div>
           </div>
         </div>
@@ -1031,20 +1269,23 @@
           <div class="scene-hint">Chọn vị • Đặt ly • Nhấn giữ để rót tới vạch xanh • Đậy nắp</div>
         </div>
         <div class="lock-banner kitchen-lock">🔒 Quán chưa mở cửa – máy nước đang tắt.</div>
+        <div id="staff-note-drinks" class="staff-note hidden"></div>
         <div class="drinks-room" id="kitchen-drinks">
-          <div class="soda-wrap">
-            <div class="soda-body" id="soda-body"></div>
-            <div class="pour-stream" id="pour-stream"></div>
-            <div class="cup-zone" id="cup-zone"></div>
-          </div>
-          <div>
-            <div class="zone-title mb-2">1️⃣ Chọn vị nước</div>
-            <div id="flavor-buttons" class="flavor-btns"></div>
+          <div class="drink-left">
+            <div class="soda-wrap">
+              <div class="soda-body" id="soda-body"></div>
+              <div class="pour-stream" id="pour-stream"></div>
+              <div class="cup-zone" id="cup-zone"></div>
+            </div>
             <div class="gauge-wrap">
               <div class="fill-gauge"><div class="zone"></div><div class="level" id="fill-level"></div></div>
               <div class="gauge-legend"><span>💦 Tràn ly!</span><span style="color:#2f8f57">◀ Vừa đẹp</span><span>Hơi vơi</span><span>Ly trống</span></div>
             </div>
-            <div id="drink-status" class="text-center text-sm font-black mb-2"></div>
+          </div>
+          <div class="drink-right">
+            <div class="zone-title mb-2">1️⃣ Chọn vị nước</div>
+            <div id="flavor-buttons" class="flavor-btns"></div>
+            <div id="drink-status" class="text-center text-sm font-black my-2"></div>
             <div class="grid grid-cols-2 gap-2">
               <button class="btn btn-sky" data-action="drink-cup">🥤 Đặt ly mới</button>
               <button class="btn btn-butter" id="btn-pour">💧 Nhấn giữ để rót</button>
@@ -1061,6 +1302,7 @@
           <h2 class="scene-title"><span class="ico" data-art="nav-serve"></span>Quầy Giao Món</h2>
           <div class="scene-hint">Chọn khách ➜ kiểm tra khay ➜ Giao cho khách</div>
         </div>
+        <div id="staff-note-serve" class="staff-note hidden"></div>
         <div class="serve-room">
           <div class="pickup">
             <div class="awning"></div>
@@ -1084,7 +1326,7 @@
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 class="text-2xl font-black m-0">📦 Kho &amp; Nhập hàng</h2>
-              <div class="text-sm font-bold opacity-70">Nguyên liệu tươi có hạn sử dụng và có thể hỏng qua đêm. Nhập vừa đủ dùng nhé!</div>
+              <div class="text-sm font-bold opacity-70 panel-hint">Nguyên liệu tươi có hạn sử dụng và có thể hỏng qua đêm. Nhập vừa đủ dùng nhé!</div>
             </div>
             <div id="storage-summary" class="text-sm font-bold"></div>
           </div>
@@ -1096,9 +1338,19 @@
       <section id="scene-shop" class="scene hidden">
         <div class="card p-4 sm:p-5 mb-4">
           <h2 class="text-2xl font-black m-0">🛠️ Cửa hàng Nâng cấp</h2>
-          <div class="text-sm font-bold opacity-70">Đầu tư cho quán để kinh doanh nhàn hơn và kiếm nhiều tiền hơn. Mỗi nâng cấp chỉ cần mua một lần.</div>
+          <div class="text-sm font-bold opacity-70 panel-hint">Đầu tư cho quán để kinh doanh nhàn hơn và kiếm nhiều tiền hơn. Mỗi nâng cấp chỉ cần mua một lần.</div>
         </div>
         <div id="shop-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </section>
+
+      <!-- Màn hình Thuê nhân viên -->
+      <section id="scene-staff" class="scene hidden">
+        <div class="card p-4 mb-3 staff-head">
+          <h2 class="text-2xl font-black m-0">👥 Thuê Nhân Viên</h2>
+          <div class="text-sm font-bold opacity-70 panel-hint">Nhân viên tự làm thay bạn một phần việc. Trả phí tuyển dụng một lần, lương trả lúc đóng cửa mỗi ngày. Quán lên cấp sẽ mở thêm vị trí mới.</div>
+          <div id="staff-summary" class="text-sm font-bold mt-2"></div>
+        </div>
+        <div id="staff-grid" class="staff-grid"></div>
       </section>
       </div>
     </aside>
@@ -1112,6 +1364,7 @@
         </div>
       </div>
       <div id="prep-info" class="text-xs font-bold mt-2"></div>
+      <div id="prep-level" class="text-xs font-bold mt-1"></div>
       <button class="btn btn-mint btn-big mt-2" data-action="open-shop">🏪 Mở cửa đón khách!</button>
     </div>
     <!-- Thanh nút chuyển cảnh -->
@@ -1254,18 +1507,18 @@
        THỰC ĐƠN (12 món)
        ===================================================== */
     const RECIPES = {
-      bo_phomai: { name: 'Burger Bò Phô Mai', type: 'burger', price: 15, unlockDay: 1, layers: ['bun_bottom', 'beef', 'cheese', 'lettuce', 'sauce', 'bun_top'] },
-      ga_gion: { name: 'Burger Gà Giòn', type: 'burger', price: 12, unlockDay: 1, layers: ['bun_bottom', 'chicken', 'lettuce', 'sauce', 'bun_top'] },
-      khoai: { name: 'Khoai Tây Chiên', type: 'side', cook: 'potato', price: 5, unlockDay: 1 },
-      cola: { name: 'Coca Mát Lạnh', type: 'drink', flavor: 'cola', price: 4, unlockDay: 1 },
-      bo_codien: { name: 'Burger Bò Cổ Điển', type: 'burger', price: 14, unlockDay: 2, layers: ['bun_bottom', 'beef', 'lettuce', 'tomato', 'sauce', 'bun_top'] },
-      garan: { name: 'Gà Rán Giòn Tan', type: 'side', cook: 'drumstick', price: 9, unlockDay: 2 },
-      cam: { name: 'Nước Cam Tươi', type: 'drink', flavor: 'orange', price: 5, unlockDay: 2 },
-      ga_phomai: { name: 'Burger Gà Phô Mai', type: 'burger', price: 15, unlockDay: 3, layers: ['bun_bottom', 'chicken', 'cheese', 'tomato', 'sauce', 'bun_top'] },
-      xongkhoi: { name: 'Burger Xông Khói', type: 'burger', price: 19, unlockDay: 3, layers: ['bun_bottom', 'beef', 'bacon', 'cheese', 'sauce', 'bun_top'] },
-      tradao: { name: 'Trà Đào Cam Sả', type: 'drink', flavor: 'peach', price: 6, unlockDay: 3 },
-      trung: { name: 'Burger Trứng Ốp La', type: 'burger', price: 18, unlockDay: 4, layers: ['bun_bottom', 'beef', 'egg', 'lettuce', 'sauce', 'bun_top'] },
-      bodoi: { name: 'Burger Bò Đôi Khổng Lồ', type: 'burger', price: 26, unlockDay: 5, layers: ['bun_bottom', 'beef', 'cheese', 'beef', 'cheese', 'lettuce', 'sauce', 'bun_top'] }
+      bo_phomai: { name: 'Burger Bò Phô Mai', type: 'burger', price: 15, unlockLv: 1, layers: ['bun_bottom', 'beef', 'cheese', 'lettuce', 'sauce', 'bun_top'] },
+      ga_gion: { name: 'Burger Gà Giòn', type: 'burger', price: 12, unlockLv: 1, layers: ['bun_bottom', 'chicken', 'lettuce', 'sauce', 'bun_top'] },
+      khoai: { name: 'Khoai Tây Chiên', type: 'side', cook: 'potato', price: 5, unlockLv: 1 },
+      cola: { name: 'Coca Mát Lạnh', type: 'drink', flavor: 'cola', price: 4, unlockLv: 1 },
+      bo_codien: { name: 'Burger Bò Cổ Điển', type: 'burger', price: 14, unlockLv: 2, layers: ['bun_bottom', 'beef', 'lettuce', 'tomato', 'sauce', 'bun_top'] },
+      garan: { name: 'Gà Rán Giòn Tan', type: 'side', cook: 'drumstick', price: 9, unlockLv: 2 },
+      cam: { name: 'Nước Cam Tươi', type: 'drink', flavor: 'orange', price: 5, unlockLv: 2 },
+      ga_phomai: { name: 'Burger Gà Phô Mai', type: 'burger', price: 15, unlockLv: 3, layers: ['bun_bottom', 'chicken', 'cheese', 'tomato', 'sauce', 'bun_top'] },
+      xongkhoi: { name: 'Burger Xông Khói', type: 'burger', price: 19, unlockLv: 3, layers: ['bun_bottom', 'beef', 'bacon', 'cheese', 'sauce', 'bun_top'] },
+      tradao: { name: 'Trà Đào Cam Sả', type: 'drink', flavor: 'peach', price: 6, unlockLv: 3 },
+      trung: { name: 'Burger Trứng Ốp La', type: 'burger', price: 18, unlockLv: 4, layers: ['bun_bottom', 'beef', 'egg', 'lettuce', 'sauce', 'bun_top'] },
+      bodoi: { name: 'Burger Bò Đôi Khổng Lồ', type: 'burger', price: 26, unlockLv: 5, layers: ['bun_bottom', 'beef', 'cheese', 'beef', 'cheese', 'lettuce', 'sauce', 'bun_top'] }
     };
     const FLAVORS = {
       cola: { name: 'Coca', color: '#5a2a14', grad: 'gCola', recipe: 'cola' },
@@ -1298,6 +1551,91 @@
         effects: ['Khách hàng kiên nhẫn chờ lâu hơn 40%', 'Tiền Tip tăng thêm 50%', 'Quán trông xinh xắn hơn hẳn!']
       }
     };
+
+    /* =====================================================
+       CẤP ĐỘ QUÁN (Lv) – giai đoạn đầu ít khách, lên cấp đông dần
+       xp      : tổng kinh nghiệm cần để đạt cấp này
+       maxCust : số khách tối đa trong quán cùng lúc (xếp hàng + chờ món)
+       spawn   : số giây giữa hai lượt khách (trước khi tính danh tiếng & giờ cao điểm)
+       reward  : tiền thưởng khi lên cấp
+       ===================================================== */
+    const LEVELS = [
+      { xp: 0, maxCust: 2, spawn: [38, 50], reward: 0, title: 'Quán mới mở' },
+      { xp: 80, maxCust: 2, spawn: [32, 43], reward: 40, title: 'Quán quen của xóm' },
+      { xp: 220, maxCust: 3, spawn: [27, 37], reward: 60, title: 'Quán có tiếng' },
+      { xp: 400, maxCust: 3, spawn: [23, 32], reward: 80, title: 'Quán đông khách' },
+      { xp: 640, maxCust: 4, spawn: [20, 28], reward: 100, title: 'Quán nổi tiếng' },
+      { xp: 940, maxCust: 5, spawn: [18, 25], reward: 120, title: 'Điểm hẹn ẩm thực' },
+      { xp: 1300, maxCust: 6, spawn: [16, 23], reward: 140, title: 'Quán ngôi sao' },
+      { xp: 1720, maxCust: 7, spawn: [15, 21], reward: 160, title: 'Thương hiệu được yêu thích' },
+      { xp: 2200, maxCust: 8, spawn: [14, 20], reward: 180, title: 'Huyền thoại khu phố' },
+      { xp: 2750, maxCust: 9, spawn: [13, 19], reward: 200, title: 'Đế chế Burger Tí Hon' }
+    ];
+    const MAX_LEVEL = LEVELS.length;
+    const CRITIC_LEVEL = 3;
+    const DAY_XP = 15;
+    const PERFECT_DAY_XP = 15;
+
+    /* =====================================================
+       NHÂN VIÊN – thuê để tự động làm một phần việc
+       hire : phí tuyển dụng (trả một lần) • wage: lương mỗi ngày (trả lúc đóng cửa)
+       work : số giây cho một việc ở tay nghề Tập sự
+       spot/face: chỗ đứng trong quán 3D
+       ===================================================== */
+    const STAFF = {
+      cashier: {
+        role: 'Thu ngân', name: 'Bé Mơ', icon: '📝', unlockLv: 2, hire: 40, wage: 10, work: 2.2, zone: 'counter',
+        spot: [-2.1, -2.0], face: 0,
+        look: { skin: '#ffe6d5', hair: 'pigtails', hairC: '#5a3825', top: '#ff9eb5', pants: '#6b7bb5', acc: 'bow', apron: true },
+        tagline: 'Nhanh nhảu, lúc nào cũng tươi cười',
+        hello: 'Em sẽ đứng quầy đón khách giúp anh chị nha!',
+        desc: 'Đứng ở quầy gọi món và tự nhận đơn ngay khi khách đầu hàng bước tới.',
+        effects: ['Tự bấm “Nhận đơn” cho khách đầu hàng', 'Bạn không cần chạy ra quầy tiếp khách nữa']
+      },
+      griller: {
+        role: 'Phụ bếp', name: 'Anh Tâm', icon: '🔥', unlockLv: 3, hire: 70, wage: 16, work: 1.3, zone: 'grill',
+        spot: [-4.35, -2.75], face: Math.PI,
+        look: { skin: '#e8b48c', hair: 'short', hairC: '#2f2a28', top: '#ffb38a', pants: '#4f5d75', acc: 'cap', apron: true },
+        tagline: 'Canh lửa chuẩn từng giây',
+        hello: 'Giao bếp cho anh, không miếng thịt nào bị cháy đâu!',
+        desc: 'Trông vỉ nướng và nồi chiên: lấy món ra đúng lúc chín vàng, tự nướng thịt và chiên những món các order đang cần.',
+        effects: ['Lấy món ra ngay khi chín vàng, dọn món bị cháy', 'Tự nướng thịt, chiên khoai/gà cho order đang chờ', 'Món chiên xong tự lên khay giao món']
+      },
+      drinker: {
+        role: 'Pha chế', name: 'Chị Đào', icon: '🥤', unlockLv: 4, hire: 55, wage: 12, work: 4.5, zone: 'drinks',
+        spot: [4.35, -2.85], face: Math.PI,
+        look: { skin: '#ffe0c7', hair: 'bun', hairC: '#8a4b2a', top: '#8fd3ff', pants: '#5b6b8c', acc: 'flower', apron: true },
+        tagline: 'Rót nước chuẩn vạch xanh',
+        hello: 'Nước ngọt, nước cam hay trà đào, cứ để chị lo!',
+        desc: 'Dùng vòi phụ của máy nước để pha đúng vị khách gọi, rót vừa đẹp rồi đậy nắp, đặt lên khay.',
+        effects: ['Ly nào cũng đầy đẹp, không tràn', 'Dùng vòi phụ, không chiếm máy của bạn', 'Mất điện thì vòi phụ cũng ngừng chạy']
+      },
+      assembler: {
+        role: 'Lắp ráp', name: 'Cậu Khôi', icon: '🍔', unlockLv: 5, hire: 90, wage: 18, work: 1.4, zone: 'assembly',
+        spot: [1.3, -2.7], face: Math.PI,
+        look: { skin: '#f6cfa8', hair: 'curly', hairC: '#3e2723', top: '#9be3b5', pants: '#3d405b', acc: 'glasses', apron: true },
+        tagline: 'Xếp bánh đúng từng lớp',
+        hello: 'Công thức nào em cũng thuộc lòng rồi!',
+        desc: 'Tự xếp burger đúng công thức cho các order khi tủ giữ nóng có thịt chín vàng và kho còn đủ nguyên liệu.',
+        effects: ['Bánh luôn đúng thứ tự công thức', 'Đứng chờ khi bạn đang tự xếp bánh trên đĩa']
+      },
+      waiter: {
+        role: 'Phục vụ', name: 'Em Su', icon: '🛎️', unlockLv: 6, hire: 80, wage: 14, work: 0.8, zone: 'serve',
+        spot: [4.05, -2.05], face: 0,
+        look: { skin: '#ffe9dc', hair: 'bob', hairC: '#2b1d1a', top: '#c9a7ff', pants: '#6d6875', acc: 'cap', apron: true },
+        tagline: 'Chân nhanh, tay khéo',
+        hello: 'Món xong là em bưng ra tận bàn liền!',
+        desc: 'Thấy trên khay đã đủ món đúng order của vị khách nào là bưng ra tận bàn cho khách đó.',
+        effects: ['Tự giao món khi khay đủ món đúng order', 'Ưu tiên khách sắp hết kiên nhẫn']
+      }
+    };
+    const STAFF_ORDER = ['cashier', 'griller', 'drinker', 'assembler', 'waiter'];
+    const STAFF_SKILL = [
+      null,
+      { label: 'Tập sự', speed: 1, wage: 1 },
+      { label: 'Thạo việc', speed: 0.75, wage: 1.3 },
+      { label: 'Chuyên nghiệp', speed: 0.55, wage: 1.6 }
+    ];
 
     /* =====================================================
        NHÂN VẬT CHIBI
@@ -1363,7 +1701,10 @@
       '💡 Mẹo: Rau xà lách rất mau héo, đừng nhập quá nhiều một lúc.',
       '💡 Mẹo: Rót nước tới vạch xanh, quá tay là tràn ly đó!',
       '💡 Mẹo: Máy phát điện giúp bạn không bao giờ lo mất điện.',
-      '💡 Mẹo: Nhà phê bình ẩm thực ảnh hưởng danh tiếng gấp đôi.'
+      '💡 Mẹo: Nhà phê bình ẩm thực ảnh hưởng danh tiếng gấp đôi.',
+      '💡 Mẹo: Khách càng hài lòng, bạn càng nhận nhiều XP để quán lên cấp.',
+      '💡 Mẹo: Quán mới mở còn vắng khách – lên cấp thì khách kéo đến đông dần.',
+      '💡 Mẹo: Thuê Phụ bếp để không bao giờ lo thịt bị cháy khét!'
     ];
 
     /* =====================================================
@@ -1371,11 +1712,22 @@
        Mỗi lần cập nhật game: tăng GAME_VERSION, thêm một mục lên đầu
        CHANGELOG và sửa file version.json ở thư mục gốc cho khớp.
        ===================================================== */
-    const GAME_VERSION = '3.1.1';
+    const GAME_VERSION = '3.2.0';
     const SEEN_VERSION_KEY = 'tinyFastFoodStory_seenVersion';
     const VERSION_URL = 'https://raw.githubusercontent.com/tunaasieunhat/Tiemdoan/main/version.json';
     const DOWNLOAD_URL = 'https://github.com/tunaasieunhat/Tiemdoan/releases/tag/apk-latest';
     const CHANGELOG = [
+      {
+        version: '3.2.0', date: '02/11/2026', title: 'Cấp độ quán & thuê nhân viên',
+        items: [
+          'Cấp độ quán Lv 1–10: lúc mới mở quán còn vắng (tối đa 2 khách cùng lúc), lên cấp thì khách kéo đến đông dần.',
+          'Nhận XP khi khách hài lòng và mỗi khi kết thúc ngày; lên cấp được thưởng tiền, mở món mới và vị trí nhân viên mới.',
+          'Thuê nhân viên: Thu ngân, Phụ bếp, Pha chế, Lắp ráp, Phục vụ tự làm từng phần việc; trả lương mỗi tối và đào tạo để làm nhanh hơn.',
+          'Góc Nhân viên mới trong quán 3D, nhân viên đứng làm việc ngay tại từng quầy.',
+          'Các bảng khu vực gọn gàng hơn trên điện thoại: nút bấm hiện ngay, không phải kéo xuống sâu.',
+          'Game tràn kín màn hình, kể cả chỗ camera đục lỗ; sàn quán không còn bị sọc khi xoay camera.'
+        ]
+      },
       {
         version: '3.1.1', date: '01/11/2026', title: 'Toàn màn hình & sửa lỗi sàn',
         items: [
@@ -2052,10 +2404,15 @@
       return inv;
     }
     function freshDayStats() {
-      return { revenue: 0, tips: 0, served: 0, happy: 0, angry: 0, lost: 0, spent: 0, upgrades: 0, wasted: 0, repStart: START_REP };
+      return { revenue: 0, tips: 0, served: 0, happy: 0, angry: 0, lost: 0, spent: 0, upgrades: 0, hiring: 0, wages: 0, bonus: 0, wasted: 0, xp: 0, repStart: START_REP };
     }
     function defaultKitchen() {
-      return { cook: [null, null, null, null, null], holding: [], plate: [], plateBunCredit: 0, tray: [], drink: null, drinkFlavor: 'cola' };
+      return { cook: [null, null, null, null, null], holding: [], plate: [], plateBunCredit: 0, tray: [], drink: null, drinkFlavor: 'cola', jobs: { drinker: null, assembler: null, waiter: null } };
+    }
+    function defaultStaff() {
+      const st = {};
+      STAFF_ORDER.forEach((k) => { st[k] = { hired: false, skill: 1, days: 0 }; });
+      return st;
     }
     function createDefaultState(profile) {
       return {
@@ -2064,6 +2421,10 @@
         day: 1,
         money: START_MONEY,
         reputation: START_REP,
+        xp: 0,
+        dayLv: 1,
+        levelSeen: 1,
+        staff: defaultStaff(),
         phase: 'prep',
         minutes: OPEN_MIN,
         paused: false,
@@ -2101,6 +2462,22 @@
         if (!c.id) c.id = uid();
         return c;
       });
+    }
+
+    function sanitizeJobs(j) {
+      const out = { drinker: null, assembler: null, waiter: null };
+      if (!j || typeof j !== 'object') return out;
+      const num = (v) => Math.max(0, Number(v) || 0);
+      if (j.drinker && FLAVORS[j.drinker.flavor]) out.drinker = { flavor: j.drinker.flavor, t: num(j.drinker.t), dur: Math.max(0.5, num(j.drinker.dur)) };
+      if (j.assembler && RECIPES[j.assembler.rid] && RECIPES[j.assembler.rid].type === 'burger') out.assembler = { rid: j.assembler.rid, t: num(j.assembler.t), dur: Math.max(0.5, num(j.assembler.dur)) };
+      if (j.waiter && typeof j.waiter.cid === 'string' && Array.isArray(j.waiter.items)) {
+        out.waiter = {
+          cid: j.waiter.cid,
+          items: j.waiter.items.filter((it) => it && typeof it === 'object' && it.uid && ['burger', 'side', 'drink'].indexOf(it.kind) >= 0),
+          t: num(j.waiter.t), dur: Math.max(0.5, num(j.waiter.dur)), back: !!j.waiter.back
+        };
+      }
+      return out;
     }
 
     function hasSave() {
@@ -2153,6 +2530,24 @@
       s.day = Math.max(1, Math.floor(Number(s.day) || 1));
       s.minutes = clamp(Number(s.minutes) || OPEN_MIN, OPEN_MIN, CLOSE_MIN);
       s.ticketNo = clamp(Math.floor(Number(s.ticketNo) || 1), 1, 99);
+      /* Cấp độ: bản lưu cũ (chưa có XP) được tính cấp theo số ngày đã chơi để giữ nguyên thực đơn */
+      const hadXP = typeof data.xp === 'number' && isFinite(data.xp);
+      s.xp = hadXP ? Math.max(0, Math.floor(data.xp)) : LEVELS[Math.min(s.day, 5) - 1].xp;
+      const lvNow = levelForXP(s.xp);
+      s.levelSeen = hadXP ? clamp(Math.floor(Number(data.levelSeen) || 1), 1, lvNow) : lvNow;
+      s.dayLv = hadXP ? clamp(Math.floor(Number(data.dayLv) || 1), 1, lvNow) : lvNow;
+      s.staff = defaultStaff();
+      if (data.staff && typeof data.staff === 'object') {
+        STAFF_ORDER.forEach((k) => {
+          const d = data.staff[k];
+          if (!d || typeof d !== 'object') return;
+          s.staff[k].hired = !!d.hired && STAFF[k].unlockLv <= lvNow;
+          s.staff[k].skill = clamp(Math.floor(Number(d.skill) || 1), 1, 3);
+          s.staff[k].days = Math.max(0, Math.floor(Number(d.days) || 0));
+        });
+      }
+      s.kitchen.jobs = sanitizeJobs(data.kitchen ? data.kitchen.jobs : null);
+      Object.keys(s.kitchen.jobs).forEach((k) => { if (!s.staff[k].hired) s.kitchen.jobs[k] = null; });
       if (['prep', 'open', 'closed'].indexOf(s.phase) < 0) s.phase = 'prep';
       if (!s.waiting.some((c) => c.id === s.selectedTicket)) s.selectedTicket = s.waiting.length ? s.waiting[0].id : null;
       s.paused = false;
@@ -2654,6 +3049,24 @@
       enterGame(false);
     }
 
+    /* Vùng camera đục lỗ: bản APK vẽ tràn cả chỗ camera và gửi số đo (px) để đẩy nút bấm ra khỏi lỗ camera */
+    window.__setSafeArea = function (l, t, r, b) {
+      const st = document.documentElement.style;
+      const px = (v) => Math.max(0, Math.min(120, Number(v) || 0)) + 'px';
+      st.setProperty('--nsa-l', px(l));
+      st.setProperty('--nsa-r', px(r));
+      st.setProperty('--nsa-t', px(t));
+      st.setProperty('--nsa-b', px(b));
+    };
+    function readNativeSafeArea() {
+      try {
+        if (window.TiemDoanSafeArea && typeof window.TiemDoanSafeArea.get === 'function') {
+          const v = String(window.TiemDoanSafeArea.get()).split(',');
+          window.__setSafeArea(v[0], v[1], v[2], v[3]);
+        }
+      } catch (e) { /* bỏ qua */ }
+    }
+
     /* Ẩn thanh trạng thái/thanh địa chỉ trên trình duyệt điện thoại (APK tự ẩn bằng chế độ immersive) */
     function goFullscreen() {
       if (window.Capacitor) return;
@@ -2672,6 +3085,7 @@
       showScreen('game');
       World.init();
       World.resize();
+      World.clearStaff();
       World.placeInstant = true;
       fillStaticArt();
       switchScene('world', true);
@@ -2695,6 +3109,7 @@
       }
       if (state.tutorial.active) Tutorial.resume();
       if (state.phase === 'prep') checkBankrupt();
+      if (!state.tutorial.active) announceLevels();
     }
 
     function fillStaticArt() {
@@ -2729,6 +3144,10 @@
       setText($('hud-clock-icon'), timeIcon(state.minutes));
       setText($('hud-money'), fmtMoney(state.money));
       setText($('hud-rep'), Math.round(state.reputation));
+      const pr = xpProgress();
+      setText($('hud-level'), 'Lv ' + pr.lv);
+      const xw = (pr.ratio * 100).toFixed(1) + '%';
+      if ($('hud-xp-bar').style.width !== xw) $('hud-xp-bar').style.width = xw;
       const w = Math.round(state.reputation) + '%';
       if ($('hud-rep-bar').style.width !== w) $('hud-rep-bar').style.width = w;
       const p = $('hud-power');
@@ -2778,14 +3197,16 @@
       setBadge('zb-waiting', wn ? wn : '', urgent ? 'danger' : '');
       setBadge('zb-storage', Object.keys(INGREDIENTS).some((id) => invCount(id) < 2) ? '!' : '', 'warn');
       setBadge('zb-shop', Object.keys(UPGRADES).some((id) => !state.upgrades[id] && state.money >= UPGRADES[id].price) ? '★' : '', 'good');
+      setBadge('zb-staff', STAFF_ORDER.some((k) => staffUnlocked(k) && !staffOn(k) && state.money >= STAFF[k].hire) ? '★' : '', 'good');
     }
 
     /* =====================================================
        MỞ / ĐÓNG BẢNG THAO TÁC KHU VỰC
        ===================================================== */
     let currentScene = 'world';
-    const ALL_SCENES = ['counter', 'grill', 'assembly', 'drinks', 'serve', 'storage', 'shop'];
+    const ALL_SCENES = ['counter', 'grill', 'assembly', 'drinks', 'serve', 'storage', 'shop', 'staff'];
     const KITCHEN_SCENES = ['grill', 'assembly', 'drinks'];
+    const WIDE_SCENES = ['storage', 'shop', 'staff'];
     const PANEL_INFO = {
       counter: { title: 'Quầy Gọi Món', sub: 'Khách đến lần lượt • Bấm “Nhận đơn” để ghi order' },
       grill: { title: 'Bếp Nướng & Chiên', sub: 'Canh vạch vàng rồi bấm “Lấy ra” trước khi cháy!' },
@@ -2793,7 +3214,8 @@
       drinks: { title: 'Quầy Nước Uống', sub: 'Chọn vị • Đặt ly • Nhấn giữ để rót tới vạch xanh' },
       serve: { title: 'Quầy Giao Món & Khu Chờ', sub: 'Chọn khách ➜ kiểm tra khay ➜ Giao cho khách' },
       storage: { title: 'Kho & Nhập Hàng', sub: 'Đồ tươi có hạn sử dụng – nhập vừa đủ dùng nhé!' },
-      shop: { title: 'Cửa Hàng Nâng Cấp', sub: 'Mỗi nâng cấp chỉ cần mua một lần' }
+      shop: { title: 'Cửa Hàng Nâng Cấp', sub: 'Mỗi nâng cấp chỉ cần mua một lần' },
+      staff: { title: 'Thuê Nhân Viên', sub: 'Nhân viên tự làm một phần việc • Lương trả mỗi cuối ngày' }
     };
 
     function switchScene(name, instant) {
@@ -2801,6 +3223,7 @@
       const panel = $('zone-panel');
       if (ALL_SCENES.indexOf(name) < 0) {
         currentScene = 'world';
+        $('screen-game').classList.remove('panel-wide');
         panel.classList.remove('open');
         panel.setAttribute('aria-hidden', 'true');
         document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
@@ -2808,6 +3231,7 @@
         return;
       }
       currentScene = name;
+      $('screen-game').classList.toggle('panel-wide', WIDE_SCENES.indexOf(name) >= 0);
       ALL_SCENES.forEach((s) => { $('scene-' + s).classList.toggle('hidden', s !== name); });
       const info = PANEL_INFO[name];
       $('zp-icon').innerHTML = zoneIconHTML(name);
@@ -2827,6 +3251,8 @@
       if (name === 'counter') renderCounter();
       if (name === 'storage') renderStorage();
       if (name === 'shop') renderShop();
+      if (name === 'staff') renderStaff();
+      renderStaffNotes();
       if (name === 'serve') renderServe();
       if (name === 'drinks') renderDrinks();
       if (KITCHEN_SCENES.indexOf(name) >= 0) renderTicketRail();
@@ -2834,10 +3260,123 @@
     }
 
     /* =====================================================
+       CẤP ĐỘ QUÁN & KINH NGHIỆM (XP)
+       state.xp     : tổng XP • cấp hiện tại tính từ XP
+       state.dayLv  : cấp áp dụng cho thực đơn & lượng khách trong ngày (chốt lúc chuẩn bị mở cửa)
+       state.levelSeen: cấp cao nhất đã thông báo (để mỗi lần lên cấp chỉ chúc mừng một lần)
+       ===================================================== */
+    function levelForXP(xp) {
+      let lv = 1;
+      while (lv < MAX_LEVEL && xp >= LEVELS[lv].xp) lv++;
+      return lv;
+    }
+    function curLevel() { return levelForXP(state.xp); }
+    function levelInfo(lv) { return LEVELS[clamp(lv, 1, MAX_LEVEL) - 1]; }
+    function xpProgress() {
+      const lv = curLevel();
+      if (lv >= MAX_LEVEL) return { lv: lv, cur: state.xp - LEVELS[MAX_LEVEL - 1].xp, need: 0, ratio: 1 };
+      const a = LEVELS[lv - 1].xp;
+      const b = LEVELS[lv].xp;
+      return { lv: lv, cur: state.xp - a, need: b - a, ratio: clamp((state.xp - a) / (b - a), 0, 1) };
+    }
+    function maxCustomers() { return levelInfo(state.dayLv).maxCust; }
+
+    /* XP khi phục vụ: khách càng hài lòng, order càng nhiều món thì càng nhiều XP */
+    function serveXP(c, score, angry) {
+      if (angry) return 0;
+      const extra = c.order.length - 1;
+      const xp = score >= 90 ? 10 + 4 * extra : score >= 65 ? 6 + 3 * extra : 3;
+      return xp * (c.critic ? 2 : 1);
+    }
+
+    function gainXP(amount, el, floatIndex, quiet) {
+      if (!(amount > 0)) return;
+      state.xp += amount;
+      state.dayStats.xp += amount;
+      if (el) floatText('+' + amount + ' XP', el, '#8e6bd6', floatIndex || 0);
+      const chip = $('chip-level');
+      if (chip) { chip.classList.remove('bump'); void chip.offsetWidth; chip.classList.add('bump'); }
+      renderHUD();
+      if (!quiet) announceLevels();
+    }
+
+    /* Chúc mừng các cấp vừa đạt (mỗi cấp một lần) và trao thưởng */
+    function announceLevels() {
+      const lv = curLevel();
+      while (state.levelSeen < lv) {
+        state.levelSeen += 1;
+        showLevelUp(state.levelSeen);
+      }
+    }
+
+    function levelUnlockList(lv, today) {
+      const L = levelInfo(lv);
+      const prev = levelInfo(lv - 1);
+      const when = today ? 'từ hôm nay' : 'từ ngày mai';
+      const out = [];
+      const recipes = Object.keys(RECIPES).filter((id) => RECIPES[id].unlockLv === lv);
+      if (recipes.length) out.push('<div class="lv-line">📜 Món mới (' + when + '): ' + recipes.map((id) => '<span class="lv-pill">' + recipeIco(id, 22) + RECIPES[id].name + '</span>').join(' ') + '</div>');
+      if (lv > 1 && L.maxCust > prev.maxCust) out.push('<div class="lv-line">👥 Quán đông hơn: tối đa <b>' + L.maxCust + ' khách</b> cùng lúc (' + when + ')</div>');
+      else if (lv > 1) out.push('<div class="lv-line">🚶 Khách ghé quán thường xuyên hơn (' + when + ')</div>');
+      if (lv === CRITIC_LEVEL) out.push('<div class="lv-line">🎩 Nhà phê bình ẩm thực bắt đầu ghé quán: trả gấp rưỡi nhưng rất khó tính!</div>');
+      STAFF_ORDER.filter((k) => STAFF[k].unlockLv === lv).forEach((k) => out.push('<div class="lv-line">🤝 Có thể thuê ngay <b>' + STAFF[k].role + ' ' + STAFF[k].name + '</b> ' + STAFF[k].icon + '</div>'));
+      return out;
+    }
+
+    function showLevelUp(lv) {
+      const L = levelInfo(lv);
+      if (L.reward) {
+        state.money += L.reward;
+        state.dayStats.bonus = (state.dayStats.bonus || 0) + L.reward;
+      }
+      Sound.play('fanfare');
+      const staffNew = STAFF_ORDER.filter((k) => STAFF[k].unlockLv === lv);
+      const html = '<div class="lv-title">“' + L.title + '”</div>' +
+        (L.reward ? '<div class="lv-line">🎁 Thưởng lên cấp: <b>+' + fmtMoney(L.reward) + '</b></div>' : '') +
+        levelUnlockList(lv, state.dayLv >= lv).join('') +
+        (lv >= MAX_LEVEL ? '<div class="lv-line">👑 Đây là cấp cao nhất – bạn đã thành huyền thoại burger!</div>' : '<div class="text-xs mt-2 opacity-80">Cấp tiếp theo cần tổng cộng ' + LEVELS[lv].xp + ' XP.</div>');
+      const ok = { label: '🎉 Tuyệt vời!', cls: 'btn-butter' };
+      Modal.show({
+        icon: '🏅',
+        title: 'Quán lên cấp ' + lv + '!',
+        html: html,
+        buttons: staffNew.length ? [{ label: '👥 Xem nhân viên', cls: 'btn-mint', onClick: () => switchScene('staff') }, ok] : [ok]
+      });
+      refreshAll();
+      saveGame();
+    }
+
+    function showLevelInfo() {
+      const pr = xpProgress();
+      const lv = pr.lv;
+      const rows = LEVELS.map((L, i) => {
+        const n = i + 1;
+        const un = [];
+        const rec = Object.keys(RECIPES).filter((id) => RECIPES[id].unlockLv === n);
+        if (rec.length) un.push(rec.map((id) => recipeIco(id, 18)).join(''));
+        STAFF_ORDER.filter((k) => STAFF[k].unlockLv === n).forEach((k) => un.push(STAFF[k].icon + ' ' + STAFF[k].role));
+        if (n === CRITIC_LEVEL) un.push('🎩 Nhà phê bình');
+        return '<tr class="' + (n === lv ? 'cur' : n < lv ? 'done' : '') + '"><td>' + (n < lv ? '✅' : n === lv ? '👉' : '🔒') + ' Lv ' + n + '</td>' +
+          '<td><b>' + L.title + '</b><div class="lv-un">' + (un.join(' • ') || 'Khách đến thường xuyên hơn') + '</div></td><td>👥 ' + L.maxCust + '</td></tr>';
+      }).join('');
+      Modal.show({
+        icon: '🏅',
+        title: 'Cấp độ quán: Lv ' + lv,
+        html: '<div class="lv-title">“' + levelInfo(lv).title + '”</div>' +
+          '<div class="xp-big"><div style="width:' + (pr.ratio * 100).toFixed(1) + '%"></div></div>' +
+          '<div class="text-sm font-black mb-2">' + (pr.need ? 'XP: ' + pr.cur + '/' + pr.need + ' – còn ' + (pr.need - pr.cur) + ' XP nữa lên Lv ' + (lv + 1) : 'Đã đạt cấp tối đa 👑') + '</div>' +
+          (state.dayLv < lv ? '<div class="text-xs font-bold mb-2">⏳ Thực đơn và lượng khách của Lv ' + lv + ' áp dụng từ ngày mai.</div>' : '') +
+          '<table class="summary-table lv-table">' + rows + '</table>' +
+          '<div class="text-xs mt-2 opacity-80 text-left">💡 Nhận XP khi khách hài lòng (order nhiều món được nhiều hơn, nhà phê bình gấp đôi) và khi kết thúc mỗi ngày (+' + DAY_XP + ' XP, thêm +' + PERFECT_DAY_XP + ' nếu không vị khách nào nổi giận hay bỏ về). 👥 = số khách tối đa trong quán cùng lúc.</div>',
+        buttons: [{ label: '👍 Đã hiểu', cls: 'btn-mint' }]
+      });
+    }
+
+    /* =====================================================
        BẢNG THỰC ĐƠN, TRANG TRÍ, MÀN CHUẨN BỊ
        ===================================================== */
     function unlockedRecipes() {
-      return Object.keys(RECIPES).filter((id) => RECIPES[id].unlockDay <= state.day);
+      return Object.keys(RECIPES).filter((id) => RECIPES[id].unlockLv <= state.dayLv);
     }
     function renderMenuBoard() {
       const list = unlockedRecipes();
@@ -2857,9 +3396,14 @@
       if (!show) return;
       setText($('prep-title'), '☀️ Ngày ' + state.day + ' sắp bắt đầu!');
       const low = Object.keys(INGREDIENTS).filter((id) => invCount(id) < 3).map((id) => INGREDIENTS[id].name + ' (' + invCount(id) + ')');
+      const lowText = low.length > 4 ? low.slice(0, 4).join(', ') + ' và ' + (low.length - 4) + ' món khác' : low.join(', ');
       $('prep-info').innerHTML = low.length
-        ? '⚠️ Sắp hết: <b>' + low.join(', ') + '</b> – ghé <button class="underline font-black" data-action="scene" data-scene="storage">📦 Kho hàng</button> nhé!'
+        ? '⚠️ Sắp hết: <b>' + lowText + '</b> – ghé <button class="underline font-black" data-action="scene" data-scene="storage">📦 Kho hàng</button> nhé!'
         : '✅ Kho hàng khá đầy đủ. Sẵn sàng đón khách!';
+      const L = levelInfo(state.dayLv);
+      const nStaff = STAFF_ORDER.filter(staffOn).length;
+      $('prep-level').innerHTML = '🏅 <b>Lv ' + state.dayLv + '</b> “' + L.title + '” – tối đa <b>' + L.maxCust + '</b> khách cùng lúc' +
+        (nStaff ? ' • 👥 ' + nStaff + ' nhân viên (lương ' + fmtMoney(totalWages()) + '/ngày)' : '');
     }
 
     /* =====================================================
@@ -2882,20 +3426,19 @@
         }).join('');
         let expiry;
         if (count === 0) expiry = '<span class="opacity-60">Hết hàng</span>';
-        else if (days <= 0) expiry = '<span style="color:#c0392b">⚠️ Lô cũ nhất sẽ hỏng sau đêm nay!</span>';
+        else if (days <= 0) expiry = '<span style="color:#c0392b">⚠️ Lô cũ nhất hỏng sau đêm nay!</span>';
         else expiry = 'Lô cũ nhất còn <b>' + days + '</b> ngày';
         const buttons = [1, 5, 10].map((q) => {
           const cost = buyCost(id, q);
-          return '<button class="btn btn-sm ' + (q === 10 ? 'btn-butter' : 'btn-mint') + '" data-action="buy" data-item="' + id + '" data-qty="' + q + '" ' + (state.money < cost ? 'disabled' : '') + '>+' + q + ' <span class="opacity-70">(' + fmtMoney(cost) + (q === 10 ? ', −10%' : '') + ')</span></button>';
+          return '<button class="btn btn-sm ' + (q === 10 ? 'btn-butter' : 'btn-mint') + '" data-action="buy" data-item="' + id + '" data-qty="' + q + '" ' + (state.money < cost ? 'disabled' : '') + '>+' + q + ' <span class="opacity-70">' + fmtMoney(cost) + (q === 10 ? ' (−10%)' : '') + '</span></button>';
         }).join('');
-        return '<div class="card ing-card p-4 flex flex-col gap-2">' +
-          '<div class="flex items-center gap-3"><div class="ing-ico">' + cached('i_' + id, () => ART.ing(id)) + '</div>' +
-          '<div class="flex-1 min-w-0"><div class="font-black text-lg">' + ing.name + '</div><div class="text-xs font-bold opacity-70">' + ing.desc + '</div></div>' +
-          '<div class="text-right"><div class="text-3xl font-black" style="color:' + (count < 3 ? '#e5484d' : 'inherit') + '">' + count + '</div><div class="text-[11px] font-bold opacity-60">trong kho</div></div></div>' +
-          '<div class="flex flex-wrap gap-1">' + (batches || '<span class="text-xs font-bold opacity-50">Kho trống</span>') + '</div>' +
-          '<div class="text-xs font-bold flex flex-wrap justify-between gap-2"><span>⏳ ' + expiry + '</span><span>🦠 Hỏng qua đêm: <b>' + rate + '%</b>/phần</span></div>' +
-          '<div class="text-xs font-bold opacity-80">💵 Giá: ' + fmtMoney(ing.price) + '/phần • 📅 Hạn dùng: ' + life + ' ngày</div>' +
-          '<div class="flex flex-wrap gap-2 mt-1">' + buttons + '</div></div>';
+        return '<div class="card ing-card">' +
+          '<div class="ing-top"><div class="ing-ico">' + cached('i_' + id, () => ART.ing(id)) + '</div>' +
+          '<div class="flex-1 min-w-0"><div class="ing-name" title="' + esc(ing.desc) + '">' + ing.name + '</div><div class="ing-sub">💵 ' + fmtMoney(ing.price) + '/phần • 📅 hạn ' + life + ' ngày • 🦠 ' + rate + '%/đêm</div></div>' +
+          '<div class="ing-count" style="color:' + (count < 3 ? '#e5484d' : 'inherit') + '">' + count + '<span>trong kho</span></div></div>' +
+          '<div class="ing-exp">⏳ ' + expiry + '</div>' +
+          '<div class="ing-batches">' + (batches || '<span class="text-xs font-bold opacity-50">Kho trống</span>') + '</div>' +
+          '<div class="ing-buy">' + buttons + '</div></div>';
       }).join('');
       $('storage-summary').innerHTML =
         '<div>💰 Tiền hiện có: <b>' + fmtMoney(state.money) + '</b></div>' +
@@ -2964,6 +3507,7 @@
       renderTicketRail();
       renderStorage();
       renderShop();
+      renderStaff();
       renderPower();
       updatePauseButton();
     }
@@ -2975,6 +3519,7 @@
       renderTicketRail();
       renderStorage();
       renderShop();
+      renderStaff();
     }
 
     /* =====================================================
@@ -2990,11 +3535,11 @@
       const drinks = un.filter((id) => RECIPES[id].type === 'drink');
       const order = [];
       if (Math.random() < 0.2) order.push(pick(sides)); else order.push(pick(burgers));
-      if (RECIPES[order[0]].type === 'burger' && Math.random() < Math.min(0.5, 0.12 + state.day * 0.07)) order.push(pick(sides));
-      if (Math.random() < Math.min(0.6, 0.25 + state.day * 0.06)) order.push(pick(drinks));
+      if (RECIPES[order[0]].type === 'burger' && Math.random() < Math.min(0.5, 0.12 + state.dayLv * 0.06)) order.push(pick(sides));
+      if (Math.random() < Math.min(0.6, 0.25 + state.dayLv * 0.05)) order.push(pick(drinks));
       return order;
     }
-    function dayFactor() { return Math.max(0.75, 1 - (state.day - 1) * 0.03); }
+    function dayFactor() { return Math.max(0.78, 1 - (state.dayLv - 1) * 0.025); }
     function linePatienceFor(critic) {
       let p = 46 * dayFactor();
       if (state.upgrades.decor) p *= 1.4;
@@ -3024,7 +3569,7 @@
 
     function spawnCustomer(forced) {
       if (state.queue.length >= QUEUE_CAP) return false;
-      const isCritic = !forced && state.day >= 2 && Math.random() < 0.07;
+      const isCritic = !forced && state.dayLv >= CRITIC_LEVEL && Math.random() < 0.07;
       const present = state.queue.concat(state.waiting).map((c) => c.lookIdx);
       const pool = LOOKS.map((l, i) => i).filter((i) => present.indexOf(i) < 0);
       const lookIdx = forced ? 0 : pick(pool.length ? pool : LOOKS.map((l, i) => i));
@@ -3119,6 +3664,19 @@
       const c = state.queue[0];
       if (!c || !frontReady()) return;
       if (state.waiting.length >= WAIT_CAP) { toast('Khu chờ đã kín chỗ! Giao bớt món rồi hãy nhận đơn mới.', 'warn'); return; }
+      acceptOrder(c);
+      Sound.play('register');
+      toast('📝 Đã nhận đơn #' + pad2(c.ticket) + ' của ' + c.name + ' – mời sang khu chờ!', 'good');
+      renderCounter();
+      renderTicketRail();
+      renderServe();
+      renderRecipeBook();
+      updateNavBadges();
+      saveGame();
+    }
+
+    /* Khách đầu hàng nhận vé và sang khu chờ (dùng chung cho người chơi và Thu ngân) */
+    function acceptOrder(c) {
       state.queue.shift();
       c.stage = 'waiting';
       c.ticket = state.ticketNo;
@@ -3128,14 +3686,6 @@
       c.maxPatience = mp;
       state.waiting.push(c);
       if (!findWaiting(state.selectedTicket)) state.selectedTicket = c.id;
-      Sound.play('register');
-      toast('📝 Đã nhận đơn #' + pad2(c.ticket) + ' của ' + c.name + ' – mời sang khu chờ!', 'good');
-      renderCounter();
-      renderTicketRail();
-      renderServe();
-      renderRecipeBook();
-      updateNavBadges();
-      saveGame();
     }
 
     /* ---------- Cập nhật thanh chờ & cảm xúc mỗi khung hình ---------- */
@@ -3215,20 +3765,21 @@
     function isRushHour(m) {
       return (m >= 11 * 60 && m < 13 * 60) || (m >= 17 * 60 && m < 19 * 60);
     }
+    /* Nhịp khách theo cấp quán: Lv thấp khách thưa và ít người trong quán cùng lúc */
     function nextSpawnDelay() {
+      const L = levelInfo(state.dayLv);
       const repF = 1.3 - (state.reputation / 100) * 0.6;
-      const dayF = Math.max(0.75, 1 - (state.day - 1) * 0.035);
-      const rush = isRushHour(state.minutes) ? 0.7 : 1;
+      const rush = isRushHour(state.minutes) ? 0.75 : 1;
       const crowd = state.queue.length >= 3 ? 1.4 : 1;
-      return rand(14, 22) * repF * dayF * rush * crowd;
+      return rand(L.spawn[0], L.spawn[1]) * repF * rush * crowd;
     }
     function updateSpawning(dt) {
       if (state.minutes >= LAST_ORDER_MIN) return;
       state.spawnTimer -= dt;
-      if (state.spawnTimer <= 0) {
-        const ok = spawnCustomer(null);
-        state.spawnTimer = ok ? nextSpawnDelay() : 3;
-      }
+      if (state.spawnTimer > 0) return;
+      if (state.queue.length + state.waiting.length >= maxCustomers()) { state.spawnTimer = rand(5, 9); return; }
+      const ok = spawnCustomer(null);
+      state.spawnTimer = ok ? nextSpawnDelay() : 3;
     }
 
     /* =====================================================
@@ -3616,9 +4167,9 @@
       $('soda-body').innerHTML = cached('soda_' + flavorSel, () => ART.sodaMachine(flavorSel));
       $('flavor-buttons').innerHTML = Object.keys(FLAVORS).map((f) => {
         const fl = FLAVORS[f];
-        const unlocked = RECIPES[fl.recipe].unlockDay <= state.day;
+        const unlocked = RECIPES[fl.recipe].unlockLv <= state.dayLv;
         return '<button class="btn btn-col flavor-btn ' + (flavorSel === f ? 'active btn-butter' : 'btn-sky') + '" data-action="drink-flavor" data-flavor="' + f + '" ' + (unlocked ? '' : 'disabled') + '>' +
-          recipeIco(fl.recipe, 42) + '<span class="text-[12px]">' + fl.name + '</span>' + (unlocked ? '' : '<span class="text-[10px]">🔒 Ngày ' + RECIPES[fl.recipe].unlockDay + '</span>') + '</button>';
+          recipeIco(fl.recipe, 42) + '<span class="text-[12px]">' + fl.name + '</span>' + (unlocked ? '' : '<span class="text-[10px]">🔒 Lv ' + RECIPES[fl.recipe].unlockLv + '</span>') + '</button>';
       }).join('');
       $('cup-zone').innerHTML = d ? ART.drink(d.flavor, d.fill, { id: 'cup-liquid', spilled: d.spilled }) : '';
       const col = FLAVORS[flavorSel].color;
@@ -3689,7 +4240,7 @@
     }
     function drinkFlavor(f) {
       const k = state.kitchen;
-      if (!FLAVORS[f] || RECIPES[FLAVORS[f].recipe].unlockDay > state.day) return;
+      if (!FLAVORS[f] || RECIPES[FLAVORS[f].recipe].unlockLv > state.dayLv) return;
       if (k.drink && k.drink.fill > 0) { toast('Đã rót rồi, không đổi vị được nữa!', 'warn'); return; }
       k.drinkFlavor = f;
       if (k.drink) k.drink.flavor = f;
@@ -3887,13 +4438,20 @@
       const needD = c.order.filter((id) => RECIPES[id].type === 'drink').length;
       if (tray.filter((t) => t.kind === 'drink').length < needD) miss.push('nước uống');
       if (miss.length) { toast('Khay chưa có đủ món khách gọi: còn thiếu ' + miss.join(', ') + '!', 'warn'); return; }
+      const ev = evaluateOrder(c, tray);
+      state.kitchen.tray = tray.filter((it) => !ev.used.has(it.uid));
+      finishServe(c, ev.issues, false);
+    }
+
+    /* Chọn món tốt nhất trong danh sách cho từng món khách gọi và chấm điểm */
+    function evaluateOrder(c, pool) {
       const used = new Set();
       const issues = [];
       c.order.forEach((rid) => {
         const r = RECIPES[rid];
         let best = null;
         let bestEval = null;
-        tray.forEach((it) => {
+        pool.forEach((it) => {
           if (used.has(it.uid)) return;
           let ev = null;
           if (r.type === 'burger' && it.kind === 'burger') ev = evaluateBurger(it, r);
@@ -3906,16 +4464,19 @@
           bestEval.issues.forEach((x) => issues.push(x));
         }
       });
-      state.kitchen.tray = tray.filter((it) => !used.has(it.uid));
+      return { used: used, issues: issues };
+    }
+
+    function finishServe(c, issues, byStaff) {
       const ratio = clamp(c.patience / c.maxPatience, 0, 1);
       if (!c.tutorial) {
         if (ratio <= LATE_RATIO) issues.push({ major: true, text: pick(COMPLAINTS.late) });
         else if (ratio < 0.5) issues.push({ major: false, penalty: 10, text: pick(COMPLAINTS.slow) });
       }
-      resolveCustomer(c, issues, ratio);
+      resolveCustomer(c, issues, ratio, byStaff);
     }
 
-    function resolveCustomer(c, issues, ratio) {
+    function resolveCustomer(c, issues, ratio, byStaff) {
       const el = $('sc-' + c.id) || document.querySelector('.cust-tag[data-cid="' + c.id + '"]');
       const price = orderPrice(c);
       const majors = issues.filter((x) => x.major);
@@ -3975,21 +4536,463 @@
       if (tip) floatText('💝 Tip +' + fmtMoney(tip), el, '#d6457a', 1);
       floatText((rep >= 0 ? '+' : '−') + Math.abs(rep) + ' ⭐', el, rep >= 0 ? '#c98a00' : '#e05561', 2);
       changeRep(rep);
+      const xp = serveXP(c, score, majors.length > 0);
       showPopup({
         avatar: ART.chibi(lookOf(c), face, { head: true }),
-        title: title,
+        title: (byStaff ? STAFF.waiter.icon + ' ' : '') + title,
         text: text,
         tone: tone,
-        extra: '🏅 Điểm món: ' + score + '/100 • ' + (pay ? '💵 +' + fmtMoney(pay) : '💸 Không trả tiền') + (tip ? ' • 💝 Tip ' + fmtMoney(tip) : '') + ' • ' + (rep >= 0 ? '+' : '−') + Math.abs(rep) + ' ⭐'
+        extra: '🏅 Điểm món: ' + score + '/100 • ' + (pay ? '💵 +' + fmtMoney(pay) : '💸 Không trả tiền') + (tip ? ' • 💝 Tip ' + fmtMoney(tip) : '') + ' • ' + (rep >= 0 ? '+' : '−') + Math.abs(rep) + ' ⭐' + (xp ? ' • +' + xp + ' XP' : '')
       });
       World.customerExit(c.id, face);
       const idx = state.waiting.indexOf(c);
       if (idx >= 0) state.waiting.splice(idx, 1);
-      state.selectedTicket = state.waiting.length ? state.waiting[0].id : null;
-      renderCounter();
-      renderTicketRail();
+      if (!findWaiting(state.selectedTicket)) state.selectedTicket = state.waiting.length ? state.waiting[0].id : null;
+      if (byStaff) {
+        renderLater(renderCounter);
+        renderLater(renderTicketRail);
+        renderLater(refreshAll);
+      } else {
+        renderCounter();
+        renderTicketRail();
+        refreshAll();
+      }
+      gainXP(xp, el, 3);
+      saveGame();
+    }
+
+    /* =====================================================
+       NHÂN VIÊN: THUÊ, ĐÀO TẠO & TỰ ĐỘNG LÀM VIỆC
+       Nhân viên chỉ làm việc khi quán mở cửa, không tạm dừng và ngoài lúc hướng dẫn.
+       Việc dở dang (ly nước, bánh đang xếp, món đang bưng) nằm trong state.kitchen.jobs nên được lưu lại.
+       ===================================================== */
+    const staffRT = { cashier: 0, griller: 0, drinker: 0, assembler: 0, waiter: 0 };
+    const staffWarnAt = {};
+
+    function staffOn(k) { return !!(state.staff && state.staff[k] && state.staff[k].hired); }
+    function staffUnlocked(k) { return curLevel() >= STAFF[k].unlockLv; }
+    function staffSpeed(k) { return STAFF_SKILL[state.staff[k].skill].speed; }
+    function wageOf(k) { return Math.round(STAFF[k].wage * STAFF_SKILL[state.staff[k].skill].wage); }
+    function totalWages() { return STAFF_ORDER.filter(staffOn).reduce((sum, k) => sum + wageOf(k), 0); }
+    function trainCost(k) { return STAFF[k].hire * state.staff[k].skill; }
+    function resetStaffTimers() { Object.keys(staffRT).forEach((k) => { staffRT[k] = 0; }); }
+    function makeBurgerItem(rid) {
+      return { uid: uid(), kind: 'burger', layers: RECIPES[rid].layers.map((id) => (LAYERS[id].cooked ? { id: id, doneness: 'perfect' } : { id: id })) };
+    }
+    function wasteItems(n) {
+      state.trashCount += n;
+      state.dayStats.wasted += n;
+    }
+
+    /* Vẽ lại giao diện sau khi nhân viên làm việc. Nếu người chơi đang nhấn giữ thì hoãn lại để cú bấm không bị mất. */
+    let uiHeld = false;
+    let uiHeldAt = 0;
+    const deferredRenders = new Set();
+    function renderLater(fn) { deferredRenders.add(fn); }
+    function flushRenders() {
+      if (!deferredRenders.size) return;
+      if (uiHeld && performance.now() - uiHeldAt < 1500) return;
+      const fns = Array.from(deferredRenders);
+      deferredRenders.clear();
+      fns.forEach((f) => f());
+    }
+
+    function staffWarn(key, msg) {
+      const now = performance.now();
+      if (staffWarnAt[key] && now - staffWarnAt[key] < 25000) return;
+      staffWarnAt[key] = now;
+      toast(msg, 'warn');
+    }
+    function staffDone(k, emote) {
+      World.staffPing(k, emote);
+      renderLater(refreshKitchen);
+    }
+
+    /* ---------- Những món mà các order đang chờ còn thiếu (khách sắp hết kiên nhẫn xếp trước) ---------- */
+    function trayMatches(it, rid) {
+      const r = RECIPES[rid];
+      if (r.type === 'burger') return isGoodBurgerFor(it, rid);
+      if (r.type === 'side') return it.kind === 'side' && it.recipe === rid && it.doneness === 'perfect';
+      return it.kind === 'drink' && it.flavor === r.flavor && !it.spilled && it.fill >= FILL_OK_MIN;
+    }
+    function urgentWaiting() {
+      const busy = state.kitchen.jobs.waiter ? state.kitchen.jobs.waiter.cid : null;
+      return state.waiting.filter((c) => c.id !== busy).sort((a, b) => a.patience / a.maxPatience - b.patience / b.maxPatience);
+    }
+    function openNeeds() {
+      const used = new Set();
+      const needs = [];
+      urgentWaiting().forEach((c) => c.order.forEach((rid) => {
+        const it = state.kitchen.tray.find((t) => !used.has(t.uid) && trayMatches(t, rid));
+        if (it) used.add(it.uid); else needs.push(rid);
+      }));
+      const drop = (rid) => { const i = needs.indexOf(rid); if (i >= 0) needs.splice(i, 1); };
+      const j = state.kitchen.jobs;
+      if (j.assembler) drop(j.assembler.rid);
+      if (j.drinker) drop(FLAVORS[j.drinker.flavor].recipe);
+      const d = state.kitchen.drink;
+      if (d && d.fill > 0 && !d.spilled) drop(FLAVORS[d.flavor].recipe);
+      return needs;
+    }
+    function trayFree() {
+      const j = state.kitchen.jobs;
+      return TRAY_CAP - state.kitchen.tray.length - (j.assembler ? 1 : 0) - (j.drinker ? 1 : 0);
+    }
+
+    /* ---------- Thu ngân: tự nhận đơn ---------- */
+    function cashierTick(dt) {
+      const c = state.queue[0];
+      if (!c || !frontReady() || state.waiting.length >= WAIT_CAP) { staffRT.cashier = 0; return; }
+      staffRT.cashier += dt;
+      if (staffRT.cashier < STAFF.cashier.work * staffSpeed('cashier')) return;
+      staffRT.cashier = 0;
+      acceptOrder(c);
+      Sound.play('register');
+      World.staffPing('cashier', '📝');
+      renderLater(renderCounter);
+      renderLater(renderTicketRail);
+      renderLater(renderServe);
+      renderLater(renderRecipeBook);
+    }
+
+    /* ---------- Phụ bếp: lấy món chín ra, dọn món cháy, nấu món còn thiếu ---------- */
+    function grillerTick(dt) {
+      staffRT.griller -= dt;
+      if (staffRT.griller > 0) return;
+      const emote = grillerWork();
+      staffRT.griller = emote ? STAFF.griller.work * staffSpeed('griller') : 0.25;
+      if (emote) staffDone('griller', emote);
+    }
+    function grillerWork() {
+      const k = state.kitchen;
+      for (let i = 0; i < k.cook.length; i++) {
+        const s = k.cook[i];
+        if (!s || stageOf(s.progress) === 'raw') continue;
+        const res = staffTakeOff(i);
+        if (res) return res;
+      }
+      if (!state.power.on) return null;
+      const supply = {};
+      const add = (t) => { supply[t] = (supply[t] || 0) + 1; };
+      k.cook.forEach((s) => { if (s && stageOf(s.progress) !== 'burnt') add(s.type); });
+      k.holding.forEach((h) => { if (h.doneness === 'perfect') add(h.kind === 'side' ? RECIPES[h.recipe].cook : h.type); });
+      k.plate.forEach((l) => { if (LAYERS[l.id].cooked && l.doneness === 'perfect') add(l.id); });
+      for (const rid of openNeeds()) {
+        const r = RECIPES[rid];
+        const types = r.type === 'burger' ? r.layers.filter((l) => LAYERS[l].cooked) : r.type === 'side' ? [r.cook] : [];
+        for (const t of types) {
+          if (supply[t] > 0) { supply[t] -= 1; continue; }
+          if (staffCook(t)) return '🔥';
+        }
+      }
+      return null;
+    }
+    function staffCook(type) {
+      const ck = COOKABLES[type];
+      const slot = state.kitchen.cook.findIndex((s, i) => !s && SLOT_STATION[i] === ck.station);
+      if (slot < 0) return false;
+      if (!invTake(ck.inv, 1)) {
+        staffWarn('inv_' + ck.inv, STAFF.griller.icon + ' ' + STAFF.griller.name + ': hết ' + INGREDIENTS[ck.inv].name + ' trong kho rồi! Nhập thêm ở 📦 Kho nhé.');
+        return false;
+      }
+      state.kitchen.cook[slot] = { type: type, progress: 0, lastStage: 'raw' };
+      Sound.play('tap');
+      return true;
+    }
+    function staffTakeOff(i) {
+      const k = state.kitchen;
+      const s = k.cook[i];
+      const st = stageOf(s.progress);
+      const ck = COOKABLES[s.type];
+      if (st === 'burnt') {
+        k.cook[i] = null;
+        wasteItems(1);
+        return '🗑️';
+      }
+      if (ck.result === 'side') {
+        const item = { uid: uid(), kind: 'side', recipe: ck.recipe, doneness: st };
+        if (k.tray.length < TRAY_CAP) k.tray.push(item);
+        else if (k.holding.length < HOLD_CAP) k.holding.push(item);
+        else return null;
+      } else {
+        if (k.holding.length >= HOLD_CAP) return null;
+        k.holding.push({ uid: uid(), kind: 'layer', type: s.type, doneness: st });
+      }
+      k.cook[i] = null;
+      Sound.play('place');
+      return '✋';
+    }
+
+    /* ---------- Pha chế: rót nước bằng vòi phụ ---------- */
+    function drinkerTick(dt) {
+      const k = state.kitchen;
+      const job = k.jobs.drinker;
+      if (job) {
+        if (!state.power.on) return;
+        job.t = Math.min(job.dur, job.t + dt);
+        if (job.t >= job.dur && k.tray.length < TRAY_CAP) {
+          k.tray.push({ uid: uid(), kind: 'drink', flavor: job.flavor, fill: randInt(82, 92), spilled: false });
+          k.jobs.drinker = null;
+          Sound.play('cooked');
+          staffDone('drinker', '🥤');
+        }
+        return;
+      }
+      staffRT.drinker -= dt;
+      if (staffRT.drinker > 0) return;
+      staffRT.drinker = 0.5;
+      if (!state.power.on || trayFree() <= 0) return;
+      const rid = openNeeds().find((r) => RECIPES[r].type === 'drink');
+      if (!rid) return;
+      if (!invTake('cup', 1)) {
+        staffWarn('inv_cup', STAFF.drinker.icon + ' ' + STAFF.drinker.name + ': hết Ly & siro trong kho rồi! Nhập thêm ở 📦 Kho nhé.');
+        return;
+      }
+      k.jobs.drinker = { flavor: RECIPES[rid].flavor, t: 0, dur: STAFF.drinker.work * staffSpeed('drinker') };
+      staffDone('drinker', '🥤');
+    }
+
+    /* ---------- Lắp ráp: xếp bánh đúng công thức ---------- */
+    function assemblyNeed(rid) {
+      const need = { cooked: {}, inv: {} };
+      RECIPES[rid].layers.forEach((id) => {
+        const L = LAYERS[id];
+        if (L.cooked) need.cooked[id] = (need.cooked[id] || 0) + 1;
+        else if (id !== 'bun_top') need.inv[L.inv] = (need.inv[L.inv] || 0) + 1;
+      });
+      return need;
+    }
+    function perfectHeld(type) { return state.kitchen.holding.filter((h) => h.kind === 'layer' && h.type === type && h.doneness === 'perfect').length; }
+    function assemblerTick(dt) {
+      const k = state.kitchen;
+      const job = k.jobs.assembler;
+      if (job) {
+        job.t = Math.min(job.dur, job.t + dt);
+        if (job.t >= job.dur && k.tray.length < TRAY_CAP) {
+          k.tray.push(makeBurgerItem(job.rid));
+          k.jobs.assembler = null;
+          Sound.play('cooked');
+          staffDone('assembler', '🍔');
+        }
+        return;
+      }
+      staffRT.assembler -= dt;
+      if (staffRT.assembler > 0) return;
+      staffRT.assembler = 0.5;
+      if (k.plate.length || trayFree() <= 0) return;
+      for (const rid of openNeeds()) {
+        if (RECIPES[rid].type !== 'burger') continue;
+        const need = assemblyNeed(rid);
+        if (!Object.keys(need.cooked).every((t) => perfectHeld(t) >= need.cooked[t])) continue;
+        const missing = Object.keys(need.inv).filter((id) => invCount(id) < need.inv[id]);
+        if (missing.length) {
+          staffWarn('asm_' + missing[0], STAFF.assembler.icon + ' ' + STAFF.assembler.name + ': hết ' + INGREDIENTS[missing[0]].name + ' để làm ' + RECIPES[rid].name + '!');
+          continue;
+        }
+        Object.keys(need.cooked).forEach((t) => {
+          for (let n = 0; n < need.cooked[t]; n++) {
+            const idx = k.holding.findIndex((h) => h.kind === 'layer' && h.type === t && h.doneness === 'perfect');
+            k.holding.splice(idx, 1);
+          }
+        });
+        Object.keys(need.inv).forEach((id) => invTake(id, need.inv[id]));
+        k.jobs.assembler = { rid: rid, t: 0, dur: (STAFF.assembler.work + 0.45 * RECIPES[rid].layers.length) * staffSpeed('assembler') };
+        staffDone('assembler', '🍔');
+        return;
+      }
+    }
+
+    /* ---------- Phục vụ: bưng món ra tận bàn khi khay đủ món đúng order ---------- */
+    function waiterSpeed() { return 2.6 / staffSpeed('waiter'); }
+    function waiterTick(dt) {
+      const k = state.kitchen;
+      const job = k.jobs.waiter;
+      if (job) {
+        job.t += dt;
+        if (job.t < job.dur) return;
+        if (job.back) { k.jobs.waiter = null; return; }
+        const c = findWaiting(job.cid);
+        const items = job.items;
+        job.items = [];
+        job.back = true;
+        job.t = 0;
+        job.dur = World.waiterBack(waiterSpeed()) || 2.5;
+        if (c) {
+          const ev = evaluateOrder(c, items);
+          items.filter((it) => !ev.used.has(it.uid)).forEach((it) => { if (k.tray.length < TRAY_CAP) k.tray.push(it); else wasteItems(1); });
+          finishServe(c, ev.issues, true);
+        } else {
+          items.forEach((it) => { if (k.tray.length < TRAY_CAP) k.tray.push(it); else wasteItems(1); });
+          renderLater(refreshKitchen);
+        }
+        return;
+      }
+      staffRT.waiter -= dt;
+      if (staffRT.waiter > 0) return;
+      staffRT.waiter = 0.4;
+      for (const c of urgentWaiting()) {
+        const items = [];
+        const ok = c.order.every((rid) => {
+          const it = k.tray.find((t) => items.indexOf(t) < 0 && trayMatches(t, rid));
+          if (it) items.push(it);
+          return !!it;
+        });
+        if (!ok) continue;
+        k.tray = k.tray.filter((t) => items.indexOf(t) < 0);
+        const walk = World.waiterGo(c.id, waiterSpeed()) || 2.5;
+        k.jobs.waiter = { cid: c.id, items: items, t: 0, dur: STAFF.waiter.work * staffSpeed('waiter') + walk, back: false };
+        staffDone('waiter', '🛎️');
+        return;
+      }
+    }
+
+    function updateStaff(dt) {
+      if (state.tutorial.active) return;
+      if (staffOn('cashier')) cashierTick(dt);
+      if (staffOn('griller')) grillerTick(dt);
+      if (staffOn('drinker')) drinkerTick(dt);
+      if (staffOn('assembler')) assemblerTick(dt);
+      if (staffOn('waiter')) waiterTick(dt);
+    }
+
+    /* Việc dở dang khi nhân viên nghỉ: món đã làm xong đặt lên khay (đầy thì bỏ) */
+    function finishStaffJob(k) {
+      const kit = state.kitchen;
+      const job = kit.jobs[k];
+      if (!job) return;
+      let items = [];
+      if (k === 'drinker') items = [{ uid: uid(), kind: 'drink', flavor: job.flavor, fill: 85, spilled: false }];
+      if (k === 'assembler') items = [makeBurgerItem(job.rid)];
+      if (k === 'waiter') items = job.items;
+      items.forEach((it) => { if (kit.tray.length < TRAY_CAP) kit.tray.push(it); else wasteItems(1); });
+      kit.jobs[k] = null;
+    }
+
+    /* ---------- Thuê, đào tạo, cho nghỉ, trả lương ---------- */
+    function hireStaff(k) {
+      const S = STAFF[k];
+      if (!S || staffOn(k)) return;
+      if (!staffUnlocked(k)) { toast('🔒 Quán cần đạt Lv ' + S.unlockLv + ' mới thuê được ' + S.role + '!', 'warn'); return; }
+      if (state.money < S.hire) { toast('Chưa đủ tiền trả phí tuyển dụng!', 'warn'); Sound.play('angry'); return; }
+      state.money -= S.hire;
+      state.dayStats.hiring += S.hire;
+      state.staff[k] = { hired: true, skill: 1, days: 0 };
+      staffRT[k] = 0;
+      Sound.play('fanfare');
       refreshAll();
       saveGame();
+      Modal.show({
+        icon: ART.chibi(S.look, 'excited', { head: true }),
+        title: S.role + ' ' + S.name + ' đã vào làm!',
+        html: '“' + S.hello + '”<br><br>' + S.effects.map((e) => '✔️ ' + e).join('<br>') + '<br><br>💵 Lương: <b>' + fmtMoney(wageOf(k)) + '/ngày</b>, trả lúc đóng cửa mỗi tối.<br><span class="text-xs opacity-80">Đào tạo để ' + S.name + ' làm nhanh hơn.</span>'
+      });
+    }
+    function fireStaff(k) {
+      const S = STAFF[k];
+      if (!staffOn(k)) return;
+      Modal.show({
+        icon: ART.chibi(S.look, 'sad', { head: true }),
+        title: 'Cho ' + S.name + ' nghỉ việc?',
+        html: S.role + ' ' + S.name + ' sẽ rời quán ngay. Nếu thuê lại, bạn phải trả lại phí tuyển dụng ' + fmtMoney(S.hire) + ' và tay nghề quay về <b>Tập sự</b>.',
+        buttons: [{ label: '↩️ Giữ lại', cls: 'btn-sky' }, { label: '👋 Cho nghỉ', cls: 'btn-pink', onClick: () => doFireStaff(k) }]
+      });
+    }
+    function doFireStaff(k) {
+      if (!staffOn(k)) return;
+      finishStaffJob(k);
+      state.staff[k].hired = false;
+      state.staff[k].skill = 1;
+      toast('👋 ' + STAFF[k].name + ' đã nghỉ việc. Hẹn gặp lại!');
+      refreshAll();
+      refreshKitchen();
+      saveGame();
+    }
+    function trainStaff(k) {
+      if (!staffOn(k)) return;
+      const st = state.staff[k];
+      if (st.skill >= 3) return;
+      const cost = trainCost(k);
+      if (state.money < cost) { toast('Chưa đủ tiền cho khóa đào tạo!', 'warn'); Sound.play('angry'); return; }
+      state.money -= cost;
+      state.dayStats.hiring += cost;
+      st.skill += 1;
+      Sound.play('fanfare');
+      toast('📚 ' + STAFF[k].name + ' đã lên tay nghề “' + STAFF_SKILL[st.skill].label + '”: làm nhanh hơn, lương ' + fmtMoney(wageOf(k)) + '/ngày', 'good');
+      refreshAll();
+      saveGame();
+    }
+    /* Trả lương lúc đóng cửa. Thiếu tiền thì người lương cao nhất nghỉ trước cho tới khi đủ trả. */
+    function payWages() {
+      const list = STAFF_ORDER.filter(staffOn).sort((a, b) => wageOf(b) - wageOf(a));
+      let due = list.reduce((sum, k) => sum + wageOf(k), 0);
+      const quit = [];
+      while (list.length && due > Math.max(0, state.money)) {
+        const k = list.shift();
+        due -= wageOf(k);
+        quit.push(k);
+        state.staff[k].hired = false;
+        state.staff[k].skill = 1;
+      }
+      state.money -= due;
+      state.dayStats.wages = due;
+      list.forEach((k) => { state.staff[k].days += 1; });
+      return { paid: due, quit: quit };
+    }
+
+    /* Dòng nhắc trong bảng khu vực khi có nhân viên đang làm ở đó */
+    const STAFF_AT_ZONE = { counter: 'cashier', grill: 'griller', assembly: 'assembler', drinks: 'drinker', serve: 'waiter' };
+    const STAFF_NOTE_TEXT = {
+      cashier: 'tự nhận đơn cho khách đầu hàng.',
+      griller: 'tự lấy món chín vàng ra và nấu món các order còn thiếu.',
+      assembler: 'tự xếp bánh khi đủ nguyên liệu (lúc đĩa của bạn đang trống).',
+      drinker: 'tự rót nước cho các order bằng vòi phụ.',
+      waiter: 'tự bưng món ra bàn khi khay đủ món đúng order.'
+    };
+    function renderStaffNotes() {
+      const zk = STAFF_AT_ZONE[currentScene];
+      const chip = $('zp-staff');
+      const showChip = !!zk && staffOn(zk);
+      chip.classList.toggle('hidden', !showChip);
+      if (showChip) setText(chip, STAFF[zk].icon + ' ' + STAFF[zk].name + ' đang làm');
+      Object.keys(STAFF_AT_ZONE).forEach((zone) => {
+        const k = STAFF_AT_ZONE[zone];
+        const el = $('staff-note-' + zone);
+        if (!el) return;
+        const on = staffOn(k);
+        el.classList.toggle('hidden', !on);
+        if (on) el.innerHTML = STAFF[k].icon + ' <b>' + STAFF[k].name + '</b> (' + STAFF[k].role + ') đang làm ở đây<span class="panel-hint">: ' + STAFF_NOTE_TEXT[k] + '</span>';
+      });
+    }
+
+    function renderStaff() {
+      renderStaffNotes();
+      const lv = curLevel();
+      const hired = STAFF_ORDER.filter(staffOn);
+      $('staff-summary').innerHTML = '🏅 Quán đang ở <b>Lv ' + lv + '</b> • 👥 Đang thuê <b>' + hired.length + '/' + STAFF_ORDER.length + '</b> • 💵 Tổng lương <b>' + fmtMoney(totalWages()) + '/ngày</b>';
+      $('staff-grid').innerHTML = STAFF_ORDER.map((k) => {
+        const S = STAFF[k];
+        const st = state.staff[k];
+        const locked = lv < S.unlockLv;
+        const on = st.hired;
+        const stars = '<span class="skill-stars">' + '★'.repeat(st.skill) + '<span class="off">' + '★'.repeat(3 - st.skill) + '</span></span>';
+        let actions;
+        if (locked) actions = '<div class="btn btn-sm is-disabled">🔒 Mở khóa ở Lv ' + S.unlockLv + '</div>';
+        else if (!on) actions = '<button class="btn btn-sm btn-mint" data-action="staff-hire" data-id="' + k + '"' + (state.money < S.hire ? ' disabled' : '') + '>🤝 Thuê • ' + fmtMoney(S.hire) + '</button>';
+        else {
+          actions = (st.skill < 3
+            ? '<button class="btn btn-sm btn-butter" data-action="staff-train" data-id="' + k + '"' + (state.money < trainCost(k) ? ' disabled' : '') + '>📚 Đào tạo • ' + fmtMoney(trainCost(k)) + '</button>'
+            : '<div class="btn btn-sm btn-butter is-disabled">🏆 Tay nghề tối đa</div>') +
+            '<button class="btn btn-sm btn-pink" data-action="staff-fire" data-id="' + k + '">👋 Cho nghỉ</button>';
+        }
+        const face = cached('staffhead_' + k + (on ? '_on' : '_off'), () => ART.chibi(S.look, on ? 'happy' : 'excited', { head: true }));
+        return '<div class="card staff-card' + (on ? ' hired' : '') + (locked ? ' locked' : '') + '">' +
+          '<div class="staff-top"><div class="staff-face">' + face + '</div>' +
+          '<div class="min-w-0 flex-1"><div class="staff-name">' + S.icon + ' ' + S.role + ' – ' + S.name + '</div>' +
+          '<div class="staff-sub">' + (on ? stars + ' ' + STAFF_SKILL[st.skill].label + ' • đã làm ' + st.days + ' ngày' : S.tagline) + '</div></div></div>' +
+          '<div class="staff-desc">' + S.desc + '</div>' +
+          '<div class="staff-meta">💵 Lương ' + fmtMoney(on ? wageOf(k) : S.wage) + '/ngày' + (on ? '' : ' • 🤝 Phí tuyển ' + fmtMoney(S.hire)) + '</div>' +
+          '<div class="staff-actions">' + actions + '</div></div>';
+      }).join('');
     }
 
     /* =====================================================
@@ -4008,6 +5011,8 @@
     }
 
     function beginPrep() {
+      state.dayLv = curLevel();
+      resetStaffTimers();
       state.phase = 'prep';
       state.minutes = OPEN_MIN;
       state.paused = false;
@@ -4046,12 +5051,12 @@
     function planEvents(fromMin) {
       const outages = [];
       const start = Math.max(fromMin + 30, 9 * 60 + 30);
-      if (start < 18 * 60 + 30 && Math.random() < Math.min(0.65, 0.45 + state.day * 0.03)) outages.push(randInt(start, 18 * 60 + 30));
-      if (state.day >= 4 && start < 19 * 60 && Math.random() < 0.25) outages.push(randInt(start, 19 * 60));
+      if (start < 18 * 60 + 30 && Math.random() < Math.min(0.65, 0.2 + state.dayLv * 0.06)) outages.push(randInt(start, 18 * 60 + 30));
+      if (state.dayLv >= 4 && start < 19 * 60 && Math.random() < 0.25) outages.push(randInt(start, 19 * 60));
       outages.sort((a, b) => a - b);
       const spoils = [];
       const s2 = Math.max(fromMin + 20, 9 * 60);
-      if (s2 < 18 * 60 && Math.random() < 0.32) spoils.push(randInt(s2, 18 * 60));
+      if (s2 < 18 * 60 && Math.random() < (state.dayLv >= 2 ? 0.32 : 0.15)) spoils.push(randInt(s2, 18 * 60));
       state.events = { outages: outages, spoils: spoils };
     }
 
@@ -4157,15 +5162,21 @@
       state.waiting = [];
       state.selectedTicket = null;
       const k = state.kitchen;
-      const leftovers = k.cook.filter((s) => !!s).length + k.holding.length + k.plate.length + k.tray.length + (k.drink ? 1 : 0);
+      const leftovers = k.cook.filter((s) => !!s).length + k.holding.length + k.plate.length + k.tray.length + (k.drink ? 1 : 0) +
+        (k.jobs.drinker ? 1 : 0) + (k.jobs.assembler ? 1 : 0) + (k.jobs.waiter ? k.jobs.waiter.items.length : 0);
       state.kitchen = defaultKitchen();
       state.power = { on: true, fix: 0 };
       const spoilReport = applyOvernightSpoilage();
       const rent = Math.min(DAILY_RENT, Math.max(0, state.money));
       state.money -= rent;
+      const wage = payWages();
       const ds = state.dayStats;
+      const perfectDay = ds.served >= 3 && !ds.angry && !ds.lost;
+      gainXP(DAY_XP + (perfectDay ? PERFECT_DAY_XP : 0), null, 0, true);
+      const pr = xpProgress();
+      const leveled = pr.lv > state.levelSeen;
       const income = ds.revenue + ds.tips;
-      const profit = income - ds.spent - rent;
+      const profit = income + ds.bonus - ds.spent - rent - wage.paid;
       state.lifetime.bestDay = Math.max(state.lifetime.bestDay, income);
       const repDelta = Math.round(state.reputation - ds.repStart);
       const spoilHtml = spoilReport.length
@@ -4181,11 +5192,19 @@
         '<tr><td>💝 Tiền Tip</td><td>' + fmtMoney(ds.tips) + '</td></tr>' +
         '<tr><td>📦 Chi phí nhập hàng</td><td>−' + fmtMoney(ds.spent) + '</td></tr>' +
         '<tr><td>🏠 Tiền điện nước &amp; mặt bằng</td><td>−' + fmtMoney(rent) + '</td></tr>' +
+        (wage.paid || wage.quit.length ? '<tr><td>👥 Lương nhân viên</td><td>−' + fmtMoney(wage.paid) + '</td></tr>' : '') +
+        (ds.bonus ? '<tr><td>🎁 Thưởng lên cấp</td><td>+' + fmtMoney(ds.bonus) + '</td></tr>' : '') +
         (ds.upgrades ? '<tr><td>🛠️ Đầu tư nâng cấp</td><td>−' + fmtMoney(ds.upgrades) + '</td></tr>' : '') +
+        (ds.hiring ? '<tr><td>🤝 Tuyển dụng &amp; đào tạo</td><td>−' + fmtMoney(ds.hiring) + '</td></tr>' : '') +
         '<tr class="total"><td>📈 Lãi/lỗ kinh doanh</td><td style="color:' + (profit >= 0 ? '#2f8f57' : '#c0392b') + '">' + (profit >= 0 ? '+' : '−') + fmtMoney(Math.abs(profit)) + '</td></tr>' +
         '<tr><td>⭐ Danh tiếng</td><td>' + Math.round(state.reputation) + ' (' + (repDelta >= 0 ? '+' : '') + repDelta + ')</td></tr>' +
         '<tr><td>🗑️ Nguyên liệu lãng phí</td><td>' + (ds.wasted + leftovers) + '</td></tr>' +
+        '<tr><td>🏅 Kinh nghiệm hôm nay</td><td>+' + ds.xp + ' XP</td></tr>' +
+        '<tr><td>🏅 Cấp quán</td><td>Lv ' + pr.lv + (pr.need ? ' (' + pr.cur + '/' + pr.need + ' XP)' : ' 👑') + '</td></tr>' +
         '</table>' +
+        (perfectDay ? '<div class="text-sm mt-2 font-black" style="color:#2f8f57">🌟 Ngày hoàn hảo: không vị khách nào phật ý! (+' + PERFECT_DAY_XP + ' XP)</div>' : '') +
+        (leveled ? '<div class="text-sm mt-1 font-black" style="color:#7d5ba6">🎉 Quán đã đủ XP lên Lv ' + pr.lv + '! Sang ngày mới để nhận thưởng.</div>' : '') +
+        (wage.quit.length ? '<div class="text-sm mt-1 font-black" style="color:#c0392b">😢 ' + wage.quit.map((key) => STAFF[key].role + ' ' + STAFF[key].name).join(', ') + ' đã nghỉ việc vì quán không đủ tiền trả lương.</div>' : '') +
         (remaining ? '<div class="text-sm mt-2">🚪 ' + remaining + ' vị khách chưa kịp phục vụ đã ra về khi quán đóng cửa.</div>' : '') +
         (leftovers ? '<div class="text-sm mt-1">🍽️ ' + leftovers + ' món/nguyên liệu còn trên bếp đã được dọn bỏ.</div>' : '') +
         '<div class="mt-3 text-left text-sm"><div class="font-black mb-1">🦠 Kiểm kho qua đêm' + (state.upgrades.freezer ? ' (🧊 Tủ đông giảm 90% hư hỏng)' : '') + ':</div>' + spoilHtml + '</div>' +
@@ -4203,14 +5222,16 @@
     }
 
     function startNextDay() {
+      const prevLv = state.dayLv;
       state.day += 1;
       beginPrep();
-      const newRecipes = Object.keys(RECIPES).filter((id) => RECIPES[id].unlockDay === state.day);
+      announceLevels();
+      const newRecipes = Object.keys(RECIPES).filter((id) => RECIPES[id].unlockLv > prevLv && RECIPES[id].unlockLv <= state.dayLv);
       if (newRecipes.length) {
         Sound.play('fanfare');
         Modal.show({
           icon: '📜',
-          title: 'Món mới được mở khóa!',
+          title: 'Món mới trong thực đơn hôm nay!',
           html: newRecipes.map((id) => {
             const r = RECIPES[id];
             let how;
@@ -4253,7 +5274,7 @@
     const custTagOf = (c) => (c ? document.querySelector('.cust-tag[data-cid="' + c.id + '"]') : null);
     const TUTORIAL_STEPS = [
       { id: 'hello', mood: 'happy', button: 'Tiếp tục ➜', text: 'Chào <b>{name}</b>! 🐾 Mình là <b>Mèo Bơ</b>, bếp trưởng kỳ cựu của khu phố. Mình sẽ chỉ bạn cách vận hành <b>{shop}</b> từ A đến Z nhé!' },
-      { id: 'hud', target: '#hud-stats', button: 'Đã hiểu ➜', text: 'Đây là <b>thanh trạng thái</b>: ngày, giờ trong ngày (8:00–20:00), tiền 💰, danh tiếng ⭐ và tình trạng điện ⚡.' },
+      { id: 'hud', target: '#hud-stats', button: 'Đã hiểu ➜', text: 'Đây là <b>thanh trạng thái</b>: cấp độ quán 🏅, ngày, giờ trong ngày (8:00–20:00), tiền 💰, danh tiếng ⭐ và tình trạng điện ⚡.' },
       { id: 'world', mood: 'wink', button: 'Tuyệt quá ➜', text: 'Đây là quán của bạn trong <b>mô hình 3D</b>! 🏠 Kéo để xoay, cuộn chuột hoặc chụm 2 ngón để phóng to. <b>Chạm vào các nhãn khu vực</b> (hoặc nút ở góc dưới bên trái) để làm việc ở đó.' },
       { id: 'open', target: '[data-action="open-shop"]', text: 'Mọi thứ đã sẵn sàng! Bấm <b>“Mở cửa đón khách”</b> nào!', done: () => state.phase === 'open' },
       { id: 'arrive', target: () => custTagOf(state.queue[0]), mood: 'wink', text: 'A, vị khách đầu tiên đang bước vào! Khách sẽ đến và xếp hàng <b>lần lượt từng người một</b> trước quầy.', done: () => frontReady() || state.waiting.length > 0 || servedSome() },
@@ -4277,7 +5298,8 @@
       },
       { id: 'go-serve', target: () => zoneTarget('serve'), mood: 'wink', text: 'Bánh đã nằm trên khay ở quầy! Chạm vào <b>🛎️ Quầy giao món</b> nào.', done: () => currentScene === 'serve' || servedSome(), requires: () => trayHasBurger() || servedSome(), backTo: 'go-grill' },
       { id: 'deliver', scene: 'serve', target: '#btn-deliver', text: 'Khách có vé #01 đã được chọn sẵn. Bấm <b>“Giao cho khách”</b> thôi!', done: () => servedSome(), requires: () => trayHasBurger() || servedSome(), backTo: 'go-grill' },
-      { id: 'more', target: '#hud-actions', mood: 'happy', button: 'Tiếp tục ➜', text: 'Tuyệt vời! 🎉 Khu <b>📦 Kho hàng</b> để nhập nguyên liệu (đồ tươi có hạn dùng!), khu <b>🛠️ Nâng cấp</b> để sắm thiết bị xịn – có cả nút tắt ở đây.' },
+      { id: 'more', target: '#hud-actions', mood: 'happy', button: 'Tiếp tục ➜', text: 'Tuyệt vời! 🎉 Khu <b>📦 Kho hàng</b> để nhập nguyên liệu (đồ tươi có hạn dùng!), <b>🛠️ Nâng cấp</b> để sắm thiết bị xịn, <b>👥 Nhân viên</b> để thuê người phụ việc – có cả nút tắt ở đây.' },
+      { id: 'level', target: '#chip-level', mood: 'wink', button: 'Tiếp tục ➜', text: 'Đây là <b>cấp độ quán 🏅</b>. Mỗi vị khách hài lòng cho bạn <b>XP</b>. Lên cấp sẽ mở <b>món mới</b>, cho <b>thuê nhân viên</b>, và khách cũng kéo đến đông dần. Lúc mới mở quán còn vắng (tối đa 2 khách cùng lúc), cứ thong thả học việc nhé!' },
       { id: 'drinks', target: () => zoneTarget('drinks'), button: 'Tiếp tục ➜', text: 'Khách còn gọi thêm <b>nước uống</b>: vào 🥤 Quầy nước, chọn vị, đặt ly rồi <b>nhấn giữ nút Rót</b> tới vạch xanh. <b>Khoai chiên &amp; gà rán</b> thì chiên ở nồi chiên trong 🔥 Bếp.' },
       { id: 'bye', mood: 'wink', button: 'Bắt đầu kinh doanh! 🚀', text: 'Cẩn thận sự cố: <b>mất điện</b> (bấm liên tục nút sửa cầu dao), <b>nguyên liệu ôi thiu</b>; khách sẽ <b>nổi giận</b> nếu đồ sống/cháy, thiếu nguyên liệu hay chờ quá lâu. Chúc {name} buôn may bán đắt! 🍀' }
     ];
@@ -4458,7 +5480,8 @@
       serve: { name: 'Quầy giao món', pos: [3.2, -1.2], tagY: 2.65, chef: [3.2, -2.3], chefFace: 0, cam: 17 },
       waiting: { name: 'Khu chờ', pos: [4.0, 2.9], tagY: 1.95, chef: null, chefFace: 0, cam: 17, opens: 'serve' },
       storage: { name: 'Kho hàng', pos: [-6.5, -4.0], tagY: 2.75, chef: [-6.3, -2.75], chefFace: Math.PI, cam: 16 },
-      shop: { name: 'Nâng cấp', pos: [6.5, -4.2], tagY: 2.75, chef: [6.4, -2.9], chefFace: Math.PI, cam: 16 }
+      shop: { name: 'Nâng cấp', pos: [6.5, -4.2], tagY: 2.75, chef: [6.4, -2.9], chefFace: Math.PI, cam: 16 },
+      staff: { name: 'Nhân viên', pos: [-7.35, 0.45], tagY: 3.0, chef: [-6.4, 0.45], chefFace: -Math.PI / 2, cam: 15, az: 0.75, ring: [-6.75, 0.45] }
     };
     const DOOR_OUT = [-9.4, 2.5];
     const DOOR_IN = [-7.0, 2.5];
@@ -4605,8 +5628,8 @@
       fl.rotation.x = -Math.PI / 2;
       fl.receiveShadow = true;
       root.add(fl);
-      /* Bệ sàn thấp hơn mặt sàn một chút để không bị nhấp nháy (z-fighting) khi xoay camera */
-      root.add(B(16.8, 0.5, 10.8, '#d9a777', 0, -0.53, 0.05));
+      /* Bệ sàn thấp hơn hẳn mặt sàn để không bị nhấp nháy (z-fighting) khi xoay camera, kể cả trên GPU điện thoại */
+      root.add(B(16.8, 0.5, 10.8, '#d9a777', 0, -0.56, 0.05));
       root.add(B(17.2, 0.25, 11.2, '#f3c9a3', 0, -0.75, 0.05, false));
 
       const wallTex = canvasTex(1024, 256, (g, w, h) => {
@@ -4669,13 +5692,13 @@
       const mb = new THREE.Group();
       mb.position.set(-1.25, 3.3, -4.96);
       mb.add(B(1.9, 1.05, 0.08, '#b9875b', 0, -0.52, 0));
-      mb.add(mesh(new THREE.PlaneGeometry(1.75, 0.92), new THREE.MeshBasicMaterial({ map: menu.tex }), 0, 0, 0.045, false));
+      mb.add(mesh(new THREE.PlaneGeometry(1.75, 0.92), new THREE.MeshBasicMaterial({ map: menu.tex }), 0, 0, 0.055, false));
       root.add(mb);
 
       W3.refs.lamps = [];
       [[2.4, 3.6, 2.9], [5.6, 3.6, 2.9], [3.2, 3.2, -1.2]].forEach((p) => {
         root.add(C(0.012, 0.012, 4.3 - p[1], '#7a5340', p[0], p[1], p[2], 6, false));
-        root.add(C(0.12, 0.42, 0.34, '#ffcf66', p[0], p[1] - 0.34, p[2], 20));
+        root.add(C(0.12, 0.42, 0.34, '#ffcf66', p[0], p[1] - 0.34, p[2], 20, false));
         const bulb = S(0.11, basic('#fff1b8'), p[0], p[1] - 0.38, p[2], 12, false);
         root.add(bulb);
         const light = new THREE.PointLight(0xffd9a0, 0.2, 7, 2);
@@ -4772,12 +5795,12 @@
         for (let x = 10; x < w; x += 20) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
       });
       root.add(mesh(new THREE.BoxGeometry(1.8, 0.06, 0.92), texMat(grate.tex), -3.97, 0.98, -3.88));
-      W3.refs.grillGlow = mesh(new THREE.PlaneGeometry(1.75, 0.88), new THREE.MeshBasicMaterial({ color: 0xff7a2a, transparent: true, opacity: 0, depthWrite: false }), -3.97, 1.013, -3.88, false);
+      W3.refs.grillGlow = mesh(new THREE.PlaneGeometry(1.75, 0.88), new THREE.MeshBasicMaterial({ color: 0xff7a2a, transparent: true, opacity: 0, depthWrite: false }), -3.97, 1.02, -3.88, false);
       W3.refs.grillGlow.rotation.x = -Math.PI / 2;
       root.add(W3.refs.grillGlow);
       root.add(B(0.82, 0.08, 1.0, '#9aa3ae', -2.7, 0.95, -3.9));
       [-4.15, -3.65].forEach((z) => {
-        const oil = mesh(new THREE.PlaneGeometry(0.6, 0.4), basic('#f6b83f'), -2.7, 1.035, z, false);
+        const oil = mesh(new THREE.PlaneGeometry(0.6, 0.4), basic('#f6b83f'), -2.7, 1.045, z, false);
         oil.rotation.x = -Math.PI / 2;
         root.add(oil);
         root.add(B(0.05, 0.05, 0.28, '#5f6773', -2.3, 1.05, z));
@@ -4842,6 +5865,12 @@
       W3.refs.stream = C(0.022, 0.022, 0.48, '#5a2a14', 3.6, 1.02, -3.98, 8, false);
       W3.refs.stream.visible = false;
       root.add(W3.refs.stream);
+      root.add(B(0.2, 0.14, 0.2, '#9aa3ae', 4.0, 1.62, -4.05));
+      root.add(C(0.035, 0.035, 0.1, '#6a727d', 4.0, 1.52, -3.98, 10));
+      root.add(B(0.26, 0.03, 0.3, '#4a4f5a', 4.0, 0.96, -3.88));
+      W3.refs.stream2 = C(0.018, 0.018, 0.48, '#5a2a14', 4.0, 1.02, -3.98, 8, false);
+      W3.refs.stream2.visible = false;
+      root.add(W3.refs.stream2);
     }
 
     /* ---------- Kho hàng ---------- */
@@ -5001,13 +6030,66 @@
       W3.refs.decor = d;
     }
 
+    /* ---------- Góc nhân viên: bảng phân ca, tủ đồ, ghế nghỉ ---------- */
+    function buildStaffCorner(root) {
+      const board = canvasTex(320, 220, (g, w, h) => {
+        g.fillStyle = '#d9a777';
+        g.fillRect(0, 0, w, h);
+        g.fillStyle = '#c48a5c';
+        g.fillRect(0, 0, w, 12);
+        g.fillStyle = '#fff6e8';
+        roundRect(g, 46, 20, w - 92, 42, 14);
+        g.fill();
+        g.fillStyle = '#e07a5f';
+        g.font = '900 26px Nunito, Quicksand, sans-serif';
+        g.textAlign = 'center';
+        g.textBaseline = 'middle';
+        g.fillText('NHÂN VIÊN', w / 2, 42);
+        ['#ff9eb5', '#ffb38a', '#8fd3ff', '#9be3b5', '#c9a7ff'].forEach((c, i) => {
+          const x = 20 + i * 58;
+          const y = 82 + (i % 2) * 12;
+          g.fillStyle = '#ffffff';
+          g.fillRect(x, y, 48, 60);
+          g.fillStyle = c;
+          g.fillRect(x + 4, y + 4, 40, 38);
+          g.fillStyle = '#ffe0c7';
+          g.beginPath();
+          g.arc(x + 24, y + 26, 10, 0, Math.PI * 2);
+          g.fill();
+          g.fillStyle = 'rgba(0,0,0,0.25)';
+          g.fillRect(x + 8, y + 48, 32, 5);
+          g.fillStyle = '#e5484d';
+          g.beginPath();
+          g.arc(x + 24, y + 3, 4, 0, Math.PI * 2);
+          g.fill();
+        });
+        g.fillStyle = '#ffd166';
+        g.font = '900 24px sans-serif';
+        g.fillText('★ ★ ★', w / 2, 192);
+      });
+      const grp = new THREE.Group();
+      grp.position.set(-7.97, 0, 0.45);
+      grp.rotation.y = Math.PI / 2;
+      grp.add(B(1.4, 0.98, 0.06, '#a8683f', 0, 1.62, 0));
+      grp.add(mesh(new THREE.PlaneGeometry(1.28, 0.86), texMat(board.tex), 0, 2.11, 0.05, false));
+      root.add(grp);
+      [['#c9a7ff', -0.5], ['#9be3b5', -1.03]].forEach((l) => {
+        root.add(B(0.5, 1.7, 0.5, l[0], -7.72, 0, l[1]));
+        root.add(B(0.03, 0.42, 0.06, '#7a5340', -7.46, 0.75, l[1] + 0.13));
+        [1.3, 1.4, 1.5].forEach((y) => root.add(B(0.02, 0.04, 0.3, shade(l[0], -0.25), -7.46, y, l[1], false)));
+      });
+      root.add(B(0.45, 0.08, 1.0, '#e9b989', -7.7, 0.38, 0.95));
+      [[-7.85, 0.52], [-7.55, 0.52], [-7.85, 1.38], [-7.55, 1.38]].forEach((p) => root.add(B(0.06, 0.38, 0.06, '#b9784a', p[0], 0, p[1])));
+      root.add(C(0.09, 0.07, 0.16, '#ffffff', -7.7, 0.46, 1.25, 12));
+    }
+
     /* ---------- Vùng chạm của từng khu vực & vòng chọn ---------- */
     function buildZonePickers(root) {
       const hit = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false });
       const boxes = {
         counter: [2.8, 2.4, 1.8, -2.8, -1.05], serve: [2.6, 2.4, 1.6, 3.2, -1.1], grill: [3.0, 2.8, 1.4, -3.6, -3.9],
         assembly: [2.9, 2.0, 1.4, 0.4, -3.9], drinks: [2.0, 2.4, 1.3, 3.6, -4.1], storage: [3.0, 2.4, 1.3, -6.4, -4.05],
-        shop: [2.0, 2.4, 1.3, 6.5, -4.25], waiting: [6.6, 1.5, 2.4, 4.0, 2.9]
+        shop: [2.0, 2.4, 1.3, 6.5, -4.25], waiting: [6.6, 1.5, 2.4, 4.0, 2.9], staff: [1.2, 2.8, 2.4, -7.4, 0.2]
       };
       W3.pickables = [];
       Object.keys(boxes).forEach((k) => {
@@ -5388,6 +6470,7 @@
       if (k === 'waiting') return cached('chair', () => ART.chair());
       if (k === 'storage') return cached('up_freezer', () => ART.upgrade('freezer'));
       if (k === 'shop') return cached('up_grill', () => ART.upgrade('grill'));
+      if (k === 'staff') return cached('staffhead_cashier_on', () => ART.chibi(STAFF.cashier.look, 'happy', { head: true }));
       return cached('nav_nav-' + k, () => ART.nav(k));
     }
 
@@ -5408,6 +6491,8 @@
       trayKey: null,
       decorKey: null,
       tagSizeTimer: 0,
+      staffAv: {},
+      staffPlateKey: null,
 
       init() {
         if (this.ok) return true;
@@ -5424,7 +6509,7 @@
         $('stage3d').appendChild(R.domElement);
         SCN = new THREE.Scene();
         SCN.background = new THREE.Color('#fbe3cf');
-        CAM = new THREE.PerspectiveCamera(32, 1, 0.5, 140);
+        CAM = new THREE.PerspectiveCamera(32, 1, 1.0, 140);
         tmpV.v = new THREE.Vector3();
         const L = W3.lights;
         L.hemi = new THREE.HemisphereLight(0xfff6ea, 0xc9a07a, 0.5);
@@ -5451,6 +6536,7 @@
         buildShopCorner(root);
         buildWaiting(root);
         buildDecor(root);
+        buildStaffCorner(root);
         buildZonePickers(root);
         SLOT_POS.forEach((p, i) => {
           const g = new THREE.Group();
@@ -5479,6 +6565,22 @@
         this.cup.add(this.liquid);
         this.cup.visible = false;
         root.add(this.cup);
+        this.staffCup = new THREE.Group();
+        this.staffCup.position.set(4.0, CUP_POS[1], -3.88);
+        this.staffCup.add(C(0.1, 0.075, 0.3, mat('#ffffff'), 0, 0, 0, 18, false));
+        this.staffLiquid = C(0.088, 0.07, 0.28, mat('#5a2a14'), 0, 0.01, 0, 18, false);
+        this.staffCup.add(this.staffLiquid);
+        this.staffCup.visible = false;
+        root.add(this.staffCup);
+        this.staffPlate = new THREE.Group();
+        this.staffPlate.position.set(1.12, 0.96, -3.62);
+        this.staffPlate.add(C(0.24, 0.22, 0.025, '#ffffff', 0, 0, 0, 24, false));
+        this.staffStack = new THREE.Group();
+        this.staffStack.position.y = 0.03;
+        this.staffStack.scale.setScalar(0.85);
+        this.staffPlate.add(this.staffStack);
+        this.staffPlate.visible = false;
+        root.add(this.staffPlate);
         this.root = root;
         this.buildTags();
         this.bindInput();
@@ -5542,6 +6644,32 @@
             setChibiMood(av, m === 'happy' ? 'happy' : m);
             const moodEl = av.tag.querySelector('.ct-mood');
             if (moodEl) setText(moodEl, m === 'happy' ? '😊' : m === 'neutral' ? '😐' : m === 'sad' ? '😟' : '😡');
+          }
+        });
+        this.updateStaffTags(coverX, dt);
+      },
+      updateStaffTags(coverX, dt) {
+        Object.keys(this.staffAv).forEach((k) => {
+          const av = this.staffAv[k];
+          if (!av.tag) return;
+          if (av.emoteT > 0) av.emoteT -= dt;
+          const p = av.root.position;
+          const sc = this.project(p.x, 2.05, p.z);
+          av.tag.style.visibility = sc.ok && sc.x < coverX ? 'visible' : 'hidden';
+          av.tag.style.transform = 'translate(-50%, -100%) translate(' + sc.x.toFixed(1) + 'px,' + sc.y.toFixed(1) + 'px)';
+          const em = av.emoteT > 0 ? av.emote : '';
+          if (av.tagEmote !== em) {
+            av.tagEmote = em;
+            av.tagEmoteEl.textContent = em;
+            av.tagEmoteEl.classList.toggle('hidden', !em);
+          }
+          const job = state.kitchen.jobs[k];
+          const r = job && !job.back && job.dur ? clamp(job.t / job.dur, 0, 1) : -1;
+          const w = r < 0 ? '' : (r * 100).toFixed(0) + '%';
+          if (av.tagBarW !== w) {
+            av.tagBarW = w;
+            av.tagBar.classList.toggle('hidden', r < 0);
+            av.tagBar.firstChild.style.width = w;
           }
         });
       },
@@ -5672,6 +6800,111 @@
         this.placeInstant = false;
       },
 
+      /* ---------- Nhân viên 3D ---------- */
+      makeStaffTag(k) {
+        const el = document.createElement('div');
+        el.className = 'cust-tag staff-tag';
+        el.dataset.action = 'scene';
+        el.dataset.scene = 'staff';
+        el.innerHTML = '<div class="st-emote hidden"></div><div class="ct-row"><span class="st-ico">' + STAFF[k].icon + '</span><span class="ct-name">' + esc(STAFF[k].name) + '</span></div><div class="st-bar hidden"><div></div></div>';
+        $('cust-tags').appendChild(el);
+        return el;
+      },
+      removeStaff(k) {
+        const av = this.staffAv[k];
+        if (!av) return;
+        this.root.remove(av.root);
+        const i = W3.pickables.indexOf(av.root);
+        if (i >= 0) W3.pickables.splice(i, 1);
+        if (av.tag && av.tag.parentNode) av.tag.parentNode.removeChild(av.tag);
+        delete this.staffAv[k];
+      },
+      clearStaff() { Object.keys(this.staffAv).forEach((k) => this.removeStaff(k)); },
+      syncStaff() {
+        STAFF_ORDER.forEach((k) => {
+          const S = STAFF[k];
+          let av = this.staffAv[k];
+          const want = !!state.profile && staffOn(k);
+          if (want && av && av.leaving) { this.removeStaff(k); av = null; }
+          if (want && !av) {
+            av = buildChibi(S.look);
+            av.staffKey = k;
+            av.speed = 2.4;
+            av.root.userData.pick = { type: 'staff', id: k };
+            if (this.placeInstant) {
+              av.root.position.set(S.spot[0], 0, S.spot[1]);
+              av.root.rotation.y = S.face;
+            } else {
+              av.root.position.set(DOOR_OUT[0], 0, DOOR_OUT[1]);
+              av.path = [vec2(DOOR_IN[0], DOOR_IN[1]), vec2(-5.6, 0.3), vec2(-5.6, -2.45), vec2(S.spot[0], -2.45), vec2(S.spot[0], S.spot[1])];
+            }
+            av.endFace = S.face;
+            if (k === 'waiter') {
+              const carry = new THREE.Group();
+              carry.add(B(0.5, 0.03, 0.34, '#f08060', 0, 0, 0, false));
+              carry.add(C(0.06, 0.05, 0.16, '#ffffff', -0.1, 0.03, 0, 10, false));
+              carry.add(C(0.13, 0.12, 0.06, '#e7a548', 0.1, 0.03, 0, 14, false));
+              carry.position.set(0, 0.92, 0.32);
+              carry.visible = false;
+              av.bodyPivot.add(carry);
+              av.carry = carry;
+            }
+            av.tag = this.makeStaffTag(k);
+            av.tagEmoteEl = av.tag.querySelector('.st-emote');
+            av.tagBar = av.tag.querySelector('.st-bar');
+            av.emoteT = 0;
+            this.root.add(av.root);
+            W3.pickables.push(av.root);
+            this.staffAv[k] = av;
+          } else if (!want && av && !av.leaving) {
+            av.leaving = true;
+            if (av.carry) av.carry.visible = false;
+            const p = av.root.position;
+            av.speed = 2.6;
+            av.path = (p.z < -0.6 ? [vec2(p.x, -2.45), vec2(-5.6, -2.45), vec2(-5.6, 0.3)] : []).concat([vec2(DOOR_IN[0], DOOR_IN[1]), vec2(DOOR_OUT[0], DOOR_OUT[1])]);
+            av.endFace = -Math.PI / 2;
+            av.onArrive = () => this.removeStaff(k);
+          }
+        });
+      },
+      staffPing(k, emote) {
+        const av = this.staffAv[k];
+        if (!av) return;
+        av.jump = 0.45;
+        av.emote = emote;
+        av.emoteT = 1.3;
+      },
+      /* Phục vụ đi tới bàn của khách: trả về số giây đi đường */
+      waiterGo(cid, speed) {
+        const av = this.staffAv.waiter;
+        const seat = this.seatOf.get(cid);
+        if (!av || seat === undefined) return 0;
+        const S0 = SEATS[seat];
+        const p = av.root.position;
+        const pts = p.z < -0.6 ? [vec2(5.6, p.z), vec2(5.6, 0.4), vec2(S0.x, 1.95)] : [vec2(S0.x, 1.95)];
+        return this.walkStaff(av, pts, speed, 0, true);
+      },
+      waiterBack(speed) {
+        const av = this.staffAv.waiter;
+        if (!av) return 0;
+        const home = STAFF.waiter.spot;
+        const p = av.root.position;
+        const pts = (p.z > -0.6 ? [vec2(5.6, 0.4)] : []).concat([vec2(5.6, home[1]), vec2(home[0], home[1])]);
+        return this.walkStaff(av, pts, speed, STAFF.waiter.face, false);
+      },
+      walkStaff(av, pts, speed, face, carrying) {
+        av.path = pts;
+        av.speed = speed;
+        av.endFace = face;
+        av.onArrive = null;
+        if (av.carry) av.carry.visible = carrying;
+        let d = 0;
+        let x = av.root.position.x;
+        let z = av.root.position.z;
+        pts.forEach((q) => { d += Math.hypot(q.x - x, q.z - z); x = q.x; z = q.z; });
+        return d / speed;
+      },
+
       /* ---------- Đầu bếp (người chơi) ---------- */
       setPlayerLook(look) {
         if (!this.ok || this.chefLookId === look.id) return;
@@ -5704,14 +6937,15 @@
         CAMD.ty = 0.9;
         CAMD.r = z.cam;
         CAMD.pol = 0.92;
-        CAMD.az = 0.18;
+        CAMD.az = z.az !== undefined ? z.az : 0.18;
         USERCAM.az = 0;
         USERCAM.pol = 0;
         USERCAM.zoom = 1;
         const ring = W3.refs.ring;
         if (ring) {
           ring.visible = true;
-          ring.position.set(z.pos[0], 0.03, z.pos[1] + (k === 'waiting' ? 0 : 0.95));
+          if (z.ring) ring.position.set(z.ring[0], 0.03, z.ring[1]);
+          else ring.position.set(z.pos[0], 0.03, z.pos[1] + (k === 'waiting' ? 0 : 0.95));
         }
         this.moveChefTo(k);
       },
@@ -5744,7 +6978,7 @@
           let o = h.object;
           while (o && !o.userData.pick) o = o.parent;
           if (!o) continue;
-          if (o.userData.pick.type === 'customer') return o.userData.pick;
+          if (o.userData.pick.type === 'customer' || o.userData.pick.type === 'staff') return o.userData.pick;
           if (!zone) zone = o.userData.pick;
         }
         return zone;
@@ -5760,6 +6994,7 @@
         if (!hit) { if (this.focus) { Sound.play('click'); switchScene('world'); } return; }
         Sound.play('click');
         if (hit.type === 'customer') { this.tapCustomer(hit.id); return; }
+        if (hit.type === 'staff') { switchScene('staff'); return; }
         const z = ZONES[hit.zone];
         switchScene(z.opens || hit.zone);
       },
@@ -5869,6 +7104,26 @@
           this.liquid.position.y = 0.01 + 0.14 * f;
           this.liquid.material = mat(DRINK_COL[d.flavor]);
         }
+        const dj = k.jobs.drinker;
+        this.staffCup.visible = !!dj;
+        const st2 = W3.refs.stream2;
+        st2.visible = !!dj && state.power.on && dj.t < dj.dur;
+        if (dj) {
+          const f2 = clamp(dj.t / dj.dur, 0.04, 0.88);
+          this.staffLiquid.scale.y = f2;
+          this.staffLiquid.position.y = 0.01 + 0.14 * f2;
+          this.staffLiquid.material = mat(DRINK_COL[dj.flavor]);
+          if (st2.visible) st2.material = mat(DRINK_COL[dj.flavor]);
+        }
+        const aj = k.jobs.assembler;
+        this.staffPlate.visible = staffOn('assembler') || !!aj;
+        const nL = aj ? Math.max(1, Math.ceil(clamp(aj.t / aj.dur, 0, 1) * RECIPES[aj.rid].layers.length)) : 0;
+        const pk2 = aj ? aj.rid + ':' + nL : '';
+        if (pk2 !== this.staffPlateKey) {
+          this.staffPlateKey = pk2;
+          this.staffStack.clear();
+          if (aj) this.staffStack.add(burgerStack(RECIPES[aj.rid].layers.slice(0, nL).map((id) => ({ id: id, doneness: LAYERS[id].cooked ? 'perfect' : undefined }))));
+        }
         const flav = d ? d.flavor : k.drinkFlavor;
         Object.keys(W3.refs.flavorBtns).forEach((f) => W3.refs.flavorBtns[f].scale.setScalar(f === flav ? 1.35 : 1));
         const stream = W3.refs.stream;
@@ -5913,7 +7168,9 @@
 
       updateDoor(dt) {
         let near = false;
-        this.avatars.forEach((av) => { const p = av.root.position; if (p.x < -6.2 && Math.abs(p.z - 2.5) < 1.4) near = true; });
+        const check = (av) => { const p = av.root.position; if (p.x < -6.2 && Math.abs(p.z - 2.5) < 1.4) near = true; };
+        this.avatars.forEach(check);
+        Object.keys(this.staffAv).forEach((k) => check(this.staffAv[k]));
         const pv = W3.refs.doorPivot;
         const target = near ? -1.25 : 0;
         pv.rotation.y += (target - pv.rotation.y) * Math.min(1, dt * 6);
@@ -5921,8 +7178,10 @@
 
       update(dt) {
         if (!this.ok) return;
+        this.syncStaff();
         this.syncCustomers();
         this.avatars.forEach((av) => animateChibi(av, dt));
+        Object.keys(this.staffAv).forEach((k) => animateChibi(this.staffAv[k], dt));
         if (this.chef) animateChibi(this.chef, dt);
         this.syncItems(dt);
         this.updateSky();
@@ -5971,6 +7230,8 @@
         '<li><b>🥤 Quầy nước:</b> Chọn vị, đặt ly, <b>nhấn giữ</b> nút Rót tới vạch xanh rồi đậy nắp.</li>' +
         '<li><b>🛎️ Giao món:</b> Chọn khách, kiểm tra dấu ✅ rồi bấm “Giao cho khách”.</li>' +
         '<li><b>Sự cố &amp; nâng cấp:</b> Mất điện ➜ bấm liên tục “🔧 Sửa cầu dao”. Nhập hàng ở 📦 Kho hàng, mua thiết bị ở 🛠️ Nâng cấp – các nâng cấp sẽ hiện ngay trong mô hình quán.</li>' +
+        '<li><b>🏅 Cấp độ quán:</b> Khách hài lòng và mỗi ngày kết thúc cho bạn XP. Mới mở quán còn vắng (tối đa 2 khách cùng lúc); lên cấp thì mở món mới, mở vị trí nhân viên và khách đông dần. Chạm vào ô 🏅 Lv trên thanh trạng thái để xem chi tiết.</li>' +
+        '<li><b>👥 Nhân viên:</b> Thuê Thu ngân, Phụ bếp, Pha chế, Lắp ráp, Phục vụ để họ tự làm từng phần việc. Trả phí tuyển dụng một lần, lương trả lúc đóng cửa mỗi tối; đào tạo để làm nhanh hơn. Nhân viên đứng làm việc ngay trong quán 3D.</li>' +
         '</ol><div class="text-xs mt-2 opacity-80">💾 Tiến trình được tự động lưu vào trình duyệt (LocalStorage).</div>';
     }
     function showHelp() {
@@ -5993,6 +7254,7 @@
     function doReset() {
       try { localStorage.removeItem(SAVE_KEY); } catch (e) { /* bỏ qua */ }
       stopPour();
+      World.clearStaff();
       $('tut-layer').classList.add('hidden');
       state = createDefaultState(null);
       resetTransient();
@@ -6023,6 +7285,7 @@
       updateCustomers(dt, tut);
       updateCook(dt);
       updatePour(dt);
+      if (!tut) updateStaff(dt);
       saveTimer += dt;
       if (saveTimer > 5) {
         saveTimer = 0;
@@ -6037,6 +7300,7 @@
       try {
         if (!$('screen-game').classList.contains('hidden')) {
           update(dt);
+          flushRenders();
           World.update(dt);
           World.render();
           renderHUD();
@@ -6082,6 +7346,10 @@
         case 'fix-breaker': fixBreaker(); break;
         case 'buy': buyIngredient(el.dataset.item, Number(el.dataset.qty)); break;
         case 'buy-upgrade': buyUpgrade(el.dataset.id); break;
+        case 'staff-hire': hireStaff(el.dataset.id); break;
+        case 'staff-fire': Sound.play('click'); fireStaff(el.dataset.id); break;
+        case 'staff-train': trainStaff(el.dataset.id); break;
+        case 'level-info': Sound.play('click'); showLevelInfo(); break;
         case 'close-panel': Sound.play('click'); switchScene('world'); break;
         case 'cust': Sound.play('click'); World.tapCustomer(el.dataset.id); break;
         case 'pause': togglePause(); break;
@@ -6092,6 +7360,11 @@
         default: break;
       }
     });
+
+    /* Theo dõi lúc người chơi đang nhấn giữ để hoãn việc vẽ lại do nhân viên gây ra */
+    document.addEventListener('pointerdown', () => { uiHeld = true; uiHeldAt = performance.now(); }, true);
+    ['pointerup', 'pointercancel'].forEach((ev) => document.addEventListener(ev, () => { uiHeld = false; }, true));
+    window.addEventListener('blur', () => { uiHeld = false; });
 
     /* Hiệu ứng khi chạm vào màn hình */
     document.addEventListener('pointerdown', (e) => {
@@ -6132,13 +7405,14 @@
 
     document.addEventListener('visibilitychange', () => { if (document.hidden) { stopPour(); saveGame(); } });
     window.addEventListener('beforeunload', saveGame);
-    window.addEventListener('resize', () => { World.resize(); positionPopups(); });
+    window.addEventListener('resize', () => { readNativeSafeArea(); World.resize(); positionPopups(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && currentScene !== 'world' && !Modal.isOpen()) switchScene('world'); });
 
     /* =====================================================
        KHỞI ĐỘNG GAME
        ===================================================== */
     function init() {
+      readNativeSafeArea();
       loadSettings();
       $('btn-sound').textContent = Sound.enabled ? '🔊' : '🔇';
       showScreen('loading');
