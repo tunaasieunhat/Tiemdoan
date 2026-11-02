@@ -1,14 +1,13 @@
 {
-  "version": "3.2.0",
+  "version": "3.3.0",
   "date": "02/11/2026",
-  "title": "Cấp độ quán & thuê nhân viên",
+  "title": "Bảng yêu cầu, công thức & trang trí",
   "notes": [
-    "Cấp độ quán Lv 1–10: lúc mới mở quán còn vắng (tối đa 2 khách cùng lúc), lên cấp thì khách kéo đến đông dần.",
-    "Nhận XP khi khách hài lòng và mỗi khi kết thúc ngày; lên cấp được thưởng tiền, mở món mới và vị trí nhân viên mới.",
-    "Thuê nhân viên: Thu ngân, Phụ bếp, Pha chế, Lắp ráp, Phục vụ tự làm từng phần việc; trả lương mỗi tối và đào tạo để làm nhanh hơn.",
-    "Góc Nhân viên mới trong quán 3D, nhân viên đứng làm việc ngay tại từng quầy.",
-    "Các bảng khu vực gọn gàng hơn trên điện thoại: nút bấm hiện ngay, không phải kéo xuống sâu.",
-    "Game tràn kín màn hình, kể cả chỗ camera đục lỗ; sàn quán không còn bị sọc khi xoay camera."
+    "Bảng yêu cầu của khách ở góc màn hình: xem order của từng khách, món nào đã có trên khay (✅), nhận đơn và giao món nhanh.",
+    "Sổ công thức nấu ăn: cách làm từng món, giá bán, giá vốn, tiền lãi và thời gian nướng/chiên.",
+    "Đóng cửa sớm: ngưng đón khách để phục vụ nốt rồi nghỉ, hoặc đóng cửa ngay.",
+    "Trang trí quán chi tiết: bàn, ghế, thảm sàn, giấy dán tường, đèn treo, cây cảnh và thêm bàn thứ ba (6 chỗ ngồi). Quán càng ấm cúng, khách càng kiên nhẫn và boa nhiều.",
+    "Nút ☰ Quản lý gom nâng cấp, nhân viên, trang trí, công thức và đóng cửa sớm vào một chỗ."
   ],
   "download": "https://github.com/tunaasieunhat/Tiemdoan/releases/tag/apk-latest"
 }

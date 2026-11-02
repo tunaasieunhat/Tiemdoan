@@ -1038,7 +1038,7 @@
       #zone-panel .pickup > .text-\[11px\] { display: none; }
       #zone-panel .tray-item, #zone-panel .tray-empty { min-height: 64px; }
       #zone-panel .tray-item .ico { width: 38px !important; height: 38px !important; }
-      #zone-panel #scene-storage h2, #zone-panel #scene-shop h2, #zone-panel #scene-staff h2 { display: none; }
+      #zone-panel #scene-storage h2, #zone-panel #scene-shop h2, #zone-panel #scene-staff h2, #zone-panel #scene-decor h2, #zone-panel #scene-recipes h2 { display: none; }
       #zone-panel #storage-grid { grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 8px; }
       #zone-panel .ing-card { padding: 8px; gap: 4px; }
       #zone-panel .ing-card .ing-ico { width: 38px; height: 38px; }
@@ -1060,6 +1060,70 @@
       #zone-panel .ing-btn .lbl { font-size: 9px; }
       #zone-panel .ing-btn .badge { top: -6px; right: -4px; min-width: 18px; height: 18px; font-size: 10px; }
       .lock-banner { padding: 3px 8px; margin-bottom: 6px; font-size: 11px; }
+    }
+    /* =====================================================
+       MENU QUẢN LÝ, BẢNG YÊU CẦU, CÔNG THỨC, TRANG TRÍ
+       ===================================================== */
+    #btn-menu { position: relative; }
+    #btn-menu .nav-badge { top: -8px; right: -8px; }
+    .mgmt-menu { position: fixed; z-index: 70; display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: 20px; min-width: 220px; }
+    .mgmt-menu button { position: relative; text-align: left; font-weight: 900; font-size: 14px; padding: 8px 12px; border-radius: 14px; background: #fff8f1; border: 2px solid #f4dfcd; }
+    .mgmt-menu button:hover { background: #ffe4d2; }
+    .mgmt-menu button:disabled { opacity: 0.45; }
+    .mgmt-menu .nav-badge { top: 6px; right: 8px; }
+    .order-board {
+      position: absolute; left: calc(10px + var(--sal)); top: calc(var(--hud-h) + 8px); z-index: 31; width: 236px;
+      max-height: calc(100% - var(--hud-h) - 118px); display: flex; flex-direction: column; border-radius: 18px;
+      background: rgba(255, 252, 247, 0.96); border: 3px solid var(--line); box-shadow: 0 4px 0 var(--line), 0 10px 22px rgba(120, 70, 40, 0.15);
+    }
+    .order-board.collapsed { width: auto; }
+    .order-board.collapsed .ob-body { display: none; }
+    .ob-head { display: flex; align-items: center; gap: 6px; padding: 6px 10px; font-weight: 900; font-size: 13px; background: transparent; border: none; }
+    .ob-count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: #ff8fa3; color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center; }
+    .ob-body { overflow-y: auto; padding: 0 6px 6px; display: flex; flex-direction: column; gap: 5px; }
+    .ob-row, .ob-queue { border-radius: 14px; padding: 5px 7px; background: #fff8f1; border: 2px solid #f4dfcd; cursor: pointer; }
+    .ob-queue { background: #f3faff; border-color: #cfe3f3; cursor: default; }
+    .ob-row.selected { border-color: #ff9c7a; box-shadow: 0 0 0 2px #ffd8c9; }
+    .ob-row.ready { background: #effbf3; border-color: #94d8ad; }
+    .ob-top { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 900; }
+    .ob-tk { color: #b0603c; }
+    .ob-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ob-more { font-size: 10px; font-weight: 800; color: var(--cocoa-soft); white-space: nowrap; }
+    .ob-items { display: flex; flex-wrap: wrap; gap: 3px; margin: 3px 0; }
+    .ob-it { position: relative; display: inline-flex; }
+    .ob-it i { position: absolute; right: -5px; bottom: -4px; font-style: normal; font-size: 10px; }
+    .ob-row .pbar { height: 6px; border-width: 1.5px; }
+    .ob-note, .ob-empty { font-size: 11px; font-weight: 800; text-align: center; padding: 4px; color: var(--cocoa-soft); }
+    .ob-note { color: #7d5ba6; }
+    .rc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+    .rc-card { padding: 10px; border-radius: 18px; display: flex; flex-direction: column; gap: 6px; }
+    .rc-card.locked { opacity: 0.62; }
+    .rc-top { display: flex; align-items: center; gap: 8px; }
+    .rc-name { font-weight: 900; font-size: 15px; line-height: 1.2; }
+    .rc-sub { font-size: 11px; font-weight: 800; opacity: 0.75; }
+    .rc-lock, .rc-ok { font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+    .rc-lock { background: #eee6ff; color: #6a4fa3; }
+    .rc-ok { background: #d8f6e3; color: #2f7a4d; }
+    .rc-steps { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; font-size: 11px; font-weight: 800; }
+    .rc-steps .step-chip b { color: #e07a5f; margin: 0 2px; }
+    .rc-tip { font-size: 11px; font-weight: 700; opacity: 0.8; }
+    .rc-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 6px; }
+    .rc-time { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; background: #fff8f1; border: 2px solid #f4dfcd; border-radius: 12px; padding: 4px 8px; }
+    .dc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+    .dc-card { padding: 8px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+    .dc-card.using { background: linear-gradient(#f2fff6, #e4f8ec); border-color: #9ad8b0; box-shadow: 0 5px 0 #9ad8b0; }
+    .dc-sw { width: 80px; height: 64px; }
+    .dc-sw svg { width: 100%; height: 100%; }
+    .dc-name { font-weight: 900; font-size: 12px; line-height: 1.2; }
+    .dc-meta { font-size: 10px; font-weight: 800; opacity: 0.7; }
+    @media (max-height: 520px) {
+      .order-board { width: 196px; top: calc(var(--hud-h) + 4px); max-height: calc(100% - var(--hud-h) - 92px); }
+      .ob-head { padding: 4px 8px; font-size: 12px; }
+      .ob-items .ico { width: 18px !important; height: 18px !important; }
+      .mgmt-menu button { font-size: 12px; padding: 6px 10px; }
+      .rc-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+      .dc-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+      .dc-sw { width: 64px; height: 50px; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
@@ -1162,14 +1226,27 @@
       </div>
       <div class="hud-actions" id="hud-actions">
         <button class="btn btn-sm btn-peach" data-action="scene" data-scene="storage" title="Kho &amp; Nhập hàng">📦<span class="lbl"> Kho</span></button>
-        <button class="btn btn-sm btn-lilac" data-action="scene" data-scene="shop" title="Cửa hàng Nâng cấp">🛠️<span class="lbl"> Nâng cấp</span></button>
-        <button class="btn btn-sm btn-mint" data-action="scene" data-scene="staff" title="Thuê nhân viên">👥<span class="lbl"> Nhân viên</span></button>
+        <button id="btn-menu" class="btn btn-sm btn-lilac" data-action="menu" title="Quản lý quán: nâng cấp, nhân viên, trang trí, công thức, đóng cửa sớm">☰<span class="lbl"> Quản lý</span><span class="nav-badge hidden" id="nb-menu"></span></button>
         <button id="btn-pause" class="btn btn-sm btn-sky" data-action="pause" title="Tạm dừng">⏸️</button>
         <button id="btn-sound" class="btn btn-sm btn-lilac" data-action="sound" title="Bật/tắt âm thanh">🔊</button>
         <button class="btn btn-sm btn-butter" data-action="help" title="Hướng dẫn">❓</button>
         <button class="btn btn-sm btn-pink" data-action="reset" title="Chơi lại từ đầu (Reset)">🔄<span class="lbl"> Reset</span></button>
       </div>
     </header>
+    <div id="mgmt-menu" class="mgmt-menu card hidden">
+      <button data-action="scene" data-scene="shop">🛠️ Nâng cấp thiết bị<span class="nav-badge hidden" id="mb-shop"></span></button>
+      <button data-action="scene" data-scene="staff">👥 Thuê nhân viên<span class="nav-badge hidden" id="mb-staff"></span></button>
+      <button data-action="scene" data-scene="decor">🎨 Trang trí quán</button>
+      <button data-action="scene" data-scene="recipes">📖 Công thức nấu ăn</button>
+      <button data-action="toggle-board">🧾 Bảng yêu cầu của khách</button>
+      <button data-action="close-early" id="mm-close">🌙 Đóng cửa sớm</button>
+    </div>
+
+    <!-- Bảng yêu cầu của khách -->
+    <div id="order-board" class="order-board hidden">
+      <button class="ob-head" data-action="toggle-board"><span class="flex-1 text-left">🧾 Yêu cầu của khách</span><span id="ob-count" class="ob-count">0</span><span id="ob-caret">▾</span></button>
+      <div id="ob-body" class="ob-body"></div>
+    </div>
 
     <aside id="zone-panel" aria-hidden="true">
       <div class="zp-head">
@@ -1343,6 +1420,25 @@
         <div id="shop-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </section>
 
+      <!-- Màn hình Trang trí quán -->
+      <section id="scene-decor" class="scene hidden">
+        <div class="card p-4 mb-3 staff-head">
+          <h2 class="text-2xl font-black m-0">🎨 Trang Trí Quán</h2>
+          <div class="text-sm font-bold opacity-70 panel-hint">Chọn bàn, ghế, thảm, giấy dán tường, đèn và cây cảnh cho khu khách ngồi. Đồ đã mua có thể đổi qua lại miễn phí.</div>
+          <div id="decor-summary" class="text-sm font-bold mt-2"></div>
+        </div>
+        <div id="decor-list"></div>
+      </section>
+
+      <!-- Màn hình Công thức nấu ăn -->
+      <section id="scene-recipes" class="scene hidden">
+        <div class="card p-4 mb-3 staff-head">
+          <h2 class="text-2xl font-black m-0">📖 Công Thức Nấu Ăn</h2>
+          <div class="text-sm font-bold opacity-70 panel-hint">Tất cả món trong thực đơn: cách làm từng bước, giá bán, giá vốn và thời gian nấu.</div>
+        </div>
+        <div id="recipe-list"></div>
+      </section>
+
       <!-- Màn hình Thuê nhân viên -->
       <section id="scene-staff" class="scene hidden">
         <div class="card p-4 mb-3 staff-head">
@@ -1444,7 +1540,6 @@
     const TRAY_CAP = 4;
     const PLATE_CAP = 10;
     const QUEUE_CAP = 5;
-    const WAIT_CAP = 4;
     const DAILY_RENT = 20;
     const LATE_RATIO = 0.2;
     const START_MONEY = 120;
@@ -1638,6 +1733,63 @@
     ];
 
     /* =====================================================
+       TRANG TRÍ KHU CHỜ – mỗi mục chọn một kiểu, kiểu có giá > 0 cộng 1 điểm ấm cúng
+       Điểm ấm cúng: khách kiên nhẫn hơn (+4%/điểm) và boa nhiều hơn (+6%/điểm)
+       ===================================================== */
+    const DECOR = {
+      table: {
+        label: 'Bàn ăn', icon: '🍽️', items: [
+          { id: 'wood', name: 'Bàn gỗ tròn', price: 0, top: '#fff6ec', cloth: '#ff9eb5', leg: '#b9784a' },
+          { id: 'marble', name: 'Bàn đá cẩm thạch', price: 90, top: '#f6f7fa', cloth: '#c9d3e0', leg: '#8e9aaf' },
+          { id: 'candy', name: 'Bàn kẹo ngọt', price: 120, top: '#ffe4f0', cloth: '#ffd166', leg: '#ff8fab' }
+        ]
+      },
+      chair: {
+        label: 'Ghế ngồi', icon: '🪑', items: [
+          { id: 'wood', name: 'Ghế gỗ', price: 0, seat: '#e9b989', cushion: '#ffd6dc', leg: '#b9784a', back: 0.5 },
+          { id: 'mint', name: 'Ghế đệm bạc hà', price: 60, seat: '#bfe9d2', cushion: '#ffffff', leg: '#6fb98f', back: 0.55 },
+          { id: 'sofa', name: 'Ghế sofa nhung', price: 110, seat: '#c9a7ff', cushion: '#eee6ff', leg: '#7d5ba6', back: 0.78 }
+        ]
+      },
+      rug: {
+        label: 'Thảm sàn', icon: '🧶', items: [
+          { id: 'pink', name: 'Thảm hồng chấm bi', price: 0, fill: '#ffd6dc', edge: '#ff9eb5' },
+          { id: 'mint', name: 'Thảm xanh bạc hà', price: 50, fill: '#d8f6e3', edge: '#7cc89c' },
+          { id: 'butter', name: 'Thảm vàng bơ', price: 50, fill: '#fff1bf', edge: '#ecc95c' }
+        ]
+      },
+      wall: {
+        label: 'Giấy dán tường', icon: '🖼️', items: [
+          { id: 'cream', name: 'Kem sọc nhạt', price: 0, a: '#ffe9d8', b: '#fff4ea', dot: 'rgba(255,170,190,0.35)', base: '#f4c9a5', trim: '#e8b085' },
+          { id: 'rose', name: 'Hồng phấn', price: 70, a: '#ffdbe6', b: '#ffeef3', dot: 'rgba(255,255,255,0.75)', base: '#f2a7bb', trim: '#e08aa2' },
+          { id: 'mint', name: 'Xanh bạc hà', price: 70, a: '#dcf3e8', b: '#eefaf4', dot: 'rgba(124,200,156,0.4)', base: '#a9dcc4', trim: '#7cc89c' },
+          { id: 'sky', name: 'Xanh da trời', price: 70, a: '#dcecff', b: '#eef6ff', dot: 'rgba(255,255,255,0.8)', base: '#a9c8ec', trim: '#82a9d6' }
+        ]
+      },
+      lamp: {
+        label: 'Đèn treo', icon: '💡', items: [
+          { id: 'classic', name: 'Chao đèn vàng', price: 0, color: '#ffcf66', shape: 'cone' },
+          { id: 'lantern', name: 'Đèn lồng đỏ', price: 70, color: '#e5484d', shape: 'lantern' },
+          { id: 'globe', name: 'Đèn cầu sữa', price: 70, color: '#fff3d6', shape: 'globe' }
+        ]
+      },
+      plant: {
+        label: 'Cây cảnh', icon: '🪴', items: [
+          { id: 'none', name: 'Chưa có cây', price: 0, count: 0 },
+          { id: 'small', name: 'Ba chậu cây nhỏ', price: 40, count: 3 },
+          { id: 'garden', name: 'Vườn mini sáu chậu', price: 100, count: 6 }
+        ]
+      },
+      seating: {
+        label: 'Số bàn khu chờ', icon: '🪑', items: [
+          { id: 'two', name: '2 bàn – 4 chỗ ngồi', price: 0, seats: 4 },
+          { id: 'three', name: '3 bàn – 6 chỗ ngồi', price: 200, seats: 6 }
+        ]
+      }
+    };
+    const DECOR_ORDER = ['seating', 'table', 'chair', 'rug', 'wall', 'lamp', 'plant'];
+
+    /* =====================================================
        NHÂN VẬT CHIBI
        hair: short | long | bun | spiky | pigtails | bob | elder | curly
        acc : none | glasses | bow | cap | beard | headphones | flower | beret | chefhat | mustache
@@ -1704,7 +1856,9 @@
       '💡 Mẹo: Nhà phê bình ẩm thực ảnh hưởng danh tiếng gấp đôi.',
       '💡 Mẹo: Khách càng hài lòng, bạn càng nhận nhiều XP để quán lên cấp.',
       '💡 Mẹo: Quán mới mở còn vắng khách – lên cấp thì khách kéo đến đông dần.',
-      '💡 Mẹo: Thuê Phụ bếp để không bao giờ lo thịt bị cháy khét!'
+      '💡 Mẹo: Thuê Phụ bếp để không bao giờ lo thịt bị cháy khét!',
+      '💡 Mẹo: Trang trí khu chờ thật xinh để khách kiên nhẫn hơn và boa nhiều hơn.',
+      '💡 Mẹo: Mệt rồi thì vào ☰ Quản lý ➜ Đóng cửa sớm để nghỉ ngơi.'
     ];
 
     /* =====================================================
@@ -1712,11 +1866,21 @@
        Mỗi lần cập nhật game: tăng GAME_VERSION, thêm một mục lên đầu
        CHANGELOG và sửa file version.json ở thư mục gốc cho khớp.
        ===================================================== */
-    const GAME_VERSION = '3.2.0';
+    const GAME_VERSION = '3.3.0';
     const SEEN_VERSION_KEY = 'tinyFastFoodStory_seenVersion';
     const VERSION_URL = 'https://raw.githubusercontent.com/tunaasieunhat/Tiemdoan/main/version.json';
     const DOWNLOAD_URL = 'https://github.com/tunaasieunhat/Tiemdoan/releases/tag/apk-latest';
     const CHANGELOG = [
+      {
+        version: '3.3.0', date: '02/11/2026', title: 'Bảng yêu cầu, công thức & trang trí',
+        items: [
+          'Bảng yêu cầu của khách ở góc màn hình: xem order của từng khách, món nào đã có trên khay (✅), nhận đơn và giao món nhanh.',
+          'Sổ công thức nấu ăn: cách làm từng món, giá bán, giá vốn, tiền lãi và thời gian nướng/chiên.',
+          'Đóng cửa sớm: ngưng đón khách để phục vụ nốt rồi nghỉ, hoặc đóng cửa ngay.',
+          'Trang trí quán chi tiết: bàn, ghế, thảm sàn, giấy dán tường, đèn treo, cây cảnh và thêm bàn thứ ba (6 chỗ ngồi). Quán càng ấm cúng, khách càng kiên nhẫn và boa nhiều.',
+          'Nút ☰ Quản lý gom nâng cấp, nhân viên, trang trí, công thức và đóng cửa sớm vào một chỗ.'
+        ]
+      },
       {
         version: '3.2.0', date: '02/11/2026', title: 'Cấp độ quán & thuê nhân viên',
         items: [
@@ -1911,6 +2075,40 @@
       g += hairFront(look.hair, look.hairC);
       g += accessory(look.acc, look);
       return svg(o.head ? '14 -8 92 102' : '0 -10 120 160', g);
+    };
+
+    /* ---------- Ô xem trước đồ trang trí ---------- */
+    ART.decorSwatch = function (cat, it) {
+      const o = ' stroke="' + O + '" stroke-width="2" stroke-linejoin="round"';
+      let g = '<rect x="2" y="2" width="76" height="60" rx="14" fill="#fff8f1"/>';
+      if (cat === 'table') {
+        g += '<rect x="37" y="34" width="6" height="20"' + o + ' fill="' + it.leg + '"/><ellipse cx="40" cy="55" rx="14" ry="4"' + o + ' fill="' + it.leg + '"/>';
+        g += '<ellipse cx="40" cy="30" rx="28" ry="9"' + o + ' fill="' + it.top + '"/><ellipse cx="40" cy="29" rx="22" ry="6" fill="' + it.cloth + '"/><circle cx="40" cy="22" r="4" fill="#ff8fab"' + o + '/>';
+      } else if (cat === 'chair') {
+        g += '<rect x="24" y="10" width="32" height="' + Math.round(14 + it.back * 20) + '" rx="6"' + o + ' fill="' + it.seat + '"/><rect x="29" y="14" width="22" height="' + Math.round(8 + it.back * 12) + '" rx="4" fill="' + it.cushion + '"/>';
+        g += '<rect x="20" y="34" width="40" height="8" rx="3"' + o + ' fill="' + it.seat + '"/><rect x="24" y="42" width="5" height="16"' + o + ' fill="' + it.leg + '"/><rect x="51" y="42" width="5" height="16"' + o + ' fill="' + it.leg + '"/>';
+      } else if (cat === 'rug') {
+        g += '<rect x="10" y="14" width="60" height="38" rx="12" fill="' + it.fill + '" stroke="' + it.edge + '" stroke-width="4"/>';
+        for (let x = 20; x < 66; x += 12) for (let y = 24; y < 48; y += 11) g += '<circle cx="' + x + '" cy="' + y + '" r="2.4" fill="#fff"/>';
+      } else if (cat === 'wall') {
+        for (let x = 4; x < 76; x += 8) g += '<rect x="' + x + '" y="4" width="8" height="40" fill="' + ((x / 8) % 2 ? it.a : it.b) + '"/>';
+        g += '<rect x="4" y="42" width="72" height="4" fill="' + it.trim + '"/><rect x="4" y="46" width="72" height="14" fill="' + it.base + '"/>';
+        g += '<rect x="2" y="2" width="76" height="60" rx="14" fill="none"' + o + '/>';
+      } else if (cat === 'lamp') {
+        g += '<line x1="40" y1="2" x2="40" y2="16" stroke="#7a5340" stroke-width="2"/>';
+        if (it.shape === 'lantern') g += '<rect x="28" y="18" width="24" height="30" rx="10"' + o + ' fill="#ff6b6b"/><rect x="31" y="15" width="18" height="5" fill="#e2b84c"/><rect x="31" y="46" width="18" height="5" fill="#e2b84c"/>';
+        else if (it.shape === 'globe') g += '<circle cx="40" cy="34" r="16"' + o + ' fill="' + it.color + '"/><rect x="36" y="14" width="8" height="6" fill="#c9a58a"/>';
+        else g += '<path d="M34 16 L46 16 L58 40 L22 40 Z"' + o + ' fill="' + it.color + '"/><circle cx="40" cy="44" r="5" fill="#fff1b8"/>';
+      } else if (cat === 'plant') {
+        const n = Math.max(1, Math.min(3, it.count));
+        if (!it.count) g += '<text x="40" y="40" text-anchor="middle" font-size="22">∅</text>';
+        else for (let i = 0; i < n; i++) { const x = 40 + (i - (n - 1) / 2) * 22; g += '<path d="M' + (x - 8) + ' 44 L' + (x + 8) + ' 44 L' + (x + 6) + ' 58 L' + (x - 6) + ' 58 Z"' + o + ' fill="#e8835f"/><circle cx="' + x + '" cy="34" r="11"' + o + ' fill="#7bc67b"/>'; }
+      } else {
+        const tables = it.seats > 4 ? 3 : 2;
+        for (let i = 0; i < tables; i++) { const x = 40 + (i - (tables - 1) / 2) * 24; g += '<ellipse cx="' + x + '" cy="32" rx="9" ry="5"' + o + ' fill="#fff6ec"/><rect x="' + (x - 17) + '" y="30" width="6" height="12" rx="2"' + o + ' fill="#e9b989"/><rect x="' + (x + 11) + '" y="30" width="6" height="12" rx="2"' + o + ' fill="#e9b989"/>'; }
+        g += '<text x="40" y="58" text-anchor="middle" font-size="10" font-weight="900" fill="' + O + '">' + it.seats + ' chỗ</text>';
+      }
+      return svg('0 0 80 64', g);
     };
 
     /* ---------- Mèo Bơ – bếp trưởng hướng dẫn ---------- */
@@ -2409,6 +2607,11 @@
     function defaultKitchen() {
       return { cook: [null, null, null, null, null], holding: [], plate: [], plateBunCredit: 0, tray: [], drink: null, drinkFlavor: 'cola', jobs: { drinker: null, assembler: null, waiter: null } };
     }
+    function defaultDecor() {
+      const d = { owned: [], equip: {} };
+      DECOR_ORDER.forEach((cat) => { const first = DECOR[cat].items[0]; d.owned.push(cat + ':' + first.id); d.equip[cat] = first.id; });
+      return d;
+    }
     function defaultStaff() {
       const st = {};
       STAFF_ORDER.forEach((k) => { st[k] = { hired: false, skill: 1, days: 0 }; });
@@ -2425,6 +2628,8 @@
         dayLv: 1,
         levelSeen: 1,
         staff: defaultStaff(),
+        decor: defaultDecor(),
+        closing: false,
         phase: 'prep',
         minutes: OPEN_MIN,
         paused: false,
@@ -2547,6 +2752,15 @@
         });
       }
       s.kitchen.jobs = sanitizeJobs(data.kitchen ? data.kitchen.jobs : null);
+      s.decor = defaultDecor();
+      if (data.decor && typeof data.decor === 'object') {
+        const valid = (key) => { const p = String(key).split(':'); return !!(DECOR[p[0]] && DECOR[p[0]].items.some((it) => it.id === p[1])); };
+        if (Array.isArray(data.decor.owned)) data.decor.owned.forEach((key) => { if (valid(key) && s.decor.owned.indexOf(key) < 0) s.decor.owned.push(key); });
+        if (data.decor.equip && typeof data.decor.equip === 'object') {
+          DECOR_ORDER.forEach((cat) => { const id = data.decor.equip[cat]; if (s.decor.owned.indexOf(cat + ':' + id) >= 0) s.decor.equip[cat] = id; });
+        }
+      }
+      s.closing = !!data.closing && s.phase === 'open';
       Object.keys(s.kitchen.jobs).forEach((k) => { if (!s.staff[k].hired) s.kitchen.jobs[k] = null; });
       if (['prep', 'open', 'closed'].indexOf(s.phase) < 0) s.phase = 'prep';
       if (!s.waiting.some((c) => c.id === s.selectedTicket)) s.selectedTicket = s.waiting.length ? s.waiting[0].id : null;
@@ -2562,16 +2776,21 @@
         /* Trình duyệt chặn LocalStorage: game vẫn chạy bình thường nhưng không lưu được */
       }
     }
+    let boardOpen = true;
     function loadSettings() {
       try {
         const raw = localStorage.getItem(SETTINGS_KEY);
-        if (raw) Sound.enabled = JSON.parse(raw).sound !== false;
+        if (raw) {
+          const st = JSON.parse(raw);
+          Sound.enabled = st.sound !== false;
+          boardOpen = st.board !== false;
+        }
       } catch (e) {
         Sound.enabled = true;
       }
     }
     function saveSettings() {
-      try { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ sound: Sound.enabled })); } catch (e) { /* bỏ qua */ }
+      try { localStorage.setItem(SETTINGS_KEY, JSON.stringify({ sound: Sound.enabled, board: boardOpen })); } catch (e) { /* bỏ qua */ }
     }
 
     /* =====================================================
@@ -3174,7 +3393,7 @@
 
     function updateNavBadges() {
       const q = state.queue.length;
-      zoneBadge('counter', q ? q : '', q && frontReady() && state.waiting.length < WAIT_CAP ? 'warn' : '');
+      zoneBadge('counter', q ? q : '', q && frontReady() && state.waiting.length < waitCap() ? 'warn' : '');
       let burnt = false;
       let perfect = false;
       let cooking = 0;
@@ -3197,16 +3416,22 @@
       setBadge('zb-waiting', wn ? wn : '', urgent ? 'danger' : '');
       setBadge('zb-storage', Object.keys(INGREDIENTS).some((id) => invCount(id) < 2) ? '!' : '', 'warn');
       setBadge('zb-shop', Object.keys(UPGRADES).some((id) => !state.upgrades[id] && state.money >= UPGRADES[id].price) ? '★' : '', 'good');
-      setBadge('zb-staff', STAFF_ORDER.some((k) => staffUnlocked(k) && !staffOn(k) && state.money >= STAFF[k].hire) ? '★' : '', 'good');
+      const staffNew = STAFF_ORDER.some((k) => staffUnlocked(k) && !staffOn(k) && state.money >= STAFF[k].hire);
+      const shopNew = Object.keys(UPGRADES).some((id) => !state.upgrades[id] && state.money >= UPGRADES[id].price);
+      setBadge('zb-staff', staffNew ? '★' : '', 'good');
+      setBadge('mb-staff', staffNew ? '★' : '', 'good');
+      setBadge('mb-shop', shopNew ? '★' : '', 'good');
+      setBadge('nb-menu', staffNew || shopNew ? '★' : '', 'good');
     }
 
     /* =====================================================
        MỞ / ĐÓNG BẢNG THAO TÁC KHU VỰC
        ===================================================== */
     let currentScene = 'world';
-    const ALL_SCENES = ['counter', 'grill', 'assembly', 'drinks', 'serve', 'storage', 'shop', 'staff'];
+    const ALL_SCENES = ['counter', 'grill', 'assembly', 'drinks', 'serve', 'storage', 'shop', 'staff', 'decor', 'recipes'];
     const KITCHEN_SCENES = ['grill', 'assembly', 'drinks'];
-    const WIDE_SCENES = ['storage', 'shop', 'staff'];
+    const WIDE_SCENES = ['storage', 'shop', 'staff', 'decor', 'recipes'];
+    const SCENE_FOCUS = { decor: 'waiting' };
     const PANEL_INFO = {
       counter: { title: 'Quầy Gọi Món', sub: 'Khách đến lần lượt • Bấm “Nhận đơn” để ghi order' },
       grill: { title: 'Bếp Nướng & Chiên', sub: 'Canh vạch vàng rồi bấm “Lấy ra” trước khi cháy!' },
@@ -3215,7 +3440,9 @@
       serve: { title: 'Quầy Giao Món & Khu Chờ', sub: 'Chọn khách ➜ kiểm tra khay ➜ Giao cho khách' },
       storage: { title: 'Kho & Nhập Hàng', sub: 'Đồ tươi có hạn sử dụng – nhập vừa đủ dùng nhé!' },
       shop: { title: 'Cửa Hàng Nâng Cấp', sub: 'Mỗi nâng cấp chỉ cần mua một lần' },
-      staff: { title: 'Thuê Nhân Viên', sub: 'Nhân viên tự làm một phần việc • Lương trả mỗi cuối ngày' }
+      staff: { title: 'Thuê Nhân Viên', sub: 'Nhân viên tự làm một phần việc • Lương trả mỗi cuối ngày' },
+      decor: { title: 'Trang Trí Quán', sub: 'Đồ trang trí đẹp giúp khách kiên nhẫn hơn và boa nhiều hơn' },
+      recipes: { title: 'Công Thức Nấu Ăn', sub: 'Cách làm, giá vốn và thời gian nấu của từng món' }
     };
 
     function switchScene(name, instant) {
@@ -3252,11 +3479,15 @@
       if (name === 'storage') renderStorage();
       if (name === 'shop') renderShop();
       if (name === 'staff') renderStaff();
+      if (name === 'decor') renderDecorShop();
+      if (name === 'recipes') renderRecipeList();
       renderStaffNotes();
       if (name === 'serve') renderServe();
       if (name === 'drinks') renderDrinks();
       if (KITCHEN_SCENES.indexOf(name) >= 0) renderTicketRail();
-      World.focusZone(name);
+      if (SCENE_FOCUS[name]) World.focusZone(SCENE_FOCUS[name]);
+      else if (ZONES[name]) World.focusZone(name);
+      else World.unfocus();
     }
 
     /* =====================================================
@@ -3370,6 +3601,164 @@
           '<div class="text-xs mt-2 opacity-80 text-left">💡 Nhận XP khi khách hài lòng (order nhiều món được nhiều hơn, nhà phê bình gấp đôi) và khi kết thúc mỗi ngày (+' + DAY_XP + ' XP, thêm +' + PERFECT_DAY_XP + ' nếu không vị khách nào nổi giận hay bỏ về). 👥 = số khách tối đa trong quán cùng lúc.</div>',
         buttons: [{ label: '👍 Đã hiểu', cls: 'btn-mint' }]
       });
+    }
+
+    /* =====================================================
+       MENU QUẢN LÝ & BẢNG YÊU CẦU CỦA KHÁCH
+       ===================================================== */
+    function toggleMenu() {
+      const m = $('mgmt-menu');
+      m.classList.toggle('hidden');
+      if (!m.classList.contains('hidden')) {
+        const b = $('btn-menu').getBoundingClientRect();
+        m.style.top = (b.bottom + 8) + 'px';
+        m.style.right = Math.max(8, window.innerWidth - b.right) + 'px';
+      }
+    }
+    function toggleBoard() {
+      boardOpen = !boardOpen;
+      saveSettings();
+      boardKey = '';
+      if (boardOpen && $('order-board').classList.contains('hidden')) toast('🧾 Bảng yêu cầu sẽ hiện khi quán mở cửa và có khách.');
+    }
+
+    let boardKey = '';
+    /* Gọi mỗi khung hình nhưng chỉ vẽ lại khi danh sách khách/khay thay đổi */
+    function updateOrderBoard() {
+      const board = $('order-board');
+      const show = !!state.profile && state.phase === 'open' && !state.tutorial.active;
+      const front = state.queue[0];
+      const canTake = !!front && frontReady() && state.waiting.length < waitCap();
+      const waitList = state.waiting.slice().sort((a, b) => a.patience / a.maxPatience - b.patience / b.maxPatience);
+      const key = [show, boardOpen, state.closing, state.queue.length, canTake, front ? front.id : '', waitList.map((c) => c.id).join(','),
+        state.selectedTicket, state.kitchen.tray.map((t) => t.uid).join(','), state.kitchen.jobs.waiter ? state.kitchen.jobs.waiter.cid : ''].join('|');
+      setText($('mm-close'), state.closing ? '🚪 Đóng cửa ngay' : '🌙 Đóng cửa sớm');
+      $('mm-close').disabled = state.phase !== 'open';
+      if (key === boardKey) return;
+      boardKey = key;
+      board.classList.toggle('hidden', !show);
+      board.classList.toggle('collapsed', !boardOpen);
+      setText($('ob-count'), state.waiting.length + state.queue.length);
+      setText($('ob-caret'), boardOpen ? '▾' : '▸');
+      if (!show || !boardOpen) return;
+      const tray = state.kitchen.tray;
+      const serving = state.kitchen.jobs.waiter ? state.kitchen.jobs.waiter.cid : null;
+      let html = '';
+      if (state.closing) html += '<div class="ob-note">🌙 Đã ngưng đón khách mới</div>';
+      if (front) {
+        html += '<div class="ob-queue"><div class="ob-top"><span class="ob-tk">🚶</span><span class="ob-name">' + esc(front.name) + (front.critic ? ' 🎩' : '') + '</span>' +
+          (state.queue.length > 1 ? '<span class="ob-more">+' + (state.queue.length - 1) + ' đang xếp hàng</span>' : '') + '</div>' +
+          '<div class="ob-items">' + front.order.map((rid) => recipeIco(rid, 22)).join('') + '</div>' +
+          (canTake ? '<button class="btn btn-sm btn-mint w-full mt-1" data-action="board-take">📝 Nhận đơn</button>' : '') + '</div>';
+      }
+      if (!waitList.length) html += '<div class="ob-empty">Chưa có khách nào đang đợi món.</div>';
+      html += waitList.map((c) => {
+        const r = clamp(c.patience / c.maxPatience, 0, 1);
+        const marks = c.order.map((rid) => '<span class="ob-it">' + recipeIco(rid, 22) + '<i>' + orderMark(rid, tray) + '</i></span>').join('');
+        const ready = c.order.every((rid) => orderMark(rid, tray) === '✅');
+        return '<div class="ob-row' + (state.selectedTicket === c.id ? ' selected' : '') + (ready ? ' ready' : '') + '" data-action="board-pick" data-id="' + c.id + '">' +
+          '<div class="ob-top"><span class="ob-tk">#' + pad2(c.ticket) + '</span><span class="ob-name">' + esc(c.name) + (c.critic ? ' 🎩' : '') + '</span>' +
+          (serving === c.id ? '<span class="ob-more">🛎️ đang mang ra</span>' : ready ? '<span class="ob-more">✅ đủ món</span>' : '') + '</div>' +
+          '<div class="ob-items">' + marks + '</div>' +
+          '<div class="pbar"><div class="' + patClass(r) + '" data-pat="' + c.id + '" style="width:' + (r * 100).toFixed(1) + '%"></div></div></div>';
+      }).join('');
+      $('ob-body').innerHTML = html;
+    }
+
+    /* =====================================================
+       CÔNG THỨC NẤU ĂN
+       ===================================================== */
+    function cookSeconds(type) {
+      const base = COOKABLES[type].speed;
+      const up = state.upgrades.grill;
+      const done = COOK_DONE / (base * (up ? 1.6 : 1));
+      const burn = done + (COOK_BURN - COOK_DONE) / (base * (up ? 0.45 : 1));
+      return { done: Math.round(done), burn: Math.round(burn) };
+    }
+    function recipeCost(rid) {
+      const r = RECIPES[rid];
+      if (r.type === 'burger') {
+        const need = assemblyNeed(rid);
+        let cost = 0;
+        Object.keys(need.inv).forEach((id) => { cost += INGREDIENTS[id].price * need.inv[id]; });
+        Object.keys(need.cooked).forEach((t) => { cost += INGREDIENTS[COOKABLES[t].inv].price * need.cooked[t]; });
+        return cost;
+      }
+      if (r.type === 'side') return INGREDIENTS[COOKABLES[r.cook].inv].price;
+      return INGREDIENTS.cup.price;
+    }
+    function renderRecipeList() {
+      const card = (rid) => {
+        const r = RECIPES[rid];
+        const locked = r.unlockLv > state.dayLv;
+        let steps;
+        if (r.type === 'burger') {
+          steps = '<div class="rc-steps">' + r.layers.map((l, i) => '<span class="step-chip"><b>' + (i + 1) + '</b>' + layerIco(l, 20) + LAYERS[l].name + '</span>').join('<span class="arrow">➜</span>') + '</div>';
+          const meats = uniq(r.layers.filter((l) => LAYERS[l].cooked));
+          steps += '<div class="rc-tip">🔥 Nướng trước: ' + meats.map((t) => COOKABLES[t].name + ' (chín sau ~' + cookSeconds(t).done + ' giây)').join(', ') + '. Xếp từ dưới lên ở 🍔 Bàn lắp ráp.</div>';
+        } else if (r.type === 'side') {
+          const t = cookSeconds(r.cook);
+          steps = '<div class="rc-steps"><span class="step-chip"><b>1</b>' + ingIco(COOKABLES[r.cook].inv, 20) + 'Cho ' + COOKABLES[r.cook].name.toLowerCase() + ' vào nồi chiên</span><span class="arrow">➜</span>' +
+            '<span class="step-chip"><b>2</b>Chờ vàng ~' + t.done + ' giây</span><span class="arrow">➜</span><span class="step-chip"><b>3</b>✋ Lấy ra trước ~' + t.burn + ' giây</span></div>' +
+            '<div class="rc-tip">Lấy ra là món tự đóng hộp và lên khay giao món.</div>';
+        } else {
+          steps = '<div class="rc-steps"><span class="step-chip"><b>1</b>🥤 Chọn vị ' + FLAVORS[r.flavor].name + '</span><span class="arrow">➜</span><span class="step-chip"><b>2</b>Đặt ly mới</span><span class="arrow">➜</span>' +
+            '<span class="step-chip"><b>3</b>💧 Nhấn giữ rót tới vạch xanh (' + FILL_OK_MIN + '–' + FILL_OK_MAX + '%)</span><span class="arrow">➜</span><span class="step-chip"><b>4</b>✅ Đậy nắp</span></div>';
+        }
+        const cost = recipeCost(rid);
+        return '<div class="card rc-card' + (locked ? ' locked' : '') + '">' +
+          '<div class="rc-top"><span class="rc-ico">' + recipeIco(rid, 44) + '</span><div class="min-w-0 flex-1"><div class="rc-name">' + r.name + '</div>' +
+          '<div class="rc-sub">💵 Giá bán ' + fmtMoney(r.price) + ' • 📦 Giá vốn ~' + fmtMoney(cost) + ' • 📈 Lãi ~' + fmtMoney(r.price - cost) + '</div></div>' +
+          (locked ? '<span class="rc-lock">🔒 Lv ' + r.unlockLv + '</span>' : '<span class="rc-ok">✓ Có trong thực đơn</span>') + '</div>' + steps + '</div>';
+      };
+      const group = (type, title) => '<div class="zone-title mt-2 mb-2">' + title + '</div><div class="rc-grid">' + Object.keys(RECIPES).filter((id) => RECIPES[id].type === type).map(card).join('') + '</div>';
+      const times = '<div class="zone-title mt-3 mb-2">⏱️ Thời gian nướng & chiên' + (state.upgrades.grill ? ' (bếp cao cấp)' : '') + '</div><div class="rc-times">' +
+        Object.keys(COOKABLES).map((t) => { const x = cookSeconds(t); return '<span class="rc-time">' + ingIco(COOKABLES[t].inv, 22) + '<b>' + COOKABLES[t].cooked + '</b> chín sau ~' + x.done + 's • cháy sau ~' + x.burn + 's</span>'; }).join('') + '</div>';
+      $('recipe-list').innerHTML = group('burger', '🍔 Burger') + group('side', '🍟 Món chiên') + group('drink', '🥤 Nước uống') + times;
+    }
+
+    /* =====================================================
+       TRANG TRÍ QUÁN
+       ===================================================== */
+    function decorOwned(cat, id) { return state.decor.owned.indexOf(cat + ':' + id) >= 0; }
+    function renderDecorShop() {
+      const score = decorScore();
+      $('decor-summary').innerHTML = '🏡 Độ ấm cúng: <b>' + score + '/' + DECOR_ORDER.length + '</b> • 😊 Khách kiên nhẫn hơn <b>+' + Math.round((cozyPatience() - 1) * 100) + '%</b> • 💝 Tip <b>+' + Math.round((cozyTips() - 1) * 100) + '%</b> • 💰 ' + fmtMoney(state.money);
+      $('decor-list').innerHTML = DECOR_ORDER.map((cat) => {
+        const D = DECOR[cat];
+        const cur = decorItem(cat).id;
+        return '<div class="zone-title mt-2 mb-2">' + D.icon + ' ' + D.label + '</div><div class="dc-grid">' + D.items.map((it) => {
+          const owned = decorOwned(cat, it.id);
+          const using = cur === it.id;
+          let btn;
+          if (using) btn = '<div class="btn btn-sm btn-mint is-disabled">✓ Đang dùng</div>';
+          else if (owned) btn = '<button class="btn btn-sm btn-sky" data-action="decor-use" data-cat="' + cat + '" data-id="' + it.id + '">Dùng</button>';
+          else btn = '<button class="btn btn-sm btn-peach" data-action="decor-buy" data-cat="' + cat + '" data-id="' + it.id + '"' + (state.money < it.price ? ' disabled' : '') + '>🛒 ' + fmtMoney(it.price) + '</button>';
+          return '<div class="card dc-card' + (using ? ' using' : '') + '"><div class="dc-sw">' + cached('dsw_' + cat + '_' + it.id, () => ART.decorSwatch(cat, it)) + '</div>' +
+            '<div class="dc-name">' + it.name + '</div><div class="dc-meta">' + (it.price ? '+1 🏡 ấm cúng' : 'Mặc định') + '</div>' + btn + '</div>';
+        }).join('') + '</div>';
+      }).join('');
+    }
+    function buyDecor(cat, id) {
+      const it = DECOR[cat] && DECOR[cat].items.find((x) => x.id === id);
+      if (!it || decorOwned(cat, id)) return;
+      if (state.money < it.price) { toast('Chưa đủ tiền mua món trang trí này!', 'warn'); Sound.play('angry'); return; }
+      state.money -= it.price;
+      state.dayStats.upgrades += it.price;
+      state.decor.owned.push(cat + ':' + id);
+      Sound.play('buy');
+      toast('🎨 Đã mua ' + it.name + '!', 'good');
+      useDecor(cat, id);
+    }
+    function useDecor(cat, id) {
+      const it = DECOR[cat] && DECOR[cat].items.find((x) => x.id === id);
+      if (!it || !decorOwned(cat, id)) return;
+      if (cat === 'seating' && it.seats < state.waiting.length) { toast('Đang có ' + state.waiting.length + ' khách ngồi chờ, chưa cất bớt bàn được!', 'warn'); return; }
+      state.decor.equip[cat] = id;
+      Sound.play('place');
+      refreshAll();
+      renderDecorShop();
+      saveGame();
     }
 
     /* =====================================================
@@ -3520,6 +3909,7 @@
       renderStorage();
       renderShop();
       renderStaff();
+      if (currentScene === 'decor') renderDecorShop();
     }
 
     /* =====================================================
@@ -3539,15 +3929,23 @@
       if (Math.random() < Math.min(0.6, 0.25 + state.dayLv * 0.05)) order.push(pick(drinks));
       return order;
     }
+    function decorItem(cat) {
+      const id = state.decor && state.decor.equip ? state.decor.equip[cat] : null;
+      return DECOR[cat].items.find((it) => it.id === id) || DECOR[cat].items[0];
+    }
+    function decorScore() { return DECOR_ORDER.filter((cat) => decorItem(cat).price > 0).length; }
+    function cozyPatience() { return 1 + 0.04 * decorScore(); }
+    function cozyTips() { return 1 + 0.06 * decorScore(); }
+    function waitCap() { return decorItem('seating').seats; }
     function dayFactor() { return Math.max(0.78, 1 - (state.dayLv - 1) * 0.025); }
     function linePatienceFor(critic) {
-      let p = 46 * dayFactor();
+      let p = 46 * dayFactor() * cozyPatience();
       if (state.upgrades.decor) p *= 1.4;
       if (critic) p *= 0.9;
       return Math.round(p);
     }
     function foodPatienceFor(order, critic) {
-      let p = (55 + (order.length - 1) * 18) * dayFactor();
+      let p = (55 + (order.length - 1) * 18) * dayFactor() * cozyPatience();
       if (state.upgrades.decor) p *= 1.4;
       if (critic) p *= 0.85;
       return Math.round(p);
@@ -3612,7 +4010,7 @@
       if (state.phase !== 'open') { el.innerHTML = '<div class="front-card"><div class="text-3xl">🌙</div><div class="font-black">Quán chưa mở cửa</div></div>'; return; }
       if (!c) { el.innerHTML = '<div class="front-card"><div class="text-3xl">🛎️</div><div><div class="font-black">Quầy đang trống</div><div class="text-xs font-bold opacity-70">Chờ khách ghé quán nhé! 🌸</div></div></div>'; return; }
       if (c.enterAge < ENTER_TIME) { el.innerHTML = '<div class="front-card"><div class="f-head">' + headHTML(c) + '</div><div><div class="font-black">' + esc(c.name) + ' đang bước vào...</div><div class="text-xs font-bold opacity-70">Xin chào! 👋</div></div></div>'; return; }
-      const full = state.waiting.length >= WAIT_CAP;
+      const full = state.waiting.length >= waitCap();
       el.innerHTML = '<div class="front-card"><div class="f-head">' + headHTML(c) + '</div>' +
         '<div class="order-bubble flex-1"><div class="o-title">' + esc(c.name) + ': “' + c.line + '”</div>' +
         c.order.map((rid) => '<div class="o-line">' + recipeIco(rid, 30) + '<span>' + RECIPES[rid].name + '</span></div>').join('') +
@@ -3663,7 +4061,7 @@
       if (state.phase !== 'open' || isPaused()) return;
       const c = state.queue[0];
       if (!c || !frontReady()) return;
-      if (state.waiting.length >= WAIT_CAP) { toast('Khu chờ đã kín chỗ! Giao bớt món rồi hãy nhận đơn mới.', 'warn'); return; }
+      if (state.waiting.length >= waitCap()) { toast('Khu chờ đã kín chỗ! Giao bớt món rồi hãy nhận đơn mới.', 'warn'); return; }
       acceptOrder(c);
       Sound.play('register');
       toast('📝 Đã nhận đơn #' + pad2(c.ticket) + ' của ' + c.name + ' – mời sang khu chờ!', 'good');
@@ -3774,7 +4172,7 @@
       return rand(L.spawn[0], L.spawn[1]) * repF * rush * crowd;
     }
     function updateSpawning(dt) {
-      if (state.minutes >= LAST_ORDER_MIN) return;
+      if (state.minutes >= LAST_ORDER_MIN || state.closing) return;
       state.spawnTimer -= dt;
       if (state.spawnTimer > 0) return;
       if (state.queue.length + state.waiting.length >= maxCustomers()) { state.spawnTimer = rand(5, 9); return; }
@@ -4483,7 +4881,7 @@
       const minors = issues.filter((x) => !x.major);
       const score = majors.length ? 0 : Math.max(0, 100 - minors.reduce((s, x) => s + x.penalty, 0));
       const repMul = c.critic ? 2 : 1;
-      const decorMul = state.upgrades.decor ? 1.5 : 1;
+      const decorMul = (state.upgrades.decor ? 1.5 : 1) * cozyTips();
       let pay = 0;
       let tip = 0;
       let rep = 0;
@@ -4642,7 +5040,7 @@
     /* ---------- Thu ngân: tự nhận đơn ---------- */
     function cashierTick(dt) {
       const c = state.queue[0];
-      if (!c || !frontReady() || state.waiting.length >= WAIT_CAP) { staffRT.cashier = 0; return; }
+      if (!c || !frontReady() || state.waiting.length >= waitCap()) { staffRT.cashier = 0; return; }
       staffRT.cashier += dt;
       if (staffRT.cashier < STAFF.cashier.work * staffSpeed('cashier')) return;
       staffRT.cashier = 0;
@@ -5033,6 +5431,7 @@
     function openShop() {
       if (state.phase !== 'prep' || isPaused()) return;
       state.phase = 'open';
+      state.closing = false;
       state.minutes = OPEN_MIN;
       state.spawnTimer = 1.5;
       state.dayStats.repStart = state.reputation;
@@ -5151,10 +5550,46 @@
       });
     }
 
+    /* ---------- Đóng cửa sớm ---------- */
+    function askCloseEarly() {
+      if (state.phase !== 'open') { toast('Quán đang không mở cửa.'); return; }
+      if (state.tutorial.active) { toast('Hoàn thành hướng dẫn trước đã nhé!', 'warn'); return; }
+      const inShop = state.queue.length + state.waiting.length;
+      const buttons = [{ label: '↩️ Bán tiếp', cls: 'btn-sky' }];
+      if (!state.closing) buttons.push({ label: '🌙 Ngưng đón khách', cls: 'btn-butter', onClick: startClosing });
+      buttons.push({ label: '🚪 Đóng cửa ngay', cls: 'btn-pink', onClick: closeNow });
+      Modal.show({
+        icon: '🌙',
+        title: state.closing ? 'Quán đang chuẩn bị đóng cửa' : 'Đóng cửa sớm hôm nay?',
+        html: 'Bây giờ là <b>' + fmtClock(state.minutes) + '</b>, trong quán còn <b>' + inShop + '</b> vị khách.<br><br>' +
+          (state.closing ? '' : '🌙 <b>Ngưng đón khách:</b> treo biển “Đóng cửa”, không nhận khách mới. Phục vụ xong khách đang có là quán tự đóng cửa.<br>') +
+          '🚪 <b>Đóng cửa ngay:</b> kết thúc ngày luôn. Khách đã gọi món mà chưa được phục vụ sẽ bực mình (−2 ⭐ mỗi người), khách đang xếp hàng −1 ⭐.<br><br>' +
+          '<span class="text-xs opacity-80">Tiền mặt bằng vẫn tính cả ngày; nguyên liệu thừa trên bếp sẽ bị dọn bỏ.</span>',
+        buttons: buttons
+      });
+    }
+    function startClosing() {
+      if (state.phase !== 'open') return;
+      state.closing = true;
+      Sound.play('bell');
+      toast('🌙 Đã treo biển “Đóng cửa”. Phục vụ nốt khách đang có nhé!', 'good');
+      renderAll();
+      saveGame();
+    }
+    function closeNow() {
+      if (state.phase !== 'open') return;
+      const loss = state.waiting.length * 2 + state.queue.length;
+      if (loss) changeRep(-loss);
+      state.closing = false;
+      endDay();
+    }
+
     /* ---------- Kết thúc ngày ---------- */
     function endDay() {
       if (state.phase !== 'open') return;
       stopPour();
+      const closedEarlyAt = state.minutes < CLOSE_MIN - 1 ? state.minutes : null;
+      state.closing = false;
       state.phase = 'closed';
       state.minutes = CLOSE_MIN;
       const remaining = state.queue.length + state.waiting.length;
@@ -5172,7 +5607,7 @@
       const wage = payWages();
       const ds = state.dayStats;
       const perfectDay = ds.served >= 3 && !ds.angry && !ds.lost;
-      gainXP(DAY_XP + (perfectDay ? PERFECT_DAY_XP : 0), null, 0, true);
+      if (ds.served > 0) gainXP(DAY_XP + (perfectDay ? PERFECT_DAY_XP : 0), null, 0, true);
       const pr = xpProgress();
       const leveled = pr.lv > state.levelSeen;
       const income = ds.revenue + ds.tips;
@@ -5202,6 +5637,7 @@
         '<tr><td>🏅 Kinh nghiệm hôm nay</td><td>+' + ds.xp + ' XP</td></tr>' +
         '<tr><td>🏅 Cấp quán</td><td>Lv ' + pr.lv + (pr.need ? ' (' + pr.cur + '/' + pr.need + ' XP)' : ' 👑') + '</td></tr>' +
         '</table>' +
+        (closedEarlyAt !== null ? '<div class="text-sm mt-2 font-black">🌙 Quán đóng cửa sớm lúc ' + fmtClock(closedEarlyAt) + '.</div>' : '') +
         (perfectDay ? '<div class="text-sm mt-2 font-black" style="color:#2f8f57">🌟 Ngày hoàn hảo: không vị khách nào phật ý! (+' + PERFECT_DAY_XP + ' XP)</div>' : '') +
         (leveled ? '<div class="text-sm mt-1 font-black" style="color:#7d5ba6">🎉 Quán đã đủ XP lên Lv ' + pr.lv + '! Sang ngày mới để nhận thưởng.</div>' : '') +
         (wage.quit.length ? '<div class="text-sm mt-1 font-black" style="color:#c0392b">😢 ' + wage.quit.map((key) => STAFF[key].role + ' ' + STAFF[key].name).join(', ') + ' đã nghỉ việc vì quán không đủ tiền trả lương.</div>' : '') +
@@ -5298,7 +5734,7 @@
       },
       { id: 'go-serve', target: () => zoneTarget('serve'), mood: 'wink', text: 'Bánh đã nằm trên khay ở quầy! Chạm vào <b>🛎️ Quầy giao món</b> nào.', done: () => currentScene === 'serve' || servedSome(), requires: () => trayHasBurger() || servedSome(), backTo: 'go-grill' },
       { id: 'deliver', scene: 'serve', target: '#btn-deliver', text: 'Khách có vé #01 đã được chọn sẵn. Bấm <b>“Giao cho khách”</b> thôi!', done: () => servedSome(), requires: () => trayHasBurger() || servedSome(), backTo: 'go-grill' },
-      { id: 'more', target: '#hud-actions', mood: 'happy', button: 'Tiếp tục ➜', text: 'Tuyệt vời! 🎉 Khu <b>📦 Kho hàng</b> để nhập nguyên liệu (đồ tươi có hạn dùng!), <b>🛠️ Nâng cấp</b> để sắm thiết bị xịn, <b>👥 Nhân viên</b> để thuê người phụ việc – có cả nút tắt ở đây.' },
+      { id: 'more', target: '#hud-actions', mood: 'happy', button: 'Tiếp tục ➜', text: 'Tuyệt vời! 🎉 Khu <b>📦 Kho hàng</b> để nhập nguyên liệu (đồ tươi có hạn dùng!), còn nút <b>☰ Quản lý</b> ở đây có: nâng cấp thiết bị, thuê nhân viên, trang trí quán, sổ công thức và đóng cửa sớm.' },
       { id: 'level', target: '#chip-level', mood: 'wink', button: 'Tiếp tục ➜', text: 'Đây là <b>cấp độ quán 🏅</b>. Mỗi vị khách hài lòng cho bạn <b>XP</b>. Lên cấp sẽ mở <b>món mới</b>, cho <b>thuê nhân viên</b>, và khách cũng kéo đến đông dần. Lúc mới mở quán còn vắng (tối đa 2 khách cùng lúc), cứ thong thả học việc nhé!' },
       { id: 'drinks', target: () => zoneTarget('drinks'), button: 'Tiếp tục ➜', text: 'Khách còn gọi thêm <b>nước uống</b>: vào 🥤 Quầy nước, chọn vị, đặt ly rồi <b>nhấn giữ nút Rót</b> tới vạch xanh. <b>Khoai chiên &amp; gà rán</b> thì chiên ở nồi chiên trong 🔥 Bếp.' },
       { id: 'bye', mood: 'wink', button: 'Bắt đầu kinh doanh! 🚀', text: 'Cẩn thận sự cố: <b>mất điện</b> (bấm liên tục nút sửa cầu dao), <b>nguyên liệu ôi thiu</b>; khách sẽ <b>nổi giận</b> nếu đồ sống/cháy, thiếu nguyên liệu hay chờ quá lâu. Chúc {name} buôn may bán đắt! 🍀' }
@@ -5488,7 +5924,8 @@
     const QUEUE_SPOTS = [[-2.8, -0.3], [-3.7, 0.45], [-4.6, 1.15], [-5.5, 1.8], [-6.35, 2.3]];
     const SEATS = [
       { x: 1.5, z: 2.9, face: Math.PI / 2 }, { x: 3.3, z: 2.9, face: -Math.PI / 2 },
-      { x: 4.7, z: 2.9, face: Math.PI / 2 }, { x: 6.5, z: 2.9, face: -Math.PI / 2 }
+      { x: 4.7, z: 2.9, face: Math.PI / 2 }, { x: 6.5, z: 2.9, face: -Math.PI / 2 },
+      { x: -1.5, z: 2.9, face: Math.PI / 2 }, { x: 0.3, z: 2.9, face: -Math.PI / 2 }
     ];
     const SLOT_POS = [[-4.5, 1.02, -3.85], [-3.95, 1.02, -3.85], [-3.4, 1.02, -3.85], [-2.7, 0.98, -4.15], [-2.7, 0.98, -3.65]];
     const PLATE_POS = [0.45, 0.98, -3.75];
@@ -5596,7 +6033,33 @@
 
     /* ---------- Phòng: sàn, tường, cửa, cửa sổ, bảng thực đơn, đèn ---------- */
     function buildRoom(root) {
-      const floor = canvasTex(1024, 640, (g, w, h) => {
+      const floor = canvasTex(1024, 640, (g, w, h) => drawFloor(g, w, h, decorItem('rug')));
+      W3.refs.floor = floor;
+      const fl = new THREE.Mesh(new THREE.PlaneGeometry(16, 10), texMat(floor.tex));
+      fl.rotation.x = -Math.PI / 2;
+      fl.receiveShadow = true;
+      root.add(fl);
+      /* Bệ sàn thấp hơn hẳn mặt sàn để không bị nhấp nháy (z-fighting) khi xoay camera, kể cả trên GPU điện thoại */
+      root.add(B(16.8, 0.5, 10.8, '#d9a777', 0, -0.56, 0.05));
+      root.add(B(17.2, 0.25, 11.2, '#f3c9a3', 0, -0.75, 0.05, false));
+
+      const wallTex = canvasTex(1024, 256, (g, w, h) => drawWall(g, w, h, decorItem('wall')));
+      W3.refs.wall = wallTex;
+      wallTex.tex.wrapS = THREE.RepeatWrapping;
+      const backMat = texMat(wallTex.tex);
+      const back = mesh(new THREE.BoxGeometry(16.6, 4.2, 0.3), backMat, 0, 2.1, -5.15);
+      root.add(back);
+      const sideTex = canvasTex(512, 256, (g, w, h) => g.drawImage(wallTex.canvas, 0, 0, w, h));
+      W3.refs.sideWall = sideTex;
+      const sideMat = texMat(sideTex.tex);
+      root.add(mesh(new THREE.BoxGeometry(0.3, 4.2, 6.6), sideMat, -8.15, 2.1, -1.7));
+      root.add(mesh(new THREE.BoxGeometry(0.3, 4.2, 1.6), sideMat, -8.15, 2.1, 4.2));
+      root.add(mesh(new THREE.BoxGeometry(0.3, 1.1, 1.8), sideMat, -8.15, 3.65, 2.5));
+      buildRoomRest(root);
+    }
+
+    /* Sàn: gạch bếp, sàn gỗ, thảm khu chờ (màu theo đồ trang trí) */
+    function drawFloor(g, w, h, rug) {
         for (let y = 0; y < h; y += 32) {
           g.fillStyle = (y / 32) % 2 ? '#e7bf96' : '#efcaa4';
           g.fillRect(0, y, w, 32);
@@ -5612,46 +6075,31 @@
         }
         g.fillStyle = 'rgba(90,60,40,0.12)';
         g.fillRect(0, ky - 3, w, 6);
-        g.fillStyle = '#ffd6dc';
-        roundRect(g, 560, 438, 420, 150, 46);
+        g.fillStyle = rug.fill;
+        roundRect(g, 310, 438, 670, 150, 46);
         g.fill();
         g.lineWidth = 8;
-        g.strokeStyle = '#ff9eb5';
+        g.strokeStyle = rug.edge;
         g.stroke();
         g.fillStyle = '#ffffff';
-        for (let x = 600; x < 960; x += 40) for (let y = 470; y < 570; y += 36) { g.beginPath(); g.arc(x, y, 5, 0, Math.PI * 2); g.fill(); }
+        for (let x = 350; x < 960; x += 40) for (let y = 470; y < 570; y += 36) { g.beginPath(); g.arc(x, y, 5, 0, Math.PI * 2); g.fill(); }
         g.fillStyle = '#f6d7b8';
         roundRect(g, -40, 470, 150, 90, 30);
         g.fill();
-      });
-      const fl = new THREE.Mesh(new THREE.PlaneGeometry(16, 10), texMat(floor.tex));
-      fl.rotation.x = -Math.PI / 2;
-      fl.receiveShadow = true;
-      root.add(fl);
-      /* Bệ sàn thấp hơn hẳn mặt sàn để không bị nhấp nháy (z-fighting) khi xoay camera, kể cả trên GPU điện thoại */
-      root.add(B(16.8, 0.5, 10.8, '#d9a777', 0, -0.56, 0.05));
-      root.add(B(17.2, 0.25, 11.2, '#f3c9a3', 0, -0.75, 0.05, false));
-
-      const wallTex = canvasTex(1024, 256, (g, w, h) => {
-        for (let x = 0; x < w; x += 32) { g.fillStyle = (x / 32) % 2 ? '#ffe9d8' : '#fff4ea'; g.fillRect(x, 0, 32, h); }
-        g.fillStyle = 'rgba(255,170,190,0.35)';
+    }
+    /* Tường: giấy dán tường theo đồ trang trí */
+    function drawWall(g, w, h, wl) {
+        for (let x = 0; x < w; x += 32) { g.fillStyle = (x / 32) % 2 ? wl.a : wl.b; g.fillRect(x, 0, 32, h); }
+        g.fillStyle = wl.dot;
         for (let x = 16; x < w; x += 64) for (let y = 20; y < 190; y += 44) { g.beginPath(); g.arc(x, y, 4, 0, Math.PI * 2); g.fill(); }
-        g.fillStyle = '#f4c9a5';
+        g.fillStyle = wl.base;
         g.fillRect(0, 196, w, 60);
-        g.fillStyle = '#e8b085';
+        g.fillStyle = wl.trim;
         g.fillRect(0, 192, w, 8);
         g.fillStyle = 'rgba(0,0,0,0.06)';
         for (let x = 0; x < w; x += 48) g.fillRect(x, 200, 3, 56);
-      });
-      wallTex.tex.wrapS = THREE.RepeatWrapping;
-      const backMat = texMat(wallTex.tex);
-      const back = mesh(new THREE.BoxGeometry(16.6, 4.2, 0.3), backMat, 0, 2.1, -5.15);
-      root.add(back);
-      const sideTex = canvasTex(512, 256, (g, w, h) => g.drawImage(wallTex.canvas, 0, 0, w, h));
-      const sideMat = texMat(sideTex.tex);
-      root.add(mesh(new THREE.BoxGeometry(0.3, 4.2, 6.6), sideMat, -8.15, 2.1, -1.7));
-      root.add(mesh(new THREE.BoxGeometry(0.3, 4.2, 1.6), sideMat, -8.15, 2.1, 4.2));
-      root.add(mesh(new THREE.BoxGeometry(0.3, 1.1, 1.8), sideMat, -8.15, 3.65, 2.5));
+    }
+    function buildRoomRest(root) {
       root.add(B(0.36, 3.15, 0.18, '#a8683f', -8.0, 0, 1.6));
       root.add(B(0.36, 3.15, 0.18, '#a8683f', -8.0, 0, 3.4));
       root.add(B(0.36, 0.2, 2.0, '#a8683f', -8.0, 3.05, 2.5));
@@ -5661,7 +6109,10 @@
       pivot.add(panel);
       pivot.add(mesh(new THREE.BoxGeometry(0.14, 0.9, 1.0), basic('#cfeaff'), 0, 2.05, 0.81, false));
       pivot.add(S(0.07, '#f2c14e', 0.1, 1.45, 1.42));
-      const doorSign = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.34), new THREE.MeshBasicMaterial({ map: signTex('MỞ CỬA', '#fff6e8', '#e07a5f'), transparent: true }));
+      W3.refs.signOpen = signTex('MỞ CỬA', '#fff6e8', '#e07a5f');
+      W3.refs.signClosed = signTex('ĐÓNG CỬA', '#4f5d75', '#ffe8a3');
+      const doorSign = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.34), new THREE.MeshBasicMaterial({ map: W3.refs.signOpen, transparent: true }));
+      W3.refs.doorSign = doorSign;
       doorSign.position.set(0.09, 1.65, 0.81);
       doorSign.rotation.y = Math.PI / 2;
       pivot.add(doorSign);
@@ -5696,16 +6147,35 @@
       root.add(mb);
 
       W3.refs.lamps = [];
-      [[2.4, 3.6, 2.9], [5.6, 3.6, 2.9], [3.2, 3.2, -1.2]].forEach((p) => {
-        root.add(C(0.012, 0.012, 4.3 - p[1], '#7a5340', p[0], p[1], p[2], 6, false));
-        root.add(C(0.12, 0.42, 0.34, '#ffcf66', p[0], p[1] - 0.34, p[2], 20, false));
-        const bulb = S(0.11, basic('#fff1b8'), p[0], p[1] - 0.38, p[2], 12, false);
-        root.add(bulb);
+      [[2.4, 3.6, 2.9], [5.6, 3.6, 2.9], [3.2, 3.2, -1.2], [-0.6, 3.6, 2.9]].forEach((p, i) => {
+        const lamp = new THREE.Group();
+        lamp.position.set(p[0], p[1], p[2]);
+        lamp.add(C(0.012, 0.012, 4.3 - p[1], '#7a5340', 0, 0, 0, 6, false));
+        const shade = new THREE.Group();
+        lamp.add(shade);
+        const bulb = S(0.11, basic('#fff1b8'), 0, -0.38, 0, 12, false);
+        lamp.add(bulb);
+        root.add(lamp);
         const light = new THREE.PointLight(0xffd9a0, 0.2, 7, 2);
         light.position.set(p[0], p[1] - 0.6, p[2]);
         root.add(light);
-        W3.refs.lamps.push({ bulb: bulb, light: light });
+        W3.refs.lamps.push({ bulb: bulb, light: light, shade: shade, group: lamp, extra: i === 3 });
       });
+    }
+    /* Chao đèn theo đồ trang trí */
+    function fillLampShade(g, L) {
+      g.clear();
+      if (L.shape === 'lantern') {
+        g.add(C(0.2, 0.2, 0.36, basic('#ff6b6b'), 0, -0.56, 0, 16, false));
+        g.add(C(0.13, 0.13, 0.05, '#e2b84c', 0, -0.21, 0, 14, false));
+        g.add(C(0.13, 0.13, 0.05, '#e2b84c', 0, -0.6, 0, 14, false));
+        g.add(C(0.01, 0.01, 0.16, '#e2b84c', 0, -0.76, 0, 6, false));
+      } else if (L.shape === 'globe') {
+        g.add(S(0.25, basic(L.color), 0, -0.42, 0, 18, false));
+        g.add(C(0.07, 0.09, 0.08, '#c9a58a', 0, -0.2, 0, 12, false));
+      } else {
+        g.add(C(0.12, 0.42, 0.34, L.color, 0, -0.34, 0, 20, false));
+      }
     }
 
     function drawMenuBoard(list) {
@@ -5959,26 +6429,38 @@
       root.add(mesh(new THREE.PlaneGeometry(1.6, 0.98), texMat(board.tex), 6.5, 2.5, -4.93, false));
     }
 
-    /* ---------- Khu chờ: bàn ghế ---------- */
+    /* ---------- Khu chờ: bàn ghế, cây cảnh (dựng lại khi đổi đồ trang trí) ---------- */
+    const DECOR_PLANT_SPOTS = [[4.0, 4.45], [7.45, 1.4], [-1.9, 4.45], [2.0, 4.5], [5.9, 4.5], [7.45, 0.1]];
     function buildWaiting(root) {
-      [2.4, 5.6].forEach((x) => {
-        root.add(C(0.66, 0.66, 0.07, '#fff6ec', x, 0.74, 2.9, 32));
-        root.add(C(0.6, 0.6, 0.02, '#ff9eb5', x, 0.81, 2.9, 32, false));
-        root.add(C(0.06, 0.06, 0.74, '#b9784a', x, 0, 2.9, 10));
-        root.add(C(0.32, 0.36, 0.05, '#b9784a', x, 0, 2.9, 20));
-        root.add(C(0.08, 0.06, 0.16, '#ffffff', x, 0.81, 2.9, 12));
-        root.add(S(0.07, '#ff8fab', x, 1.02, 2.9, 10));
+      W3.refs.waitGroup = new THREE.Group();
+      root.add(W3.refs.waitGroup);
+    }
+    function fillWaitingArea(g) {
+      g.clear();
+      const T = decorItem('table');
+      const Ch = decorItem('chair');
+      const seats = waitCap();
+      (seats > 4 ? [-0.6, 2.4, 5.6] : [2.4, 5.6]).forEach((x) => {
+        g.add(C(0.66, 0.66, 0.07, T.top, x, 0.74, 2.9, 32));
+        g.add(C(0.6, 0.6, 0.02, T.cloth, x, 0.81, 2.9, 32, false));
+        g.add(C(0.06, 0.06, 0.74, T.leg, x, 0, 2.9, 10));
+        g.add(C(0.32, 0.36, 0.05, T.leg, x, 0, 2.9, 20));
+        g.add(C(0.08, 0.06, 0.16, '#ffffff', x, 0.81, 2.9, 12));
+        g.add(S(0.07, '#ff8fab', x, 1.02, 2.9, 10));
       });
-      SEATS.forEach((s) => {
+      SEATS.slice(0, seats).forEach((s) => {
         const ch = new THREE.Group();
         ch.position.set(s.x, 0, s.z);
         ch.rotation.y = s.face;
-        ch.add(B(0.5, 0.08, 0.5, '#e9b989', 0, 0.42, 0));
-        ch.add(B(0.5, 0.5, 0.08, '#e9b989', 0, 0.5, -0.22));
-        ch.add(B(0.4, 0.3, 0.06, '#ffd6dc', 0, 0.62, -0.18));
-        [[-0.2, -0.2], [0.2, -0.2], [-0.2, 0.2], [0.2, 0.2]].forEach((p) => ch.add(B(0.06, 0.42, 0.06, '#b9784a', p[0], 0, p[1])));
-        root.add(ch);
+        ch.add(B(0.5, 0.08, 0.5, Ch.seat, 0, 0.42, 0));
+        ch.add(B(0.5, Ch.back, 0.08, Ch.seat, 0, 0.5, -0.22));
+        ch.add(B(0.4, Ch.back * 0.6, 0.06, Ch.cushion, 0, 0.6, -0.18));
+        ch.add(B(0.42, 0.05, 0.42, Ch.cushion, 0, 0.5, 0.02));
+        if (Ch.id === 'sofa') [-1, 1].forEach((sd) => ch.add(B(0.08, 0.26, 0.48, Ch.seat, 0.25 * sd, 0.42, 0)));
+        [[-0.2, -0.2], [0.2, -0.2], [-0.2, 0.2], [0.2, 0.2]].forEach((p) => ch.add(B(0.06, 0.42, 0.06, Ch.leg, p[0], 0, p[1])));
+        g.add(ch);
       });
+      DECOR_PLANT_SPOTS.slice(0, decorItem('plant').count).forEach((p, i) => g.add(plant(p[0], p[1], 0.75 + (i % 3) * 0.08)));
     }
 
     /* ---------- Cây, trang trí & mèo (nâng cấp Trang trí) ---------- */
@@ -6471,6 +6953,8 @@
       if (k === 'storage') return cached('up_freezer', () => ART.upgrade('freezer'));
       if (k === 'shop') return cached('up_grill', () => ART.upgrade('grill'));
       if (k === 'staff') return cached('staffhead_cashier_on', () => ART.chibi(STAFF.cashier.look, 'happy', { head: true }));
+      if (k === 'decor') return cached('chair', () => ART.chair());
+      if (k === 'recipes') return cached('r_bo_phomai', () => ART.recipeIcon('bo_phomai'));
       return cached('nav_nav-' + k, () => ART.nav(k));
     }
 
@@ -6490,6 +6974,7 @@
       holdKey: null,
       trayKey: null,
       decorKey: null,
+      decorStyleKey: null,
       tagSizeTimer: 0,
       staffAv: {},
       staffPlateKey: null,
@@ -6775,7 +7260,7 @@
           seen.add(c.id);
           let seat = this.seatOf.get(c.id);
           if (seat === undefined) {
-            seat = [0, 1, 2, 3].find((s) => !used.has(s));
+            seat = SEATS.map((x, i) => i).slice(0, waitCap()).find((i) => !used.has(i));
             if (seat === undefined) seat = 0;
             used.add(seat);
             this.seatOf.set(c.id, seat);
@@ -7141,6 +7626,28 @@
           W3.refs.premiumTrim.visible = state.upgrades.grill;
         }
         if (state.upgrades.decor && W3.refs.cat) W3.refs.cat.scale.y = 1 + Math.sin(performance.now() / 700) * 0.04;
+        const signMap = state.phase === 'open' && !state.closing ? W3.refs.signOpen : W3.refs.signClosed;
+        if (W3.refs.doorSign.material.map !== signMap) { W3.refs.doorSign.material.map = signMap; W3.refs.doorSign.material.needsUpdate = true; }
+        const sk = DECOR_ORDER.map((c) => decorItem(c).id).join('|');
+        if (sk !== this.decorStyleKey) {
+          this.decorStyleKey = sk;
+          fillWaitingArea(W3.refs.waitGroup);
+          const F = W3.refs.floor;
+          drawFloor(F.ctx, F.canvas.width, F.canvas.height, decorItem('rug'));
+          F.tex.needsUpdate = true;
+          const Wl = W3.refs.wall;
+          drawWall(Wl.ctx, Wl.canvas.width, Wl.canvas.height, decorItem('wall'));
+          Wl.tex.needsUpdate = true;
+          const Sd = W3.refs.sideWall;
+          Sd.ctx.drawImage(Wl.canvas, 0, 0, Sd.canvas.width, Sd.canvas.height);
+          Sd.tex.needsUpdate = true;
+          const extra = waitCap() > 4;
+          W3.refs.lamps.forEach((l) => {
+            fillLampShade(l.shade, decorItem('lamp'));
+            l.group.visible = !l.extra || extra;
+            l.light.visible = !l.extra || extra;
+          });
+        }
       },
 
       /* ---------- Ánh sáng theo giờ & mất điện ---------- */
@@ -7231,6 +7738,8 @@
         '<li><b>🛎️ Giao món:</b> Chọn khách, kiểm tra dấu ✅ rồi bấm “Giao cho khách”.</li>' +
         '<li><b>Sự cố &amp; nâng cấp:</b> Mất điện ➜ bấm liên tục “🔧 Sửa cầu dao”. Nhập hàng ở 📦 Kho hàng, mua thiết bị ở 🛠️ Nâng cấp – các nâng cấp sẽ hiện ngay trong mô hình quán.</li>' +
         '<li><b>🏅 Cấp độ quán:</b> Khách hài lòng và mỗi ngày kết thúc cho bạn XP. Mới mở quán còn vắng (tối đa 2 khách cùng lúc); lên cấp thì mở món mới, mở vị trí nhân viên và khách đông dần. Chạm vào ô 🏅 Lv trên thanh trạng thái để xem chi tiết.</li>' +
+        '<li><b>🧾 Bảng yêu cầu:</b> Góc trái màn hình liệt kê order của từng khách (✅ đã có trên khay, ⏳ chưa có). Chạm vào khách để giao món; chạm tiêu đề để thu gọn.</li>' +
+        '<li><b>☰ Quản lý:</b> 📖 Công thức nấu ăn (cách làm, giá vốn, thời gian nướng), 🎨 Trang trí quán (bàn, ghế, thảm, giấy dán tường, đèn, cây, thêm bàn – càng ấm cúng khách càng kiên nhẫn và boa nhiều), 🌙 Đóng cửa sớm (ngưng đón khách hoặc đóng ngay).</li>' +
         '<li><b>👥 Nhân viên:</b> Thuê Thu ngân, Phụ bếp, Pha chế, Lắp ráp, Phục vụ để họ tự làm từng phần việc. Trả phí tuyển dụng một lần, lương trả lúc đóng cửa mỗi tối; đào tạo để làm nhanh hơn. Nhân viên đứng làm việc ngay trong quán 3D.</li>' +
         '</ol><div class="text-xs mt-2 opacity-80">💾 Tiến trình được tự động lưu vào trình duyệt (LocalStorage).</div>';
     }
@@ -7292,6 +7801,7 @@
         saveGame();
       }
       if (!tut && state.minutes >= CLOSE_MIN && !isPaused()) endDay();
+      else if (!tut && state.closing && !state.queue.length && !state.waiting.length && !state.kitchen.jobs.waiter && !isPaused()) endDay();
     }
 
     function frame(ts) {
@@ -7304,6 +7814,7 @@
           World.update(dt);
           World.render();
           renderHUD();
+          updateOrderBoard();
           updatePatienceUI();
           updateCookDynamic();
           if (currentScene === 'drinks') updateDrinkDynamic(false);
@@ -7319,8 +7830,12 @@
        SỰ KIỆN BẤM NÚT (event delegation)
        ===================================================== */
     document.addEventListener('click', (e) => {
+      const menu = $('mgmt-menu');
+      const inMenu = !!e.target.closest('#mgmt-menu');
+      if (!menu.classList.contains('hidden') && !e.target.closest('#btn-menu')) menu.classList.add('hidden');
       const el = e.target.closest('[data-action]');
       if (!el || el.disabled) return;
+      if (inMenu) menu.classList.add('hidden');
       Sound.ensure();
       switch (el.dataset.action) {
         case 'load-continue': Sound.play('click'); startFromSave(); break;
@@ -7350,6 +7865,13 @@
         case 'staff-fire': Sound.play('click'); fireStaff(el.dataset.id); break;
         case 'staff-train': trainStaff(el.dataset.id); break;
         case 'level-info': Sound.play('click'); showLevelInfo(); break;
+        case 'menu': Sound.play('click'); toggleMenu(); break;
+        case 'close-early': Sound.play('click'); askCloseEarly(); break;
+        case 'toggle-board': Sound.play('click'); toggleBoard(); break;
+        case 'board-pick': Sound.play('click'); selectTicket(el.dataset.id); switchScene('serve'); break;
+        case 'board-take': takeOrder(); break;
+        case 'decor-buy': buyDecor(el.dataset.cat, el.dataset.id); break;
+        case 'decor-use': useDecor(el.dataset.cat, el.dataset.id); break;
         case 'close-panel': Sound.play('click'); switchScene('world'); break;
         case 'cust': Sound.play('click'); World.tapCustomer(el.dataset.id); break;
         case 'pause': togglePause(); break;

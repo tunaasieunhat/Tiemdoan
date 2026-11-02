@@ -65,13 +65,15 @@ The script runs top to bottom in this order:
    - `Sound` (WebAudio).
    - A `Modal` queue. Any open modal pauses the simulation through `isPaused()`.
    - Toasts, popups, floating text and tap effects.
-4. **Screens and panels.** The game moves loading → profile → game through `showScreen()`. `switchScene(name)` opens the right-side zone panel for `counter|grill|assembly|drinks|serve|storage|shop|staff` (`'world'` closes it) and tells `World` to focus that zone. Each panel is a `<section id="scene-…">` inside `#zone-panel`. `currentScene` holds the open panel. The panel width is the CSS variable `--zp-w`; `storage|shop|staff` (`WIDE_SCENES`) widen it via `#screen-game.panel-wide`.
+4. **Screens and panels.** The game moves loading → profile → game through `showScreen()`. `switchScene(name)` opens the right-side zone panel for `counter|grill|assembly|drinks|serve|storage|shop|staff|decor|recipes` (`'world'` closes it) and tells `World` to focus that zone. Each panel is a `<section id="scene-…">` inside `#zone-panel`. `currentScene` holds the open panel. The panel width is the CSS variable `--zp-w`; `WIDE_SCENES` (storage, shop, staff, decor, recipes) widen it via `#screen-game.panel-wide`. The HUD `☰ Quản lý` button opens `#mgmt-menu` (upgrades, staff, decor, recipes, order board toggle, close early). `updateOrderBoard()` runs every frame but only re-renders the left-side customer order board (`#order-board`) when its key string changes.
 5. **Gameplay.**
    - **Customers** move from `state.queue` through `takeOrder()` into `state.waiting`, where they get a ticket and a food-wait patience bar. `moodOf()` derives their mood from patience.
    - **Kitchen:** `state.kitchen.cook` has 5 slots (0–2 grill, 3–4 fryer, per `SLOT_STATION`), plus holding, plate, tray, and a `drink` filled by press-and-hold pouring.
    - **Grading:** `evaluateBurger/Side/Drink` return issues. A major issue makes the customer angry and they don't pay; minor issues cut the score. `resolveCustomer()` applies the outcome.
    - **Day cycle:** `prep → open → closed`. `endDay()` applies spoilage and rent, then `startNextDay()` runs.
    - **Random events** (power outage, spoilage) are scheduled per day in `state.events`.
+   - **Close early:** `askCloseEarly()` offers `startClosing()` (sets `state.closing`: no new spawns, the day ends once the shop is empty) or `closeNow()` (rep penalty, `endDay()` at once). Day XP needs at least one customer served.
+   - **Decor:** `DECOR` categories (seating, table, chair, rug, wall, lamp, plant); `state.decor = {owned: ['cat:id'], equip: {cat: id}}`. `decorScore()` (non-free items equipped) raises patience and tips; `waitCap()` (4 or 6 seats) replaces the old `WAIT_CAP`. `World.syncItems` rebuilds the waiting area, redraws the floor/wall canvases and restyles lamps when the equip signature changes.
    - **Levels:** `state.xp` is total XP; `curLevel()` derives the level from `LEVELS`. `state.dayLv` is locked in `beginPrep()` and drives the menu, spawn rate, max customers (`maxCustomers()`), order size, patience, critics and events for that day. `gainXP()` adds XP (serving via `serveXP()`, end of day `DAY_XP`/`PERFECT_DAY_XP`); `announceLevels()` shows each level-up once (`state.levelSeen`) and pays the reward. Old saves without `xp` get the level matching their day (max 5).
    - **Staff:** `state.staff[k] = {hired, skill, days}`; `updateStaff(dt)` runs the cashier, griller, drinker, assembler and waiter ticks. They work from `openNeeds()` (items the waiting orders still lack). Drinks, burgers and the waiter's delivery are timed jobs in `state.kitchen.jobs` (saved). Wages are paid in `endDay()` by `payWages()`; staff quit if the shop can't pay.
 6. **Tutorial.** `TUTORIAL_STEPS` are condition-driven, with `target`, `done` and `requires`/`backTo` fields. `Tutorial.update()` runs every frame to place the spotlight shades, ring and hand. While `state.tutorial.active`, the clock, patience, spawning and events are frozen.
@@ -98,6 +100,7 @@ The script runs top to bottom in this order:
 ## Progress (as of 2026-11-02)
 
 Shipped, newest first (each version is a `CHANGELOG` entry):
+- **3.3.0:** customer order board, recipe book (steps, cost, cook times), close early, detailed decor shop (tables, chairs, rug, wallpaper, lamps, plants, third table) shown in 3D, and a `☰ Quản lý` HUD menu.
 - **3.2.0:** shop levels Lv 1–10 (Lv 1–2 allow at most 2 customers at once, then the shop gets busier), XP and level-up rewards, menu unlocked by level; hireable staff (cashier, griller, drinks, assembler, waiter) with wages, training and 3D avatars plus a staff corner; compact two-column zone panels for landscape phones; the APK now fills the camera-cutout strip with safe-area padding.
 - **3.1.1:** immersive full screen (APK hides status/navigation bars via `android-native/MainActivity.java`, which CI copies over Capacitor's; mobile browsers call `requestFullscreen` on entering the game), and fixed floor z-fighting (the floor base box top sat exactly at the floor plane's y=0).
 - **Fixed APK signing:** all builds now share `android-signing/debug.keystore`. Players still on an older APK must uninstall once; after that, updates install in place.
@@ -108,5 +111,5 @@ Shipped, newest first (each version is a `CHANGELOG` entry):
 - **CI:** APK workflow publishing the `apk-latest` pre-release.
 
 Open items:
-- PR #1 (dev branch into `main`) is not merged yet. Until it is, the new-version banner can't find `version.json` on `main`.
+- PR #1 was merged into `main` on 2026-11-02; the new-version banner reads `version.json` from `main`, and pushes to `main` rebuild the APK. New work goes through a new PR.
 - Untested so far: frame rate on real phones and loading from the live CDNs (development tests used local copies under SwiftShader). A low-graphics option (no shadows, lower pixel ratio) was offered if phones stutter.
